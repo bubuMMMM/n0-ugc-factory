@@ -1222,7 +1222,7 @@ function computeFaceSafeLayout(raw,requested="lower",hasSecondLine=false,style="
   }
 
   const choices=[];
-  for(const placement of ["top","lower","bottom","upper","middle"]){
+  for(const placement of ["top","lower","bottom","upper"]){
     const band=SAFE_BANDS[placement];
     for(const alignment of ["center","left","right"]){
       const col=SAFE_COLUMNS[alignment];
