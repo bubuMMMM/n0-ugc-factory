@@ -960,7 +960,7 @@ function demoHookFor(index){
 
 let HOOKS=new Array(ALL.length).fill("");
 let HOOK_META=new Array(ALL.length).fill(null);
-let VIDEO_MATCHES=new Array(ALL.length).fill(null), VIDEO_LAYOUTS=new Array(ALL.length).fill(null), BRAND_PROFILE_ID="";
+let VIDEO_MATCHES=new Array(ALL.length).fill(null), VIDEO_LAYOUTS=new Array(ALL.length).fill(null), BRAND_PROFILE_ID="", PROJECT_TOKEN="";
 let PROFILE=null, PROJECT_WEBSITE="", generating=false;
 
 const BATCH=56;
@@ -1272,7 +1272,7 @@ function updateProgress(message){
   if(message)studioStatus.textContent=message;
 }
 function saveProject(){
-  try{localStorage.setItem("videoma_project_v3",JSON.stringify({website:PROJECT_WEBSITE,profile:PROFILE,brandProfileId:BRAND_PROFILE_ID,hooks:HOOKS,hookMeta:HOOK_META,style:{font:fontSelect.value,size:Number(fontSize.value)}}))}catch{}
+  try{localStorage.setItem("videoma_project_v4",JSON.stringify({website:PROJECT_WEBSITE,profile:PROFILE,brandProfileId:BRAND_PROFILE_ID,projectToken:PROJECT_TOKEN,hooks:HOOKS,hookMeta:HOOK_META,style:{font:fontSelect.value,size:Number(fontSize.value)}}))}catch{}
 }
 function applyStyle(){
   const size=Number(fontSize.value)||6.6;
@@ -1289,9 +1289,9 @@ fontSelect.addEventListener("change",applyStyle);fontSize.addEventListener("inpu
 
 function restoreProject(){
   try{
-    const p=JSON.parse(localStorage.getItem("videoma_project_v3")||localStorage.getItem("videoma_project_v2")||"null");
+    const p=JSON.parse(localStorage.getItem("videoma_project_v4")||localStorage.getItem("videoma_project_v3")||localStorage.getItem("videoma_project_v2")||"null");
     if(!p) return;
-    PROJECT_WEBSITE=p.website||"";PROFILE=p.profile||null;BRAND_PROFILE_ID=p.brandProfileId||"";
+    PROJECT_WEBSITE=p.website||"";PROFILE=p.profile||null;BRAND_PROFILE_ID=p.brandProfileId||"";PROJECT_TOKEN=p.projectToken||"";
     if(Array.isArray(p.hooks)) HOOKS=p.hooks.slice(0,ALL.length).concat(new Array(Math.max(0,ALL.length-p.hooks.length)).fill(""));
     if(Array.isArray(p.hookMeta)) HOOK_META=p.hookMeta.slice(0,ALL.length).concat(new Array(Math.max(0,ALL.length-p.hookMeta.length)).fill(null));
     if(p.style?.font) fontSelect.value=p.style.font;
@@ -1337,7 +1337,7 @@ async function postJSON(url,body,timeout=70000){
   try{
     const r=await fetch(url,{
       method:"POST",
-      headers:{"Content-Type":"application/json"},
+      headers:{"Content-Type":"application/json",...(PROJECT_TOKEN?{"X-Project-Token":PROJECT_TOKEN}:{})},
       body:JSON.stringify(body),
       signal:ctrl.signal
     });
@@ -1394,6 +1394,8 @@ function errorMessage(code){
     JEV_TIMEOUT:"La validation Jev a mis trop de temps.",
     ANALYZE_TIMEOUT:"L’analyse du site a pris trop de temps.",
     REQUEST_TIMEOUT:"La requête a dépassé le délai prévu.",
+    ANALYZE_RATE_LIMIT:"Trop d’analyses ont été lancées depuis ce navigateur. Réessayez plus tard.",
+    PROJECT_UNAUTHORIZED:"Ce projet a expiré ou n’est plus autorisé. Relancez l’analyse du site.",
     DATABASE_NOT_CONFIGURED:"La base Video Intelligence n’est pas configurée."
   };
   return map[code]||"Une erreur technique a interrompu cette étape.";
@@ -1755,6 +1757,7 @@ siteForm.addEventListener("submit",async e=>{
   HOOK_META=new Array(ALL.length).fill(null);
   VIDEO_MATCHES=new Array(ALL.length).fill(null);
   BRAND_PROFILE_ID="";
+  PROJECT_TOKEN="";
   refreshVisibleHooks();
   updateProgress("Analyse du site…");
 
@@ -1773,6 +1776,7 @@ siteForm.addEventListener("submit",async e=>{
   PROFILE=data.profile;
   PROJECT_WEBSITE=data.website||website;
   BRAND_PROFILE_ID=data.brandProfileId||"";
+  PROJECT_TOKEN=data.projectToken||"";
   studioTitle.textContent=PROFILE?.brand||"Projet videoma";
   studioMeta.textContent=(PROFILE?.summary||PROJECT_WEBSITE).slice(0,180);
   studioStatus.textContent=data.fallback?"Site analysé · mode local activé":data.cached?"Profil marque chargé depuis le cache":"Site analysé avec succès";
