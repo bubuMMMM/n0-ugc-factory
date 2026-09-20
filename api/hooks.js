@@ -55,7 +55,13 @@ module.exports=async function handler(req,res){
     return res.status(200).json({hooks:normalized,model:MODEL});
   }catch(err){
     console.error('hooks error',err?.message,err?.status||'',err?.detail||'');
-    const code=String(err?.message||'HOOKS_FAILED');
-    return res.status(code==='AI_GATEWAY_NOT_CONFIGURED'?503:500).json({error:code});
+    const code=String(err&&err.message||'HOOKS_FAILED');
+    const status=
+      code==='AI_GATEWAY_INSUFFICIENT_FUNDS'?402:
+      code==='AI_GATEWAY_RATE_LIMIT'?429:
+      code==='AI_GATEWAY_TIMEOUT'||code==='EMBEDDING_TIMEOUT'||code==='JEV_TIMEOUT'?504:
+      code==='AI_GATEWAY_NOT_CONFIGURED'||code==='AI_GATEWAY_UNAVAILABLE'?503:
+      code==='AI_GATEWAY_AUTH_ERROR'?502:500;
+    return res.status(status).json({error:code});
   }
 };
