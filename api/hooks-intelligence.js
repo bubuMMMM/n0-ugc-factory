@@ -6,9 +6,10 @@ const db=require('./_db');
 const {HOOK_RULES}=require('./_hook-rules');
 const {evaluateHook,mapLimit,JEV_MODEL}=require('./_jev');
 const {resolveLayout}=require('./_layout');
+const {LAYOUT_VERSION,HOOK_INTELLIGENCE_VERSION}=require('./_versions');
 
 const MAX_ITEMS=24;
-const VERSION='hook-intelligence-v3-face-first';
+const VERSION=HOOK_INTELLIGENCE_VERSION;
 const MECHANISMS=['drama','story','credential','insider','numbered','diagnostic','inversion','overheard','confession','pov','value','take','fourthwall','transformation','wall','proof','pattern_break','product_natural','objection','pain','benefit','comparison','mistake','discovery','observation'];
 const SCORE_KEYS=['visualFit','brandFit','hookStrength','specificity','naturalness','claimSafety','novelty','readability','emotionMatch'];
 const WEIGHTS={visualFit:.16,brandFit:.16,hookStrength:.16,specificity:.12,naturalness:.10,claimSafety:.12,novelty:.07,readability:.06,emotionMatch:.05};
@@ -95,7 +96,7 @@ async function generate(profile,videos,avoid,mechanismUsage,revision){
     const secondLine=tx(r.secondLine,260);
     const style=r.style==='wall'?'wall':'short';
     const requested=['top','upper','middle','lower','bottom'].includes(r.placement)?r.placement:'lower';
-    const layout=layoutDecision(v.intelligence||{},requested,Boolean(secondLine),style);
+    const layout=resolveLayout(v.intelligence||{},{requested,secondLine,style});
     return {
       index:Number(v.index),hook,
       secondLine:layout.allowSecondLine?secondLine:'',
@@ -107,7 +108,14 @@ async function generate(profile,videos,avoid,mechanismUsage,revision){
       faceOcclusionPenalty:layout.faceOcclusionPenalty,
       layoutScore:layout.layoutScore,
       hookScale:layout.scale,
-      maxLines:layout.maxLines
+      fontScale:layout.fontScale,
+      horizontalAlign:layout.horizontalAlign,
+      textRect:layout.textRect||null,
+      objectOcclusionPenalty:Number(layout.objectOcclusionPenalty)||0,
+      maxLines:layout.maxLines,
+      noSafeZone:Boolean(layout.noSafeZone),
+      safeForAutoApproval:Boolean(layout.safeForAutoApproval),
+      layoutVersion:LAYOUT_VERSION
     };
   });
 }
@@ -130,7 +138,11 @@ function applySafeLayouts(videos,results){
       compact:layout.compact,
       textRect:layout.textRect||null,
       fontScale:Number(layout.fontScale)||1,
-      objectOcclusionPenalty:Number(layout.objectOcclusionPenalty)||0
+      objectOcclusionPenalty:Number(layout.objectOcclusionPenalty)||0,
+      maxLines:Number(layout.maxLines)||2,
+      noSafeZone:Boolean(layout.noSafeZone),
+      safeForAutoApproval:Boolean(layout.safeForAutoApproval),
+      layoutVersion:LAYOUT_VERSION
     };
   });
 }
@@ -208,7 +220,7 @@ async function persist(brandProfileId,videos,results){
       r.scores.visualFit,r.scores.brandFit,r.scores.hookStrength,r.scores.specificity,r.scores.naturalness,r.scores.claimSafety,
       r.scores.novelty,r.scores.readability,r.scores.emotionMatch,r.quality,Boolean(r.accepted),r.rationale,VERSION,
       Number(r.jevAcceptProbability)||0,JSON.stringify(r.jevAnswers||{}),r.evaluatorModel||JEV_MODEL,'evaluator-v2',
-      Number(r.faceOcclusionPenalty)||0,Number(r.layoutScore)||0,Boolean(r.secondLineSuppressed),'face-first-v2',r.horizontalAlign||'center',
+      Number(r.faceOcclusionPenalty)||0,Number(r.layoutScore)||0,Boolean(r.secondLineSuppressed),LAYOUT_VERSION,r.horizontalAlign||'center',
       JSON.stringify(r.textRect||null),Number(r.fontScale)||1
     ]);
   }
@@ -261,6 +273,8 @@ module.exports=async function handler(req,res){
         ['jev','openai-fallback'].includes(r.evaluationStatus)&&
         Number(r.jevAcceptProbability)>=.80&&
         Number(r.faceOcclusionPenalty)<=8&&
+        r.safeForAutoApproval!==false&&
+        !r.noSafeZone&&
         !weakQuality(r)&&
         !tooSimilar(r.hook,avoid)
     }));
@@ -270,7 +284,6 @@ module.exports=async function handler(req,res){
       results,model:MODEL,evaluator:JEV_MODEL,version:VERSION,
       accepted:results.filter(x=>x.accepted).length,
       jevEvaluated:results.filter(x=>x.evaluationStatus==='jev').length,
-      openaiEvaluated:results.filter(x=>x.evaluationStatus==='openai').length,
       openaiEvaluated:results.filter(x=>x.evaluationStatus==='openai-fallback').length,
       faceSafe:results.filter(x=>Number(x.faceOcclusionPenalty)<=22).length
     });
