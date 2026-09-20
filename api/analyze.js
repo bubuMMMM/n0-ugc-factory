@@ -120,14 +120,25 @@ function jsonLd(html){
   }
   return out;
 }
+function imageAlts(html){
+  const out=[];
+  for(const m of html.matchAll(/<img[^>]+alt=["']([^"']+)["'][^>]*>/gi)){
+    const text=decodeEntities(m[1]).replace(/\s+/g,' ').trim();
+    if(text&&text.length<=180&&!out.includes(text))out.push(text);
+    if(out.length>=30)break;
+  }
+  return out;
+}
 function pageSignals(html){
   const text=textOnly(html);
   return {
     h1:visibleChunks(html,'h1',10),
     h2:visibleChunks(html,'h2',20),
     h3:visibleChunks(html,'h3',20),
+    quotes:visibleChunks(html,'blockquote',12),
     ctas:buttonLikeText(html),
     prices:priceMentions(text),
+    imageAlts:imageAlts(html),
     jsonLd:jsonLd(html)
   };
 }
@@ -155,9 +166,64 @@ function internalLinks(html,base){
   return scored.sort((a,b)=>b.score-a.score).map(x=>x.url);
 }
 
+
+function rankPath(pathname){
+  const p=String(pathname||'').toLowerCase();
+  let score=0;
+  if(/service|product|produit|offre|solution|pricing|tarif|prix|devis|shop|boutique/.test(p))score+=10;
+  if(/faq|question|aide|support/.test(p))score+=9;
+  if(/testimonial|temoignage|avis|review|client|case|cas-client|realisation|portfolio|projet/.test(p))score+=8;
+  if(/about|a-propos|qui-sommes|equipe|histoire/.test(p))score+=5;
+  if(/blog|article|actualit/.test(p))score+=2;
+  if(p.split('/').filter(Boolean).length<=2)score+=1;
+  return score;
+}
+async function fetchTextPublic(raw,depth=0){
+  if(depth>4)throw new Error('TOO_MANY_REDIRECTS');
+  const url=await assertPublicUrl(raw);
+  const r=await fetch(url,{redirect:'manual',headers:{'User-Agent':'Mozilla/5.0 (compatible; videoma-site-analyzer/1.0)','Accept':'application/xml,text/xml,text/plain,*/*'},signal:AbortSignal.timeout(7000)});
+  if(r.status>=300&&r.status<400){
+    const loc=r.headers.get('location');if(!loc)throw new Error('BAD_REDIRECT');
+    return fetchTextPublic(new URL(loc,url).href,depth+1);
+  }
+  if(!r.ok)throw new Error('HTTP_'+r.status);
+  return {url:r.url||url.href,text:(await r.text()).slice(0,800000)};
+}
+function locsFromXml(xml,base){
+  const out=[];
+  for(const m of xml.matchAll(/<loc[^>]*>([\s\S]*?)<\/loc>/gi)){
+    let u;try{u=new URL(decodeEntities(m[1].trim()),base)}catch{continue}
+    u.hash='';
+    out.push(u.href);
+    if(out.length>=1500)break;
+  }
+  return out;
+}
+async function discoverSitemap(base){
+  const origin=new URL(base).origin;
+  const found=[];const xmlQueue=[origin+'/sitemap.xml'];
+  const seenXml=new Set();
+  while(xmlQueue.length&&seenXml.size<4){
+    const target=xmlQueue.shift();if(seenXml.has(target))continue;seenXml.add(target);
+    let doc;try{doc=await fetchTextPublic(target)}catch{continue}
+    const locs=locsFromXml(doc.text,doc.url);
+    for(const loc of locs){
+      let u;try{u=new URL(loc)}catch{continue}
+      if(u.origin!==origin)continue;
+      if(/\.xml(?:$|\?)/i.test(u.pathname+u.search)){if(xmlQueue.length<6)xmlQueue.push(u.href);continue}
+      if(/\.(jpg|jpeg|png|gif|svg|webp|pdf|zip|mp4|mp3)$/i.test(u.pathname))continue;
+      found.push({url:u.href,score:rankPath(u.pathname)});
+    }
+  }
+  const unique=new Map();
+  for(const x of found)if(!unique.has(x.url)||unique.get(x.url)<x.score)unique.set(x.url,x.score);
+  return [...unique].map(([url,score])=>({url,score})).sort((a,b)=>b.score-a.score).slice(0,80).map(x=>x.url);
+}
+
 async function crawl(website){
   const first=await safeFetch(website);
-  const queue=[first.url,...internalLinks(first.html,first.url)];
+  const sitemap=await discoverSitemap(first.url).catch(()=>[]);
+  const queue=[first.url,...new Set([...internalLinks(first.html,first.url),...sitemap])];
   const origin=new URL(first.url).origin;
   const pages=[];const seen=new Set();let total=0;
   for(const target of queue){
@@ -261,10 +327,12 @@ MÉTHODE:
 2. Distingue besoins explicites et motivations profondes.
 3. Extrais douleurs, désirs, objections, déclencheurs d'achat et jobs-to-be-done.
 4. Repère les formulations exactes intéressantes du site: mots clients, CTA, questions FAQ, bénéfices formulés naturellement.
-5. Sépare les preuves fortes des simples slogans.
-6. Définis ce que les futurs hooks PEUVENT affirmer et ce qu'ils NE DOIVENT PAS affirmer.
-7. Construis 12 à 30 familles de hooks très différentes. Pour chacune, précise les types de scènes vidéo qui lui correspondent.
-8. Cherche des tensions créatives concrètes: erreur vs bonne pratique, attente vs réalité, friction vs simplicité, avant vs après (sans résultat inventé), objection vs réponse, détail négligé, coût de l'inaction, identité du client, démonstration, comparaison, question, opinion contrariante factuellement défendable.
+5. Sépare les preuves fortes des simples slogans et rattache chaque preuve à son URL source.
+6. Repère les mots et formulations que la marque utilise réellement: vocabulaire métier, verbes, expressions clients, CTA, questions fréquentes.
+7. Définis ce que les futurs hooks PEUVENT affirmer et ce qu'ils NE DOIVENT PAS affirmer.
+8. Construis 12 à 30 familles de hooks très différentes. Pour chacune, précise les types de scènes vidéo qui lui correspondent.
+9. Cherche des tensions créatives concrètes: erreur vs bonne pratique, attente vs réalité, friction vs simplicité, avant vs après (sans résultat inventé), objection vs réponse, détail négligé, coût de l'inaction, identité du client, démonstration, comparaison, question, opinion contrariante factuellement défendable.
+10. Donne priorité aux insights spécifiques au business plutôt qu'aux vérités génériques qui pourraient convenir à n'importe quelle PME.
 
 Écris en français. Sois concret. Évite le jargon marketing.`
         },
