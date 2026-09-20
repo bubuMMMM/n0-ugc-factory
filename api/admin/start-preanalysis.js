@@ -1,5 +1,4 @@
 const crypto=require('node:crypto');
-const {waitUntil}=require('@vercel/functions');
 const db=require('../_db');
 const core=require('./_preanalysis-core');
 
@@ -10,11 +9,6 @@ function authorized(req){
   if(!token)return false;
   return crypto.createHash('sha256').update(token).digest('hex')===TOKEN_HASH;
 }
-async function kick(jobId,host){
-  const url='https://'+host+'/api/admin/continue-preanalysis?job='+encodeURIComponent(jobId)+'&nonce='+Date.now();
-  const r=await fetch(url,{headers:{'User-Agent':'videoma-preanalysis-start/1.0'},signal:AbortSignal.timeout(10000)});
-  if(!r.ok)throw new Error('CONTINUATION_START_'+r.status);
-}
 module.exports=async function handler(req,res){
   res.setHeader('Cache-Control','no-store');
   if(!authorized(req))return res.status(401).json({error:'UNAUTHORIZED'});
@@ -24,11 +18,9 @@ module.exports=async function handler(req,res){
     await core.recoverStale();
     await core.resetErrors();
     const jobId=await core.createJob();
-    const host=String(req.headers.host||process.env.VERCEL_PROJECT_PRODUCTION_URL||'n0-ugc-factory.vercel.app');
-    waitUntil(kick(jobId,host));
     const c=await core.counts();
     return res.status(202).json({
-      started:true,jobId,...c,batch:core.BATCH,model:core.MODEL,embeddingModel:core.EMBEDDING_MODEL
+      started:true,jobId,...c,batch:core.BATCH,model:core.MODEL,embeddingModel:core.EMBEDDING_MODEL,orchestration:'vercel-cron'
     });
   }catch(error){
     console.error('start-preanalysis',error&&error.message,error&&error.detail||'');
