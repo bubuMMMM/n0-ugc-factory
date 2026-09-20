@@ -270,6 +270,7 @@ module.exports=async function handler(req,res){
       results,model:MODEL,evaluator:JEV_MODEL,version:VERSION,
       accepted:results.filter(x=>x.accepted).length,
       jevEvaluated:results.filter(x=>x.evaluationStatus==='jev').length,
+      openaiEvaluated:results.filter(x=>x.evaluationStatus==='openai').length,
       openaiEvaluated:results.filter(x=>x.evaluationStatus==='openai-fallback').length,
       faceSafe:results.filter(x=>Number(x.faceOcclusionPenalty)<=22).length
     });
