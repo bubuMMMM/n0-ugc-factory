@@ -28,8 +28,7 @@ async function seed(){
     );
   }
   await db.query(
-    "update video_intelligence set status='pending',error_message=null where status='ready' and analysis_version is distinct from $1",
-    [VERSION]
+    "update video_intelligence set status='ready',error_message=null where status='pending' and embedding is not null and analyzed_at is not null and scene is not null"
   );
   return urls.length;
 }
