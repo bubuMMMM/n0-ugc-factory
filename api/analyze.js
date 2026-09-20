@@ -405,8 +405,15 @@ ${source}`
   }catch(err){
     console.error('analyze error',err?.message,err?.status||'',err?.detail||'');
     const raw=String(err?.message||'ANALYZE_FAILED');
-    const code=/timeout|aborted/i.test(raw)?'ANALYZE_TIMEOUT':raw;
-    const status=code==='AI_GATEWAY_NOT_CONFIGURED'?503:code==='ANALYZE_TIMEOUT'?504:code.startsWith('SITE_')||code==='SITE_UNREADABLE'?422:code==='INVALID_URL'||code==='INVALID_PROTOCOL'||code==='PRIVATE_HOST'?400:500;
+    const code=/timeout|aborted/i.test(raw)&&!raw.startsWith('AI_')?'ANALYZE_TIMEOUT':raw;
+    const status=
+      code==='AI_GATEWAY_INSUFFICIENT_FUNDS'?402:
+      code==='AI_GATEWAY_RATE_LIMIT'?429:
+      code==='AI_GATEWAY_TIMEOUT'||code==='ANALYZE_TIMEOUT'?504:
+      code==='AI_GATEWAY_NOT_CONFIGURED'||code==='AI_GATEWAY_UNAVAILABLE'?503:
+      code==='AI_GATEWAY_AUTH_ERROR'?502:
+      code.startsWith('SITE_')||code==='SITE_UNREADABLE'?422:
+      code==='INVALID_URL'||code==='INVALID_PROTOCOL'||code==='PRIVATE_HOST'?400:500;
     return res.status(status).json({error:code});
   }
 };
