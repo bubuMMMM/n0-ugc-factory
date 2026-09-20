@@ -245,7 +245,7 @@ function jevOverall(scores){
   const weights={visualFit:.16,brandFit:.16,hookStrength:.16,specificity:.12,naturalness:.10,claimSafety:.12,novelty:.07,readability:.06,emotionMatch:.05};
   return Math.round(keys.reduce((sum,k)=>sum+(Number(scores&&scores[k])||0)*weights[k],0));
 }
-function jevWeak(r){
+function qaWeak(r){
   const q=r.jevScores||{};
   return ['jev','openai-fallback'].includes(r.evaluationStatus)&&(
     Number(r.jevAcceptProbability)<.80||
@@ -337,7 +337,7 @@ module.exports=async function handler(req,res){
       !r.brandAnchor||r.brandAnchor.length<5||
       tooSimilar(r.hook,[...avoid,...currentHooks.filter(x=>x!==r.hook)])||
       Number(r.faceOcclusionPenalty)>8||
-      jevWeak(r)
+      qaWeak(r)
     );
 
     if(weak.length){
@@ -363,7 +363,7 @@ module.exports=async function handler(req,res){
         ['jev','openai-fallback'].includes(r.evaluationStatus)&&
         Number(r.jevAcceptProbability)>=.80&&
         Number(r.faceOcclusionPenalty)<=8&&
-        !jevWeak(r)&&
+        !qaWeak(r)&&
         !genericHook(r.hook)&&
         !tooSimilar(r.hook,avoid)
     }));
@@ -371,6 +371,7 @@ module.exports=async function handler(req,res){
     return res.status(200).json({
       results,model:MODEL,evaluator:JEV_MODEL,grounded:true,revised:weak.length,
       jevEvaluated:results.filter(x=>x.evaluationStatus==='jev').length,
+      openaiEvaluated:results.filter(x=>x.evaluationStatus==='openai').length,
       openaiEvaluated:results.filter(x=>x.evaluationStatus==='openai-fallback').length,
       faceSafe:results.filter(x=>Number(x.faceOcclusionPenalty)<=22).length
     });
