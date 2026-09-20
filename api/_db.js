@@ -1,6 +1,6 @@
 const {Pool}=require('pg');
 const {attachDatabasePool}=require('@vercel/functions');
-const {SCHEMA_SQL}=require('./_schema');
+const {MIGRATIONS}=require('./_schema');
 
 let pool=null;
 let schemaPromise=null;
@@ -21,11 +21,15 @@ function normalizedConnectionString(){
   const raw=String(process.env.DATABASE_URL||'').trim();
   try{
     const u=new URL(raw);
-    if(u.searchParams.get('sslmode')==='require')u.searchParams.set('sslmode','verify-full');
+    u.searchParams.delete('sslmode');
     return u.toString();
   }catch{return raw}
 }
-
+function sslConfig(){
+  if(process.env.DATABASE_SSL==='false')return false;
+  if(process.env.DATABASE_SSL_INSECURE==='true')return {rejectUnauthorized:false};
+  return {rejectUnauthorized:true};
+}
 function getPool(){
   if(!configured()){
     const e=new Error('DATABASE_NOT_CONFIGURED');
@@ -38,7 +42,7 @@ function getPool(){
       max:3,
       idleTimeoutMillis:10000,
       connectionTimeoutMillis:8000,
-      ssl:process.env.DATABASE_SSL==='false'?undefined:{rejectUnauthorized:false}
+      ssl:sslConfig()
     });
     try{attachDatabasePool(pool)}catch{}
   }
@@ -51,17 +55,43 @@ async function ensureSchema(){
     e.code='DATABASE_NOT_CONFIGURED';
     throw e;
   }
-  if(!schemaPromise){
-    schemaPromise=(async()=>{
-      try{
-        await getPool().query(SCHEMA_SQL);
-        return true;
-      }catch(err){
-        schemaPromise=null;
-        throw err;
+  if(schemaPromise)return schemaPromise;
+
+  schemaPromise=(async()=>{
+    const client=await getPool().connect();
+    try{
+      await client.query("select pg_advisory_lock(hashtext('videoma_schema_migrations'))");
+      await client.query(
+        "create table if not exists videoma_schema_migrations ("+
+        "id text primary key, applied_at timestamptz not null default now())"
+      );
+      const appliedResult=await client.query("select id from videoma_schema_migrations");
+      const applied=new Set(appliedResult.rows.map(r=>r.id));
+      for(const migration of MIGRATIONS){
+        if(applied.has(migration.id))continue;
+        await client.query('begin');
+        try{
+          await client.query(migration.sql);
+          await client.query(
+            "insert into videoma_schema_migrations(id) values($1) on conflict(id) do nothing",
+            [migration.id]
+          );
+          await client.query('commit');
+        }catch(error){
+          try{await client.query('rollback')}catch{}
+          throw error;
+        }
       }
-    })();
-  }
+      return true;
+    }catch(error){
+      schemaPromise=null;
+      throw error;
+    }finally{
+      try{await client.query("select pg_advisory_unlock(hashtext('videoma_schema_migrations'))")}catch{}
+      client.release();
+    }
+  })();
+
   return schemaPromise;
 }
 
