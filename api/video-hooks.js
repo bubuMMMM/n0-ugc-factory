@@ -113,17 +113,19 @@ A. VISION
 5. Détermine les zones occupées par visage/mains/objet pour choisir placement.
 
 B. MARQUE
-6. Consulte d'abord hookPlaybook. Si un angle a un visualMatch compatible avec la scène, privilégie cet angle et adapte-le précisément.
-7. Choisis UNE douleur, objection, envie, preuve, différenciateur, FAQ, formulation client ou insight du hookPlaybook.
-8. Vérifie que cet insight est compatible avec la scène. Si le lien est forcé, choisis un autre insight.
-9. N'utilise jamais un claim hors de claimsAllowed et respecte claimsForbidden.
+6. Consulte d'abord contentPillars, awarenessMap et hookPlaybook.
+7. Choisis un niveau de conscience adapté au message: problème, recherche de solution, comparaison de produit ou décision.
+8. Si un angle du hookPlaybook a un visualMatch compatible avec la scène, privilégie-le et adapte-le précisément.
+9. Choisis UNE douleur, objection, envie, preuve, différenciateur, FAQ, formulation client ou insight d'un contentPillar.
+10. Vérifie que cet insight est compatible avec la scène. Si le lien est forcé, choisis un autre insight.
+11. N'utilise jamais un claim hors de claimsAllowed et respecte claimsForbidden.
 
 C. COPY
-10. Génère mentalement au moins 5 candidats de mécanismes différents.
-11. Compare-les au hookPlaybook, aux formulations client et aux hooks déjà utilisés.
-12. Élimine les hooks génériques, clickbait, interchangeables, trop publicitaires ou trop proches d'un hook précédent.
-13. Garde celui qui crée la meilleure tension entre ce qu'on LIT et ce qu'on VOIT.
-14. Le hook doit pouvoir être compris en environ 1 seconde.
+12. Génère mentalement au moins 5 candidats de mécanismes différents.
+13. Compare-les au hookPlaybook, aux contentPillars, aux formulations client et aux hooks déjà utilisés.
+14. Élimine les hooks génériques, clickbait, interchangeables, trop publicitaires ou trop proches d'un hook précédent.
+15. Garde celui qui crée la meilleure tension entre ce qu'on LIT et ce qu'on VOIT.
+16. Le hook doit pouvoir être compris en environ 1 seconde.
 
 BARÈME — note sévèrement:
 - visualFit: le texte semble-t-il écrit pour CETTE scène précise?
