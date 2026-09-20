@@ -725,6 +725,26 @@ header{background:transparent}
 .card[data-demo="true"] .hook-overlay{
   text-wrap:balance;
 }
+
+.description-field{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:stretch}
+.description-field[hidden]{display:none}
+.description-field textarea{
+  width:100%;min-height:104px;resize:vertical;border:1px solid #253147;border-radius:16px;
+  background:#080c13;color:#fff;padding:15px 16px;font:500 15px/1.45 Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  outline:none;box-shadow:inset 0 1px 0 rgba(255,255,255,.025)
+}
+.description-field textarea:focus{border-color:#6aaeff;box-shadow:0 0 0 3px rgba(89,151,255,.09)}
+.description-submit{min-width:210px;border-radius:16px}
+.input-mode-toggle{
+  display:block;margin:10px auto 0;border:0;background:transparent;color:#8795aa;
+  font-size:12px;text-decoration:underline;text-underline-offset:3px;cursor:pointer
+}
+.input-mode-toggle:hover{color:#c9d8ec}
+@media(max-width:680px){
+  .description-field{grid-template-columns:1fr}
+  .description-submit{width:100%}
+}
+
 </style>
 </head>
 <body>
@@ -744,6 +764,11 @@ header{background:transparent}
           <input id="siteUrl" name="website" type="url" inputmode="url" autocomplete="url" placeholder="votresite.fr" required>
           <button type="submit" class="site-submit"><span>Créer mes 1000 vidéos</span><span class="submit-arrow" aria-hidden="true">→</span></button>
         </div>
+        <div id="descriptionField" class="description-field" hidden>
+          <textarea id="siteDescription" rows="4" maxlength="12000" placeholder="Ex. : Je suis plombier à Nantes. J’interviens chez les particuliers pour les urgences, rénovations de salle de bain et chauffe-eau. Mes clients veulent surtout une intervention rapide, des prix clairs et quelqu’un de fiable."></textarea>
+          <button type="submit" class="site-submit description-submit"><span>Créer mes 1000 vidéos</span><span class="submit-arrow" aria-hidden="true">→</span></button>
+        </div>
+        <button id="inputModeToggle" class="input-mode-toggle" type="button">Pas de site ? Décrire mon activité</button>
         <div id="siteError" class="site-error" aria-live="polite"></div>
       </form>
     </div>
@@ -1428,7 +1453,18 @@ document.querySelector("#copyLink").onclick=async()=>{
   }catch{document.querySelector("#copyLink").textContent="Copie impossible"}
 };
 
-const siteForm=document.querySelector("#siteForm"),siteUrlInput=document.querySelector("#siteUrl"),siteError=document.querySelector("#siteError");
+const siteForm=document.querySelector("#siteForm"),siteUrlInput=document.querySelector("#siteUrl"),siteDescription=document.querySelector("#siteDescription"),descriptionField=document.querySelector("#descriptionField"),inputModeToggle=document.querySelector("#inputModeToggle"),siteError=document.querySelector("#siteError");
+let INPUT_MODE="website";
+inputModeToggle.addEventListener("click",()=>{
+  INPUT_MODE=INPUT_MODE==="website"?"description":"website";
+  const manual=INPUT_MODE==="description";
+  siteForm.querySelector(".site-field").hidden=manual;
+  descriptionField.hidden=!manual;
+  siteUrlInput.required=!manual;
+  inputModeToggle.textContent=manual?"J’ai un site web":"Pas de site ? Décrire mon activité";
+  siteError.textContent="";
+  (manual?siteDescription:siteUrlInput).focus();
+});
 function normalizeSite(value){
   let v=(value||"").trim();if(!v)return "";
   if(!/^https?:\/\//i.test(v))v="https://"+v;
@@ -1848,10 +1884,17 @@ continueHooks.addEventListener("click",generateMissing);
 
 siteForm.addEventListener("submit",async e=>{
   e.preventDefault();
-  const website=normalizeSite(siteUrlInput.value);
-  if(!website){
+  const manual=INPUT_MODE==="description";
+  const website=manual?"":normalizeSite(siteUrlInput.value);
+  const description=manual?String(siteDescription.value||"").replace(/\s+/g," ").trim():"";
+  if(!manual&&!website){
     siteError.textContent="Entrez une adresse de site valide.";
     siteUrlInput.focus();
+    return;
+  }
+  if(manual&&description.length<20){
+    siteError.textContent="Décrivez votre activité en quelques phrases (20 caractères minimum).";
+    siteDescription.focus();
     return;
   }
   if(generating)return;
@@ -1862,7 +1905,7 @@ siteForm.addEventListener("submit",async e=>{
   btn.textContent="Analyse du site…";
   studio.hidden=false;
   studioTitle.textContent="Analyse du site…";
-  studioMeta.textContent=website;
+  studioMeta.textContent=manual?description.slice(0,160):website;
   studioStatus.textContent="Lecture du site puis analyse GPT‑5.6…";
   HOOKS=new Array(ALL.length).fill("");
   HOOK_META=new Array(ALL.length).fill(null);
@@ -1874,7 +1917,7 @@ siteForm.addEventListener("submit",async e=>{
 
   let data;
   try{
-    data=await postJSON("/api/analyze",{website},170000);
+    data=await postJSON("/api/analyze",manual?{description}:{website},170000);
   }catch(err){
     console.error("site analysis",err);
     siteError.textContent=errorMessage(err.message);
@@ -1885,7 +1928,7 @@ siteForm.addEventListener("submit",async e=>{
   }
 
   PROFILE=data.profile;
-  PROJECT_WEBSITE=data.website||website;
+  PROJECT_WEBSITE=data.website||website||"Description manuelle";
   BRAND_PROFILE_ID=data.brandProfileId||"";
   PROJECT_TOKEN=data.projectToken||"";
   if(copyProjectLink)copyProjectLink.hidden=!PROJECT_TOKEN;
