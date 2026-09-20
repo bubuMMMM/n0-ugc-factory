@@ -1,4 +1,5 @@
 const db=require('./_db');
+const {statusForAiCode}=require('./_gateway-errors');
 const {embedMany,EMBEDDING_MODEL}=require('./_embedding');
 
 function t(x,n=500){return String(x||'').replace(/\s+/g,' ').trim().slice(0,n)}
@@ -160,12 +161,7 @@ module.exports=async function handler(req,res){
   }catch(err){
     console.error('match videos',err&&err.message,err&&err.detail||'');
     const code=String(err&&err.message||'MATCH_FAILED');
-    const status=
-      code==='AI_GATEWAY_INSUFFICIENT_FUNDS'?402:
-      code==='AI_GATEWAY_RATE_LIMIT'?429:
-      code==='AI_GATEWAY_TIMEOUT'||code==='EMBEDDING_TIMEOUT'||code==='JEV_TIMEOUT'?504:
-      code==='AI_GATEWAY_NOT_CONFIGURED'||code==='AI_GATEWAY_UNAVAILABLE'?503:
-      code==='AI_GATEWAY_AUTH_ERROR'?502:500;
+    const status=statusForAiCode(code);
     return res.status(status).json({error:code});
   }
 };
