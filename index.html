@@ -1454,11 +1454,16 @@ async function generateIntelligenceBatch(indices){
     const idx=Number(r.index)-1;if(idx<0||idx>=ALL.length)continue;
     HOOKS[idx]=String(r.hook||"").trim();
     HOOK_META[idx]={
-      placement:r.placement||VIDEO_MATCHES[idx]?.intelligence?.textSafeZone?.preferred||"upper",
+      placement:r.placement||VIDEO_MATCHES[idx]?.intelligence?.textSafeZone?.preferred||"lower",
       style:r.style||"short",secondLine:r.secondLine||"",quality:Number(r.quality)||0,
       grounded:true,source:"video-intelligence",accepted:r.accepted!==false,
       visualCue:r.visualAnchor||"",brandAnchor:r.brandAnchor||"",mechanism:r.mechanism||"",
       angle:r.mechanism||"",scores:r.scores||null,confidence:Number(r.scores?.visualFit)||0,rationale:r.rationale||"",
+      faceOcclusionPenalty:Number(r.faceOcclusionPenalty)||0,
+      layoutScore:Number(r.layoutScore)||0,
+      hookScale:Number(r.hookScale)||1,
+      maxLines:Number(r.maxLines)||2,
+      secondLineSuppressed:Boolean(r.secondLineSuppressed),
       faceOcclusionPenalty:Number(r.faceOcclusionPenalty)||0,
       horizontalAlign:r.horizontalAlign||"center",
       layoutScore:Number(r.layoutScore)||0,
