@@ -1,11 +1,11 @@
 const core=require('./_preanalysis-core');
+const {isCron}=require('./_auth');
 const {openaiCredential}=require('../_ai');
 
 module.exports=async function handler(req,res){
   res.setHeader('Cache-Control','no-store');
-  const cronHeader=String(req.headers['x-vercel-cron-schedule']||'');
-  const ua=String(req.headers['user-agent']||'');
-  if(cronHeader!=='* * * * *'&&!ua.toLowerCase().includes('vercel-cron'))return res.status(403).json({error:'CRON_ONLY'});
+  if(req.method!=='GET')return res.status(405).json({error:'METHOD_NOT_ALLOWED'});
+  if(!isCron(req))return res.status(401).json({error:'UNAUTHORIZED'});
   try{
     let job=await core.latestActiveJob();
 
