@@ -1,5 +1,6 @@
 module.exports=async function handler(req,res){
-  if(req.method!=="POST"){res.setHeader("Allow","POST");return res.status(405).json({error:"METHOD_NOT_ALLOWED"});}
+  if(req.method==="GET") return res.status(200).json({configured:Boolean(process.env.STRIPE_SECRET_KEY)});
+  if(req.method!=="POST"){res.setHeader("Allow","GET, POST");return res.status(405).json({error:"METHOD_NOT_ALLOWED"});}
   const key=process.env.STRIPE_SECRET_KEY;
   if(!key)return res.status(503).json({error:"STRIPE_NOT_CONFIGURED"});
   const origin="https://"+req.headers.host;
