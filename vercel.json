@@ -34,6 +34,12 @@
     },
     "api/hooks.js": {
       "maxDuration": 60
+    },
+    "api/video-hooks.js": {
+      "maxDuration": 60
+    },
+    "api/video-proxy.js": {
+      "maxDuration": 60
     }
   }
 }
