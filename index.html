@@ -642,8 +642,8 @@ header{background:transparent}
 .modal-hook[data-compact="true"]{
   left:13%!important;
   right:13%!important;
-  font-size:5.65cqi!important;
-  line-height:1.16!important;
+  font-size:5.35cqi!important;
+  line-height:1.14!important;
 }
 .card[data-demo="true"] .hook-overlay{max-width:74%;margin-inline:auto}
 .card[data-face-risk^="2"] .hook-overlay,
@@ -801,9 +801,33 @@ const DEMO_HOOK_LIBRARY=[
   {hook:"Et si ton prochain contenu était déjà là ?",second:"Il suffit de générer la bibliothèque"}
 ];
 
+const SAFE_DEMO_HOOKS=[
+  "1000 vidéos en moins de 5 min.",
+  "1 URL → 1000 vidéos.",
+  "Ton site devient 1000 vidéos.",
+  "1000 vidéos. Une seule URL.",
+  "Ton contenu du mois, déjà prêt.",
+  "Une URL entre. 1000 vidéos sortent.",
+  "Tu filmes encore tout à la main ?",
+  "1017 vidéos. Continue de scroller.",
+  "Ton prochain post est déjà prêt.",
+  "Ta marque mérite 1000 variations.",
+  "5 minutes. Puis tu choisis.",
+  "Le problème ? Choisir quoi poster.",
+  "Une URL. Tout ce feed.",
+  "Ce feed pourrait être le tien.",
+  "Ton site produit maintenant du contenu.",
+  "1000 hooks. 1000 vidéos.",
+  "Chaque scroll = une nouvelle créa.",
+  "Plus besoin de manquer de contenu.",
+  "Videoma transforme ton site en vidéos.",
+  "Imagine ta marque sur celle-ci."
+];
+
 function demoHookFor(index){
   const layout=VIDEO_LAYOUTS[index];
   const item=DEMO_HOOK_LIBRARY[index%DEMO_HOOK_LIBRARY.length];
+  const safeHook=SAFE_DEMO_HOOKS[index%SAFE_DEMO_HOOKS.length];
   const n=index+1;
   const remaining=Math.max(0,ALL.length-n);
   const dynamic=[
@@ -815,7 +839,7 @@ function demoHookFor(index){
 
   if(!layout){
     return {
-      hook:item.hook,
+      hook:safeHook,
       secondLine:"",
       placement:index%4===0?"lower":"top",
       style:"short",
@@ -829,7 +853,7 @@ function demoHookFor(index){
   }
 
   return {
-    hook:item.hook,
+    hook:safeHook,
     secondLine:layout.allowSecondLine?(dynamic||item.second||""):"",
     placement:layout.placement||"top",
     style:"short",
@@ -1038,6 +1062,15 @@ function errorMessage(code){
     AI_GATEWAY_AUTH_ERROR:"La connexion à AI Gateway est refusée. Vérifiez la clé configurée sur Vercel.",
     AI_GATEWAY_RATE_LIMIT:"Le service IA reçoit trop de requêtes. Réessayez dans un instant.",
     AI_GATEWAY_UNAVAILABLE:"AI Gateway est temporairement indisponible.",
+    OPENAI_API_INSUFFICIENT_FUNDS:"Le crédit de l’API OpenAI directe est épuisé.",
+    OPENAI_API_AUTH_ERROR:"La clé OpenAI directe est refusée.",
+    OPENAI_API_RATE_LIMIT:"L’API OpenAI directe reçoit trop de requêtes. Réessayez dans un instant.",
+    OPENAI_API_UNAVAILABLE:"L’API OpenAI directe est temporairement indisponible.",
+    OPENAI_API_TIMEOUT:"L’API OpenAI directe a mis trop de temps à répondre.",
+    OPENAI_EMBEDDING_INSUFFICIENT_FUNDS:"Le crédit OpenAI nécessaire au matching est épuisé.",
+    OPENAI_EMBEDDING_AUTH_ERROR:"La clé OpenAI directe ne permet pas les embeddings.",
+    OPENAI_EMBEDDING_RATE_LIMIT:"Le service d’embeddings OpenAI est temporairement limité.",
+    OPENAI_EMBEDDING_TIMEOUT:"Le matching OpenAI a mis trop de temps.",
     AI_MODEL_UNAVAILABLE:"Le modèle IA configuré est indisponible.",
     AI_GATEWAY_TIMEOUT:"Le modèle IA a mis trop de temps à répondre.",
     EMBEDDING_TIMEOUT:"Le matching sémantique a mis trop de temps.",
@@ -1165,7 +1198,9 @@ async function generateVisualBatch(indices){
         evaluator:r.evaluatorModel||"typesafe-ai/jev",
         jevAcceptProbability:Number(r.jevAcceptProbability)||0,
         evaluationStatus:r.evaluationStatus||"",
-        jevAnswers:r.jevAnswers||{}
+        jevAnswers:r.jevAnswers||{},
+        faceOcclusionPenalty:Number(r.faceOcclusionPenalty)||0,
+        compact:Number(r.faceOcclusionPenalty)>10
       };
     }
   }
@@ -1211,7 +1246,14 @@ async function generateIntelligenceBatch(indices){
       style:r.style||"short",secondLine:r.secondLine||"",quality:Number(r.quality)||0,
       grounded:true,source:"video-intelligence",accepted:r.accepted!==false,
       visualCue:r.visualAnchor||"",brandAnchor:r.brandAnchor||"",mechanism:r.mechanism||"",
-      angle:r.mechanism||"",scores:r.scores||null,confidence:Number(r.scores?.visualFit)||0,rationale:r.rationale||""
+      angle:r.mechanism||"",scores:r.scores||null,confidence:Number(r.scores?.visualFit)||0,rationale:r.rationale||"",
+      faceOcclusionPenalty:Number(r.faceOcclusionPenalty)||0,
+      layoutScore:Number(r.layoutScore)||0,
+      compact:Boolean(r.compact),
+      secondLineSuppressed:Boolean(r.secondLineSuppressed),
+      evaluator:r.evaluatorModel||"typesafe-ai/jev",
+      evaluationStatus:r.evaluationStatus||"",
+      jevAcceptProbability:Number(r.jevAcceptProbability)||0
     };
   }
   refreshVisibleHooks();updateProgress("GPT‑5.6 génère · Jev valide…");saveProject();return true;
