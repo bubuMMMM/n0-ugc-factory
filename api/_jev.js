@@ -140,7 +140,7 @@ async function evaluateWithOpenAI(state){
     provider:'openai-fallback'
   };
 }
-async function evaluateHook({hook,secondLine,mechanism,visualAnchor,brandAnchor,placement,faceOcclusionPenalty,video,signal,brand,previousHooks}){
+async function evaluateHook({hook,secondLine,mechanism,visualAnchor,brandAnchor,placement,horizontalAlign,faceOcclusionPenalty,video,signal,brand,previousHooks}){
   const state={
     candidate:{
       hook,
@@ -149,6 +149,7 @@ async function evaluateHook({hook,secondLine,mechanism,visualAnchor,brandAnchor,
       visualAnchor,
       brandAnchor,
       placement:placement||'',
+      horizontalAlign:horizontalAlign||'center',
       faceOcclusionPenalty:Number(faceOcclusionPenalty)||0
     },
     video:{
