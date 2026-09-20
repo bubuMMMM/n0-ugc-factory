@@ -745,6 +745,17 @@ header{background:transparent}
   .description-submit{width:100%}
 }
 
+
+.profile-editor{margin-top:14px;padding:14px;border:1px solid #1c2737;border-radius:14px;background:#070b11;display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.profile-editor[hidden]{display:none}
+.profile-editor label{display:grid;gap:6px;color:#8e9caf;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em}
+.profile-editor input,.profile-editor textarea{width:100%;border:1px solid #253147;border-radius:10px;background:#0a0e15;color:#fff;padding:10px 11px;font:500 13px/1.4 Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;outline:none}
+.profile-editor input:focus,.profile-editor textarea:focus{border-color:#6aaeff}
+.profile-summary{grid-column:1/-1}
+.profile-editor-actions{grid-column:1/-1;display:flex;gap:8px;justify-content:flex-end}
+.profile-editor-actions .studio-action{width:auto}
+@media(max-width:680px){.profile-editor{grid-template-columns:1fr}.profile-summary,.profile-editor-actions{grid-column:1}}
+
 </style>
 </head>
 <body>
@@ -806,8 +817,18 @@ header{background:transparent}
       <output id="fontSizeValue">6.6 %</output>
     </label>
     <button id="continueHooks" class="studio-action" type="button">Compléter les hooks</button>
+    <button id="editProfile" class="studio-action" type="button" hidden>Profil marque</button>
     <button id="copyProjectLink" class="studio-action" type="button" hidden>Copier le lien projet</button>
   </div>
+  <form id="profileEditor" class="profile-editor" hidden>
+    <label>Marque<input id="profileBrand" maxlength="80"></label>
+    <label>Offre principale<input id="profileOffer" maxlength="240"></label>
+    <label class="profile-summary">Résumé<textarea id="profileSummary" rows="3" maxlength="600"></textarea></label>
+    <div class="profile-editor-actions">
+      <button type="button" id="cancelProfile" class="copy">Annuler</button>
+      <button type="submit" class="studio-action">Enregistrer & régénérer</button>
+    </div>
+  </form>
 </section>
 
 <main id="library" class="wrap video-only">
@@ -966,7 +987,8 @@ const BATCH=56;
 const grid=document.querySelector("#grid"), empty=document.querySelector("#empty");
 const studio=document.querySelector("#studio"), studioTitle=document.querySelector("#studioTitle"), studioMeta=document.querySelector("#studioMeta");
 const hookCount=document.querySelector("#hookCount"), progressFill=document.querySelector("#progressFill"), progressTrack=document.querySelector(".progress-track"), studioStatus=document.querySelector("#studioStatus");
-const fontSelect=document.querySelector("#fontSelect"), fontSize=document.querySelector("#fontSize"), fontSizeValue=document.querySelector("#fontSizeValue"), continueHooks=document.querySelector("#continueHooks"), copyProjectLink=document.querySelector("#copyProjectLink");
+const fontSelect=document.querySelector("#fontSelect"), fontSize=document.querySelector("#fontSize"), fontSizeValue=document.querySelector("#fontSizeValue"), continueHooks=document.querySelector("#continueHooks"), editProfile=document.querySelector("#editProfile"), copyProjectLink=document.querySelector("#copyProjectLink");
+const profileEditor=document.querySelector("#profileEditor"),profileBrand=document.querySelector("#profileBrand"),profileOffer=document.querySelector("#profileOffer"),profileSummary=document.querySelector("#profileSummary"),cancelProfile=document.querySelector("#cancelProfile");
 const modal=document.querySelector("#modal"), big=document.querySelector("#big"), modalHook=document.querySelector("#modalHook"), regenerateHook=document.querySelector("#regenerateHook"), renderDownload=document.querySelector("#renderDownload");
 
 const visibleCards=new Map();
@@ -1322,6 +1344,7 @@ function updateProgress(message){
 function saveProject(){
   try{localStorage.setItem("videoma_project_v4",JSON.stringify({website:PROJECT_WEBSITE,profile:PROFILE,brandProfileId:BRAND_PROFILE_ID,projectToken:PROJECT_TOKEN,hooks:HOOKS,hookMeta:HOOK_META,style:{font:fontSelect.value,size:Number(fontSize.value)}}))}catch{}
   if(copyProjectLink)copyProjectLink.hidden=!PROJECT_TOKEN;
+  if(editProfile)editProfile.hidden=!(PROJECT_TOKEN&&PROFILE);
 }
 function applyStyle(){
   const size=Number(fontSize.value)||6.6;
@@ -1400,6 +1423,50 @@ async function loadProjectState(){
     return false;
   }
 }
+editProfile?.addEventListener("click",()=>{
+  if(!PROFILE||!PROJECT_TOKEN)return;
+  profileBrand.value=PROFILE.brand||"";
+  profileOffer.value=PROFILE.primaryOffer||"";
+  profileSummary.value=PROFILE.summary||"";
+  profileEditor.hidden=false;
+  profileBrand.focus();
+});
+cancelProfile?.addEventListener("click",()=>{profileEditor.hidden=true});
+profileEditor?.addEventListener("submit",async e=>{
+  e.preventDefault();
+  if(!PROJECT_TOKEN)return;
+  const brand=profileBrand.value.trim(),primaryOffer=profileOffer.value.trim(),summary=profileSummary.value.trim();
+  if(!brand||!primaryOffer||summary.length<20){
+    siteError.textContent="Complétez la marque, l’offre et un résumé de 20 caractères minimum.";
+    return;
+  }
+  const submit=profileEditor.querySelector('[type="submit"]'),label=submit.textContent;
+  submit.disabled=true;submit.textContent="Enregistrement…";
+  try{
+    const r=await fetch("/api/project-profile",{
+      method:"PATCH",
+      headers:{"Content-Type":"application/json","X-Project-Token":PROJECT_TOKEN},
+      body:JSON.stringify({brand,primaryOffer,summary})
+    });
+    const data=await r.json().catch(()=>({}));
+    if(!r.ok)throw new Error(data.error||"PROFILE_UPDATE_FAILED");
+    PROFILE=data.profile;
+    studioTitle.textContent=PROFILE.brand||"Projet videoma";
+    studioMeta.textContent=(PROFILE.summary||PROJECT_WEBSITE).slice(0,180);
+    HOOK_META=HOOK_META.map(meta=>meta?{...meta,accepted:false}:meta);
+    VIDEO_MATCHES=new Array(ALL.length).fill(null);
+    profileEditor.hidden=true;
+    saveProject();
+    await prepareIntelligenceMatches();
+    await generateMissing();
+  }catch(error){
+    console.error("profile update",error);
+    siteError.textContent=errorMessage(error.message);
+  }finally{
+    submit.disabled=false;submit.textContent=label;
+  }
+});
+
 copyProjectLink?.addEventListener("click",async()=>{
   if(!PROJECT_TOKEN)return;
   const link=location.origin+location.pathname+"#project="+encodeURIComponent(PROJECT_TOKEN);
