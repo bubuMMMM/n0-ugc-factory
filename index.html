@@ -657,6 +657,27 @@ header{background:transparent}
   font-size:5.35cqi!important;
 }
 
+
+.card[data-align="left"] .hook-overlay,
+.modal-hook[data-align="left"]{
+  left:7%!important;
+  right:38%!important;
+  text-align:left!important;
+  max-width:55%!important;
+  margin-inline:0!important;
+  font-size:5cqi!important;
+}
+.card[data-align="right"] .hook-overlay,
+.modal-hook[data-align="right"]{
+  left:38%!important;
+  right:7%!important;
+  text-align:right!important;
+  max-width:55%!important;
+  margin-left:auto!important;
+  margin-right:0!important;
+  font-size:5cqi!important;
+}
+
 </style>
 </head>
 <body>
@@ -842,6 +863,7 @@ function demoHookFor(index){
       hook:safeHook,
       secondLine:"",
       placement:index%4===0?"lower":"top",
+      horizontalAlign:"center",
       style:"short",
       demo:true,
       compact:true,
@@ -856,6 +878,7 @@ function demoHookFor(index){
     hook:safeHook,
     secondLine:layout.allowSecondLine?(dynamic||item.second||""):"",
     placement:layout.placement||"top",
+    horizontalAlign:layout.horizontalAlign||"center",
     style:"short",
     demo:true,
     compact:Boolean(layout.compact),
@@ -895,6 +918,7 @@ function metaFor(index){
     return {
       ...base,
       placement:layout.placement||(["top","lower"].includes(base.placement)?base.placement:"top"),
+      horizontalAlign:layout.horizontalAlign||base.horizontalAlign||"center",
       secondLine:allowSecond?(base.secondLine||""):"",
       compact:Boolean(layout.compact)||Boolean(base.compact),
       faceOcclusionPenalty:Number(layout.faceOcclusionPenalty)||Number(base.faceOcclusionPenalty)||0,
@@ -905,6 +929,7 @@ function metaFor(index){
   return {
     ...base,
     placement:["top","lower"].includes(base.placement)?base.placement:(index%4===0?"lower":"top"),
+    horizontalAlign:["left","center","right"].includes(base.horizontalAlign)?base.horizontalAlign:"center",
     secondLine:"",
     compact:true,
     faceOcclusionPenalty:Number(base.faceOcclusionPenalty)||25,
@@ -939,6 +964,7 @@ function applyHookToCard(card,index){
   card.dataset.compact=meta.compact?"true":"false";
   card.dataset.demo=meta.demo?"true":"false";
   card.dataset.faceRisk=String(Math.round(Number(meta.faceOcclusionPenalty)||0));
+  card.dataset.align=meta.horizontalAlign||"center";
 }
 function render(reset=false){
   if(reset){grid.innerHTML="";cursor=0}
@@ -1006,7 +1032,7 @@ function openVideo(u,index){
   modalHook.innerHTML="";
   const primary=document.createElement("span");primary.className="hook-primary";primary.textContent=hookFor(index);modalHook.appendChild(primary);
   if(meta.secondLine){const second=document.createElement("small");second.className="hook-secondary";second.textContent=meta.secondLine;modalHook.appendChild(second)}
-  modalHook.dataset.placement=meta.placement||"top";modalHook.dataset.hookStyle=meta.style||"short";modalHook.dataset.compact=meta.compact?"true":"false";modalHook.title=meta.rationale||"";
+  modalHook.dataset.placement=meta.placement||"top";modalHook.dataset.hookStyle=meta.style||"short";modalHook.dataset.compact=meta.compact?"true":"false";modalHook.dataset.align=meta.horizontalAlign||"center";modalHook.title=meta.rationale||"";
   modal.classList.add("open");big.play().catch(()=>{});
 }
 document.querySelector("#close").onclick=()=>{modal.classList.remove("open");big.pause();big.removeAttribute("src");big.load();modalHook.innerHTML=""};
@@ -1200,6 +1226,7 @@ async function generateVisualBatch(indices){
         evaluationStatus:r.evaluationStatus||"",
         jevAnswers:r.jevAnswers||{},
         faceOcclusionPenalty:Number(r.faceOcclusionPenalty)||0,
+        horizontalAlign:r.horizontalAlign||"center",
         compact:Number(r.faceOcclusionPenalty)>10
       };
     }
@@ -1248,6 +1275,7 @@ async function generateIntelligenceBatch(indices){
       visualCue:r.visualAnchor||"",brandAnchor:r.brandAnchor||"",mechanism:r.mechanism||"",
       angle:r.mechanism||"",scores:r.scores||null,confidence:Number(r.scores?.visualFit)||0,rationale:r.rationale||"",
       faceOcclusionPenalty:Number(r.faceOcclusionPenalty)||0,
+      horizontalAlign:r.horizontalAlign||"center",
       layoutScore:Number(r.layoutScore)||0,
       compact:Boolean(r.compact),
       secondLineSuppressed:Boolean(r.secondLineSuppressed),
