@@ -17,7 +17,7 @@ header{position:absolute;inset:0 0 auto;z-index:40}.nav{height:76px;display:flex
 .showcase{position:relative;height:min(68vh,650px);display:flex;align-items:center;justify-content:center}.preview{position:absolute;aspect-ratio:9/16;overflow:hidden;border-radius:28px;background:#111827;border:1px solid #ffffff18;box-shadow:0 30px 90px #000}.preview video{width:100%;height:100%;object-fit:cover;display:block}.preview:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 55%,rgba(1,4,9,.65))}.preview.one{width:min(310px,54%);z-index:3;transform:rotate(4deg);right:14%}.preview.two{width:min(230px,40%);z-index:2;left:6%;transform:rotate(-8deg) translateY(28px);opacity:.72}.preview.three{width:min(210px,36%);z-index:1;right:-2%;transform:rotate(11deg) translateY(-34px);opacity:.55}.preview-label{position:absolute;z-index:4;left:16px;bottom:15px;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:#eef6ff}.orbit{position:absolute;width:82%;aspect-ratio:1;border:1px solid rgba(109,154,255,.14);border-radius:50%;filter:drop-shadow(0 0 30px rgba(84,128,255,.15))}
 .proof{border-bottom:1px solid var(--line);background:#070a0f}.proof-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line)}.proof-item{background:#070a0f;padding:22px 20px}.proof-item b{display:block;font-family:Georgia,"Times New Roman",serif;font-size:28px;font-weight:400}.proof-item span{display:block;color:#808a99;font-size:12px;margin-top:3px}
 .section{padding:82px 0}.section-head{display:flex;justify-content:space-between;gap:30px;align-items:flex-end;margin-bottom:28px}.kicker{color:#83aefc;font-size:11px;text-transform:uppercase;letter-spacing:.16em;font-weight:700}.section h2{font-family:Georgia,"Times New Roman",serif;font-weight:400;font-size:clamp(42px,5vw,70px);letter-spacing:-.05em;line-height:.94;margin:8px 0 0}.section-copy{color:#8f99a9;max-width:420px;line-height:1.5}.toolbar{display:flex;align-items:center;gap:12px;margin:22px 0 16px}.search{height:42px;width:min(340px,65vw);border:1px solid #263247;background:#0b0f16;color:#fff;border-radius:999px;padding:0 15px;outline:0}.counter,.status{font:12px ui-monospace,SFMono-Regular,Menlo,monospace;color:#7d8796}.status{margin-left:auto}
-.grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:8px}.card{position:relative;aspect-ratio:9/16;border-radius:14px;overflow:hidden;background:#0a0e14;border:1px solid #172033;cursor:pointer;content-visibility:auto;contain-intrinsic-size:180px 320px}.card video{width:100%;height:100%;display:block;object-fit:cover;background:#0b0e14}.num{position:absolute;left:8px;bottom:8px;font:600 9px ui-monospace,SFMono-Regular,Menlo,monospace;padding:4px 6px;border-radius:6px;background:#000a}.play{position:absolute;right:8px;bottom:8px;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;background:#eef5ff;color:#10141c;font-size:9px}.skeleton{position:absolute;inset:0;background:linear-gradient(110deg,#0b0e13 8%,#141d2a 18%,#0b0e13 33%);background-size:200% 100%;animation:sh 1.3s linear infinite}@keyframes sh{to{background-position-x:-200%}}.empty{padding:80px 0;text-align:center;color:#777;display:none}.empty.show{display:block}
+.grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:8px}.card{position:relative;aspect-ratio:9/16;border-radius:14px;overflow:hidden;background:#0a0e14;border:1px solid #172033;cursor:pointer;content-visibility:auto;contain-intrinsic-size:180px 320px}.card video{width:100%;height:100%;display:block;object-fit:cover;background:#0b0e14}.num{position:absolute;left:8px;top:8px;bottom:auto;font:600 9px ui-monospace,SFMono-Regular,Menlo,monospace;padding:4px 6px;border-radius:6px;background:#000a}.play{position:absolute;right:8px;top:8px;bottom:auto;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;background:#eef5ff;color:#10141c;font-size:9px}.skeleton{position:absolute;inset:0;background:linear-gradient(110deg,#0b0e13 8%,#141d2a 18%,#0b0e13 33%);background-size:200% 100%;animation:sh 1.3s linear infinite}@keyframes sh{to{background-position-x:-200%}}.empty{padding:80px 0;text-align:center;color:#777;display:none}.empty.show{display:block}
 .pay-msg{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(20px);z-index:200;background:#101722;border:1px solid #2a3a52;color:#eaf2ff;padding:12px 16px;border-radius:999px;opacity:0;pointer-events:none;transition:.25s;white-space:nowrap}.pay-msg.show{opacity:1;transform:translateX(-50%) translateY(0)}
 footer{border-top:1px solid var(--line);padding:28px 0 42px;color:#727d8c;font-size:12px}.footer-row{display:flex;justify-content:space-between;gap:20px}
 .modal{position:fixed;inset:0;z-index:100;display:none;align-items:center;justify-content:center;background:#000e;backdrop-filter:blur(18px);padding:18px}.modal.open{display:flex}.player{height:min(94vh,920px);aspect-ratio:9/16;background:#000;border-radius:20px;overflow:hidden;position:relative;border:1px solid #333}.player video{width:100%;height:100%;object-fit:contain}.close{position:absolute;top:10px;right:10px;z-index:2;width:40px;height:40px;border:0;border-radius:50%;background:#000a;color:#fff;font-size:22px}.copy{position:absolute;left:12px;right:12px;bottom:12px;height:42px;border:1px solid #ffffff22;border-radius:12px;background:#000b;color:#fff;font-weight:700}.modal button{cursor:pointer}
@@ -925,6 +925,7 @@ const SAFE_DEMO_HOOKS=[
   "Imagine ta marque ici."
 ]
 
+const CURRENT_LAYOUT_VERSION="face-first-v4";
 let CLIENT_SAFE_LAYOUTS=new Array(ALL.length).fill(null);
 const LOCAL_LAYOUT_PENDING=new Set();
 const LOCAL_LAYOUT_QUEUE=[];
@@ -944,25 +945,25 @@ function demoHookFor(index){
   ][Math.floor(index/DEMO_HOOK_LIBRARY.length)%4];
 
   if(!layout){
-    const right=index%2===1;
     return {
       hook:safeHook,
       secondLine:"",
-      placement:"top",
-      horizontalAlign:right?"right":"left",
-      textRect:right?{x:.56,y:.028,w:.40,h:.060}:{x:.04,y:.028,w:.40,h:.060},
-      fontScale:.46,
+      placement:"bottom",
+      horizontalAlign:"center",
+      textRect:{x:.12,y:.855,w:.76,h:.058},
+      fontScale:.44,
       style:"short",
       demo:true,
       compact:true,
       maxLines:1,
       secondLineSuppressed:true,
       noSafeZone:true,
-      faceOcclusionPenalty:14,
+      faceOcclusionPenalty:10,
       objectOcclusionPenalty:8,
-      layoutScore:72,
+      layoutScore:76,
       accepted:true,
-      rationale:"Safe-edge mode: une seule ligne compacte dans un coin haut, remplacée dès qu’une analyse visuelle locale ou permanente est disponible."
+      layoutVersion:"fallback-bottom-v2",
+      rationale:"Fallback ultra-conservateur: une ligne compacte dans la bande basse jusqu’à disponibilité d’une géométrie visage."
     };
   }
 
@@ -979,6 +980,7 @@ function demoHookFor(index){
     faceOcclusionPenalty:Number(layout.faceOcclusionPenalty)||0,
     layoutScore:Number(layout.layoutScore)||0,
     accepted:true,
+    layoutVersion:layout.layoutVersion||CURRENT_LAYOUT_VERSION,
     rationale:"Hook de démonstration Videoma placé selon la zone sûre de la vidéo."
   };
 }
@@ -1187,26 +1189,33 @@ function validTextRect(rect){
 }
 function metaFor(index){
   const base=HOOK_META[index]||demoHookFor(index);
+  const raw=VIDEO_LAYOUTS[index]||VIDEO_MATCHES[index]?.intelligence||null;
 
-  // A server-approved rectangle is authoritative. Never recompute it client-side.
-  if(validTextRect(base.textRect)){
-    const secondSuppressed=Boolean(base.secondLineSuppressed)||Boolean(base.noSafeZone);
+  // Fresh video geometry always wins over a previously persisted rectangle.
+  // This prevents old localStorage/project layouts from covering a face after the layout engine improves.
+  if(raw){
+    const decision=computeFaceSafeLayout(raw,base.placement||"lower",Boolean(base.secondLine),base.style||"short");
     return {
       ...base,
-      placement:base.placement||"lower",
-      horizontalAlign:base.horizontalAlign||"center",
-      secondLine:secondSuppressed?"":(base.secondLine||""),
-      fontScale:Math.max(.58,Math.min(1,Number(base.fontScale||base.hookScale)||1)),
-      compact:Boolean(base.compact)||Number(base.faceOcclusionPenalty)>8,
-      faceOcclusionPenalty:Number(base.faceOcclusionPenalty)||0,
-      objectOcclusionPenalty:Number(base.objectOcclusionPenalty)||0,
-      layoutScore:Number.isFinite(Number(base.layoutScore))?Number(base.layoutScore):100,
-      maxLines:Math.max(1,Math.min(3,Number(base.maxLines)||2))
+      placement:decision.placement,
+      horizontalAlign:decision.horizontalAlign,
+      textRect:decision.textRect,
+      secondLine:decision.allowSecondLine?(base.secondLine||""):"",
+      secondLineSuppressed:Boolean(base.secondLine)&&!decision.allowSecondLine,
+      fontScale:Math.min(Number(base.fontScale||base.hookScale)||1,decision.fontScale),
+      compact:decision.compact||Boolean(base.compact),
+      faceOcclusionPenalty:decision.faceOcclusionPenalty,
+      objectOcclusionPenalty:decision.objectOcclusionPenalty,
+      layoutScore:decision.layoutScore,
+      maxLines:decision.maxLines,
+      noSafeZone:decision.noSafeZone,
+      safeForAutoApproval:decision.safeForAutoApproval,
+      layoutVersion:raw.layoutVersion||CURRENT_LAYOUT_VERSION
     };
   }
 
-  const raw=VIDEO_LAYOUTS[index]||VIDEO_MATCHES[index]?.intelligence||null;
-  if(!raw&&CLIENT_SAFE_LAYOUTS[index]&&validTextRect(CLIENT_SAFE_LAYOUTS[index].textRect)){
+  // Browser-derived safe geometry is second choice.
+  if(CLIENT_SAFE_LAYOUTS[index]&&validTextRect(CLIENT_SAFE_LAYOUTS[index].textRect)){
     const local=CLIENT_SAFE_LAYOUTS[index];
     return {
       ...base,
@@ -1218,22 +1227,41 @@ function metaFor(index){
       safeForAutoApproval:false
     };
   }
-  const decision=computeFaceSafeLayout(raw,base.placement||"lower",Boolean(base.secondLine),base.style||"short");
+
+  // Trust persisted rectangles only when they come from the current face-safe engine.
+  if(validTextRect(base.textRect)&&base.layoutVersion===CURRENT_LAYOUT_VERSION){
+    const secondSuppressed=Boolean(base.secondLineSuppressed)||Boolean(base.noSafeZone);
+    return {
+      ...base,
+      placement:base.placement||"bottom",
+      horizontalAlign:base.horizontalAlign||"center",
+      secondLine:secondSuppressed?"":(base.secondLine||""),
+      fontScale:Math.max(.48,Math.min(1,Number(base.fontScale||base.hookScale)||1)),
+      compact:Boolean(base.compact)||Number(base.faceOcclusionPenalty)>8,
+      faceOcclusionPenalty:Number(base.faceOcclusionPenalty)||0,
+      objectOcclusionPenalty:Number(base.objectOcclusionPenalty)||0,
+      layoutScore:Number.isFinite(Number(base.layoutScore))?Number(base.layoutScore):100,
+      maxLines:Math.max(1,Math.min(3,Number(base.maxLines)||1))
+    };
+  }
+
+  // Last-resort layout: one short line at the bottom edge.
   return {
     ...base,
-    placement:decision.placement,
-    horizontalAlign:decision.horizontalAlign,
-    textRect:decision.textRect,
-    secondLine:decision.allowSecondLine?(base.secondLine||""):"",
-    secondLineSuppressed:Boolean(base.secondLine)&&!decision.allowSecondLine,
-    fontScale:Math.min(Number(base.hookScale)||1,decision.fontScale),
-    compact:decision.compact||Boolean(base.compact),
-    faceOcclusionPenalty:Math.max(Number(base.faceOcclusionPenalty)||0,decision.faceOcclusionPenalty),
-    objectOcclusionPenalty:Math.max(Number(base.objectOcclusionPenalty)||0,decision.objectOcclusionPenalty),
-    layoutScore:Math.min(Number.isFinite(Number(base.layoutScore))?Number(base.layoutScore):100,decision.layoutScore),
-    maxLines:decision.maxLines,
-    noSafeZone:decision.noSafeZone,
-    safeForAutoApproval:decision.safeForAutoApproval
+    placement:"bottom",
+    horizontalAlign:"center",
+    textRect:{x:.12,y:.855,w:.76,h:.058},
+    secondLine:"",
+    secondLineSuppressed:Boolean(base.secondLine),
+    fontScale:.44,
+    compact:true,
+    faceOcclusionPenalty:10,
+    objectOcclusionPenalty:8,
+    layoutScore:76,
+    maxLines:1,
+    noSafeZone:true,
+    safeForAutoApproval:false,
+    layoutVersion:"fallback-bottom-v2"
   };
 }
 function setHookGeometry(node,meta){
@@ -1309,13 +1337,17 @@ async function loadVideoLayouts(){
   }
 }
 
-function localRectCandidates(){
-  return [
-    {placement:"top",horizontalAlign:"left",textRect:{x:.04,y:.028,w:.40,h:.060}},
-    {placement:"top",horizontalAlign:"right",textRect:{x:.56,y:.028,w:.40,h:.060}},
-    {placement:"bottom",horizontalAlign:"left",textRect:{x:.04,y:.885,w:.40,h:.058}},
-    {placement:"bottom",horizontalAlign:"right",textRect:{x:.56,y:.885,w:.40,h:.058}}
+function localRectCandidates(faceAware=false){
+  const bottom=[
+    {placement:"bottom",horizontalAlign:"center",textRect:{x:.12,y:.855,w:.76,h:.058}},
+    {placement:"bottom",horizontalAlign:"left",textRect:{x:.04,y:.855,w:.46,h:.058}},
+    {placement:"bottom",horizontalAlign:"right",textRect:{x:.50,y:.855,w:.46,h:.058}}
   ];
+  if(!faceAware)return bottom;
+  return bottom.concat([
+    {placement:"top",horizontalAlign:"left",textRect:{x:.04,y:.028,w:.40,h:.060}},
+    {placement:"top",horizontalAlign:"right",textRect:{x:.56,y:.028,w:.40,h:.060}}
+  ]);
 }
 function pixelClutter(data,width,height,rect,frameOffsetX){
   const x0=Math.max(0,Math.floor(frameOffsetX+rect.x*160));
@@ -1382,7 +1414,7 @@ async function deriveLocalSafeLayout(contactSheet,index){
   ctx.drawImage(img,0,0,640,284);
   const pixels=ctx.getImageData(0,0,640,284).data;
   const faces=await detectFacesOnSheet(canvas).catch(()=>[]);
-  const candidates=localRectCandidates().map(candidate=>{
+  const candidates=localRectCandidates(faces.length>0).map(candidate=>{
     let clutter=0,facePenalty=0;
     for(let frame=0;frame<4;frame++){
       clutter=Math.max(clutter,pixelClutter(pixels,640,284,candidate.textRect,frame*160));
@@ -1401,7 +1433,7 @@ async function deriveLocalSafeLayout(contactSheet,index){
     placement:best.placement,
     horizontalAlign:best.horizontalAlign,
     textRect:best.textRect,
-    fontScale:.46,
+    fontScale:.44,
     compact:true,
     maxLines:1,
     allowSecondLine:false,
