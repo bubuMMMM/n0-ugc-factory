@@ -600,6 +600,13 @@ header{background:transparent}
   -webkit-text-stroke:.125em #000;
   paint-order:stroke fill;
 }
+.hook-overlay,.modal-hook{
+  font-family:var(--hook-family,var(--hook-font))!important;
+  color:var(--hook-color,#fff)!important;
+  font-weight:var(--hook-weight,800)!important;
+  letter-spacing:var(--hook-letter-spacing,0em)!important;
+  -webkit-text-stroke:.125em var(--hook-stroke,#000)!important;
+}
 .hook-overlay .hook-primary,.modal-hook .hook-primary{display:block}
 .hook-overlay .hook-secondary,.modal-hook .hook-secondary{
   display:block;
@@ -903,29 +910,97 @@ const DEMO_HOOK_LIBRARY=[
 ];
 
 const SAFE_DEMO_HOOKS=[
-  "1000 vidéos. 5 min.",
-  "1 URL → 1000 vidéos.",
-  "Ton site devient contenu.",
-  "1000 vidéos. Une URL.",
-  "5 minutes. Puis tu choisis.",
-  "Ton prochain post est prêt.",
-  "Tout ce feed. Une URL.",
-  "1017 vidéos ici.",
-  "Ta marque, 1000 variations.",
-  "Le contenu, sans tournage.",
-  "1000 hooks. 1000 vidéos.",
-  "Videoma fait le volume.",
-  "Une URL. Puis ce feed.",
-  "Encore 1000 idées.",
-  "Ton site devient vidéos.",
-  "Le scroll ne finit plus.",
-  "1000 créas à tester.",
-  "Ton contenu est déjà là.",
-  "5 min pour tout générer.",
-  "Imagine ta marque ici."
+  "Tu filmes encore chaque vidéo une par une ?",
+  "Et si ton site pouvait générer 1000 vidéos ?",
+  "Voilà ce que 5 minutes peuvent produire pour une marque.",
+  "Une seule URL peut désormais remplir tout ton calendrier contenu.",
+  "Le plus dur maintenant, c’est de choisir quoi publier.",
+  "Cette vidéo fait partie d’un lot de 1017 créas.",
+  "Ton prochain mois de contenu pourrait déjà être prêt.",
+  "Pourquoi produire une vidéo quand tu peux en générer 1000 ?",
+  "On a transformé une simple URL en machine à contenu.",
+  "Tu donnes ton site. Videoma génère le reste.",
+  "Imagine ouvrir ça avec le nom de ta marque.",
+  "1000 vidéos avant même d’avoir choisi la première à poster.",
+  "Le problème n’est plus de créer, mais de sélectionner.",
+  "Ce feed entier peut être généré à partir d’un site.",
+  "Une PME ne devrait plus jamais manquer d’idées de contenu.",
+  "Chaque réaction peut devenir un angle différent pour ta marque.",
+  "Ce que tu regardes est littéralement la démo du produit.",
+  "Une URL entre. Une bibliothèque entière de vidéos sort.",
+  "On n’a pas tourné 1000 vidéos pour construire ce feed.",
+  "Tu pourrais publier celle-ci aujourd’hui, puis 999 autres ensuite.",
+  "Voilà à quoi ressemble du contenu généré à grande échelle.",
+  "1000 créas prêtes à tester sans refaire 1000 tournages.",
+  "Si tu peux coller un lien, tu peux lancer la machine.",
+  "Ton site web peut désormais produire bien plus que du trafic.",
+  "Le scroll continue parce que la bibliothèque contient 1017 vidéos.",
+  "Chaque vidéo ici peut porter un message complètement différent.",
+  "5 minutes plus tard, ton problème devient quoi publier en premier.",
+  "Ce n’est pas une banque de vidéos, c’est une usine à contenu.",
+  "Ta marque pourrait avoir 1000 variations avant la fin du café.",
+  "Tu voulais plus de contenu ? Voilà ce que signifie vraiment plus.",
+  "Une seule page web peut nourrir des mois de publications.",
+  "La création de contenu devient enfin un problème de sélection.",
+  "Imagine tester 1000 hooks sans enregistrer 1000 nouvelles vidéos.",
+  "Cette créa pourrait déjà parler de ton entreprise aujourd’hui.",
+  "Ton offre, ton message, puis 1000 façons de les montrer.",
+  "Pourquoi attendre une semaine pour produire ce feed entier ?",
+  "Le volume de contenu vient de devenir une fonctionnalité.",
+  "Tu ne cherches plus quoi poster, tu choisis parmi 1000.",
+  "Le résultat final n’est pas un mockup : tu le regardes.",
+  "Chaque scroll ici est une nouvelle créa prête à être adaptée.",
+  "Ton site devient la matière première de toutes ces vidéos.",
+  "Ce feed montre ce qu’une seule URL peut déclencher.",
+  "1000 vidéos, 1000 hooks et pourtant un seul point de départ.",
+  "On a remplacé la panne d’idées par un problème de choix.",
+  "Et si 5 minutes suffisaient pour remplir ton feed ?",
+  "Ce que tu vois ici pourrait porter ton prochain message commercial.",
+  "Le contenu n’est plus rare quand la production devient automatisée.",
+  "Ta prochaine campagne pourrait commencer avec une simple URL.",
+  "Chaque clip peut recevoir le hook qui correspond à sa réaction.",
+  "1000 vidéos ne servent à rien si elles racontent toutes la même chose.",
+  "Ici, chaque réaction devient une nouvelle façon d’arrêter le scroll.",
+  "Ton prochain post est peut-être déjà quelque part dans ce feed.",
+  "Le vrai luxe, c’est d’avoir 1000 options avant de publier.",
+  "Cette bibliothèque existe pour que ta marque n’ait plus à improviser.",
+  "On peut maintenant produire le volume avant même de choisir l’angle.",
+  "Tu regardes 1017 occasions différentes de capter l’attention.",
+  "Le futur du contenu ressemble peut-être simplement à ce scroll.",
+  "Une URL suffit pour transformer ton offre en centaines de créas.",
+  "Videoma ne génère pas une vidéo : il génère le choix.",
+  "Et si ton calendrier contenu se construisait avant ton prochain café ?"
 ]
 
 const CURRENT_LAYOUT_VERSION="face-first-v4";
+const HOOK_VISUAL_PRESETS=[
+  {font:"'TikTok Sans',Arial,Helvetica,sans-serif",color:"#ffffff",stroke:"#000000",scale:1.00,weight:800,letterSpacing:"0em"},
+  {font:"Impact,'Arial Narrow',sans-serif",color:"#ffe45e",stroke:"#000000",scale:1.08,weight:800,letterSpacing:".01em"},
+  {font:"Georgia,'Times New Roman',serif",color:"#ffffff",stroke:"#000000",scale:.92,weight:700,letterSpacing:"-.015em"},
+  {font:"'Arial Black',Arial,sans-serif",color:"#7dd3fc",stroke:"#000000",scale:.96,weight:900,letterSpacing:"-.02em"},
+  {font:"'Trebuchet MS',Arial,sans-serif",color:"#f9a8d4",stroke:"#000000",scale:.98,weight:800,letterSpacing:"-.01em"},
+  {font:"'Courier New',monospace",color:"#bef264",stroke:"#000000",scale:.86,weight:800,letterSpacing:"-.025em"},
+  {font:"Arial,Helvetica,sans-serif",color:"#ffffff",stroke:"#111111",scale:1.12,weight:900,letterSpacing:"-.025em"},
+  {font:"Georgia,'Times New Roman',serif",color:"#fde68a",stroke:"#000000",scale:1.02,weight:700,letterSpacing:"-.025em"}
+];
+function visualStyleFor(index,raw,meta={}){
+  const reaction=String(raw?.reactionType||raw?.primaryEmotion||"").toLowerCase();
+  const energy=Number(raw?.energyScore||0);
+  let presetIndex=index%HOOK_VISUAL_PRESETS.length;
+  if(/surpris|shock|excited|wow|discovery/.test(reaction))presetIndex=1;
+  else if(/skeptic|deadpan|calm|thoughtful/.test(reaction))presetIndex=2;
+  else if(/happy|smile|validation|relief|proud/.test(reaction))presetIndex=5;
+  else if(/frustr|angry|annoy|confus/.test(reaction))presetIndex=3;
+  else if(energy>=75)presetIndex=6;
+  const preset=HOOK_VISUAL_PRESETS[presetIndex];
+  const jitter=[.92,1,1.06,1.12][index%4];
+  return {
+    ...preset,
+    scale:Math.max(.78,Math.min(1.18,preset.scale*jitter)),
+    color:meta.demo===false&&meta.textColor?meta.textColor:preset.color
+  };
+}
+
 let CLIENT_SAFE_LAYOUTS=new Array(ALL.length).fill(null);
 const LOCAL_LAYOUT_PENDING=new Set();
 const LOCAL_LAYOUT_QUEUE=[];
@@ -934,57 +1009,46 @@ let LOCAL_LAYOUT_ACTIVE=0;
 function demoHookFor(index){
   const layout=VIDEO_LAYOUTS[index]||CLIENT_SAFE_LAYOUTS[index];
   const item=DEMO_HOOK_LIBRARY[index%DEMO_HOOK_LIBRARY.length];
-  const safeHook=SAFE_DEMO_HOOKS[index%SAFE_DEMO_HOOKS.length];
+  const hook=SAFE_DEMO_HOOKS[index%SAFE_DEMO_HOOKS.length]||item.hook;
   const n=index+1;
-  const remaining=Math.max(0,ALL.length-n);
   const dynamic=[
-    "vidéo "+n.toLocaleString("fr-FR")+" / "+ALL.length.toLocaleString("fr-FR"),
-    item.second,
-    remaining+" vidéos derrière celle-ci",
-    n%2?"1000 vidéos en moins de 5 min":"à partir d’une seule URL"
-  ][Math.floor(index/DEMO_HOOK_LIBRARY.length)%4];
+    "À partir d’une seule URL",
+    "1000 vidéos en moins de 5 minutes",
+    "Vidéo "+n.toLocaleString("fr-FR")+" sur "+ALL.length.toLocaleString("fr-FR"),
+    item.second||"Videoma transforme ton site en contenu"
+  ][Math.floor(index/SAFE_DEMO_HOOKS.length)%4];
 
-  if(!layout){
-    return {
-      hook:safeHook,
-      secondLine:"",
-      placement:"bottom",
-      horizontalAlign:"center",
-      textRect:{x:.12,y:.855,w:.76,h:.058},
-      fontScale:.44,
-      style:"short",
-      demo:true,
-      compact:true,
-      maxLines:1,
-      secondLineSuppressed:true,
-      noSafeZone:true,
-      faceOcclusionPenalty:10,
-      objectOcclusionPenalty:8,
-      layoutScore:76,
-      accepted:true,
-      layoutVersion:"fallback-bottom-v2",
-      rationale:"Fallback ultra-conservateur: une ligne compacte dans la bande basse jusqu’à disponibilité d’une géométrie visage."
-    };
-  }
+  const visual=visualStyleFor(index,layout||{}, {demo:true});
+  const defaultPlacements=[
+    {placement:"upper",horizontalAlign:"center",textRect:{x:.08,y:.12,w:.84,h:.20}},
+    {placement:"middle",horizontalAlign:"center",textRect:{x:.08,y:.36,w:.84,h:.22}},
+    {placement:"lower",horizontalAlign:"center",textRect:{x:.08,y:.62,w:.84,h:.20}},
+    {placement:"top",horizontalAlign:"center",textRect:{x:.08,y:.06,w:.84,h:.19}}
+  ];
+  const fallback=defaultPlacements[index%defaultPlacements.length];
 
   return {
-    hook:item.hook||safeHook,
-    secondLine:layout.allowSecondLine?(dynamic||item.second||""):"",
-    placement:layout.placement||"top",
-    horizontalAlign:layout.horizontalAlign||"center",
-    textRect:layout.textRect||null,
-    fontScale:Number(layout.fontScale)||1,
+    hook,
+    secondLine:index%3===0?dynamic:"",
+    placement:layout?.placement||fallback.placement,
+    horizontalAlign:layout?.horizontalAlign||fallback.horizontalAlign,
+    textRect:layout?.textRect||fallback.textRect,
+    fontScale:Math.max(.80,Number(layout?.fontScale)||visual.scale),
+    visualStyle:visual,
     style:"short",
     demo:true,
-    compact:Boolean(layout.compact),
-    faceOcclusionPenalty:Number(layout.faceOcclusionPenalty)||0,
-    layoutScore:Number(layout.layoutScore)||0,
+    compact:false,
+    maxLines:index%3===0?3:2,
+    secondLineSuppressed:false,
+    noSafeZone:false,
+    faceOcclusionPenalty:Number(layout?.faceOcclusionPenalty)||0,
+    objectOcclusionPenalty:Number(layout?.objectOcclusionPenalty)||0,
+    layoutScore:Number(layout?.layoutScore)||70,
     accepted:true,
-    layoutVersion:layout.layoutVersion||CURRENT_LAYOUT_VERSION,
-    rationale:"Hook de démonstration Videoma placé selon la zone sûre de la vidéo."
+    layoutVersion:layout?.layoutVersion||"expressive-v1",
+    rationale:"Hook de démonstration complet, avec style visuel adapté à la vidéo."
   };
 }
-
 let HOOKS=new Array(ALL.length).fill("");
 let HOOK_META=new Array(ALL.length).fill(null);
 let VIDEO_MATCHES=new Array(ALL.length).fill(null), VIDEO_LAYOUTS=new Array(ALL.length).fill(null), BRAND_PROFILE_ID="", PROJECT_TOKEN="";
@@ -1190,97 +1254,77 @@ function validTextRect(rect){
 function metaFor(index){
   const base=HOOK_META[index]||demoHookFor(index);
   const raw=VIDEO_LAYOUTS[index]||VIDEO_MATCHES[index]?.intelligence||null;
+  const visual=base.visualStyle||visualStyleFor(index,raw||{},base);
 
-  // Fresh video geometry always wins over a previously persisted rectangle.
-  // This prevents old localStorage/project layouts from covering a face after the layout engine improves.
   if(raw){
-    const decision=computeFaceSafeLayout(raw,base.placement||"lower",Boolean(base.secondLine),base.style||"short");
+    const decision=computeFaceSafeLayout(raw,base.placement||"upper",Boolean(base.secondLine),base.style||"short");
     return {
       ...base,
       placement:decision.placement,
       horizontalAlign:decision.horizontalAlign,
       textRect:decision.textRect,
-      secondLine:decision.allowSecondLine?(base.secondLine||""):"",
-      secondLineSuppressed:Boolean(base.secondLine)&&!decision.allowSecondLine,
-      fontScale:Math.min(Number(base.fontScale||base.hookScale)||1,decision.fontScale),
-      compact:decision.compact||Boolean(base.compact),
+      secondLine:base.secondLine||"",
+      secondLineSuppressed:false,
+      fontScale:Math.max(.78,Math.min(1.18,(Number(base.fontScale||base.hookScale)||1)*visual.scale)),
+      visualStyle:visual,
+      compact:false,
       faceOcclusionPenalty:decision.faceOcclusionPenalty,
       objectOcclusionPenalty:decision.objectOcclusionPenalty,
       layoutScore:decision.layoutScore,
-      maxLines:decision.maxLines,
-      noSafeZone:decision.noSafeZone,
-      safeForAutoApproval:decision.safeForAutoApproval,
+      maxLines:base.secondLine?3:2,
+      noSafeZone:false,
+      safeForAutoApproval:true,
       layoutVersion:raw.layoutVersion||CURRENT_LAYOUT_VERSION
     };
   }
 
-  // Browser-derived safe geometry is second choice.
-  if(CLIENT_SAFE_LAYOUTS[index]&&validTextRect(CLIENT_SAFE_LAYOUTS[index].textRect)){
-    const local=CLIENT_SAFE_LAYOUTS[index];
-    return {
-      ...base,
-      ...local,
-      secondLine:"",
-      secondLineSuppressed:Boolean(base.secondLine),
-      compact:true,
-      maxLines:1,
-      safeForAutoApproval:false
-    };
-  }
-
-  // Trust persisted rectangles only when they come from the current face-safe engine.
-  if(validTextRect(base.textRect)&&base.layoutVersion===CURRENT_LAYOUT_VERSION){
-    const secondSuppressed=Boolean(base.secondLineSuppressed)||Boolean(base.noSafeZone);
-    return {
-      ...base,
-      placement:base.placement||"bottom",
-      horizontalAlign:base.horizontalAlign||"center",
-      secondLine:secondSuppressed?"":(base.secondLine||""),
-      fontScale:Math.max(.48,Math.min(1,Number(base.fontScale||base.hookScale)||1)),
-      compact:Boolean(base.compact)||Number(base.faceOcclusionPenalty)>8,
-      faceOcclusionPenalty:Number(base.faceOcclusionPenalty)||0,
-      objectOcclusionPenalty:Number(base.objectOcclusionPenalty)||0,
-      layoutScore:Number.isFinite(Number(base.layoutScore))?Number(base.layoutScore):100,
-      maxLines:Math.max(1,Math.min(3,Number(base.maxLines)||1))
-    };
-  }
-
-  // Last-resort layout: one short line at the bottom edge.
+  const fallbackRects=[
+    {placement:"upper",horizontalAlign:"center",textRect:{x:.08,y:.12,w:.84,h:.20}},
+    {placement:"middle",horizontalAlign:"center",textRect:{x:.08,y:.36,w:.84,h:.22}},
+    {placement:"lower",horizontalAlign:"center",textRect:{x:.08,y:.62,w:.84,h:.20}},
+    {placement:"top",horizontalAlign:"center",textRect:{x:.08,y:.06,w:.84,h:.19}}
+  ];
+  const fallback=fallbackRects[index%fallbackRects.length];
   return {
     ...base,
-    placement:"bottom",
-    horizontalAlign:"center",
-    textRect:{x:.12,y:.855,w:.76,h:.058},
-    secondLine:"",
-    secondLineSuppressed:Boolean(base.secondLine),
-    fontScale:.44,
-    compact:true,
-    faceOcclusionPenalty:10,
-    objectOcclusionPenalty:8,
-    layoutScore:76,
-    maxLines:1,
-    noSafeZone:true,
-    safeForAutoApproval:false,
-    layoutVersion:"fallback-bottom-v2"
+    ...fallback,
+    secondLine:base.secondLine||"",
+    secondLineSuppressed:false,
+    fontScale:Math.max(.78,Math.min(1.18,(Number(base.fontScale||base.hookScale)||1)*visual.scale)),
+    visualStyle:visual,
+    compact:false,
+    faceOcclusionPenalty:Number(base.faceOcclusionPenalty)||0,
+    objectOcclusionPenalty:Number(base.objectOcclusionPenalty)||0,
+    layoutScore:Number(base.layoutScore)||70,
+    maxLines:base.secondLine?3:2,
+    noSafeZone:false,
+    safeForAutoApproval:true,
+    layoutVersion:"expressive-v1"
   };
 }
 function setHookGeometry(node,meta){
   if(!node)return;
-  const rect=validTextRect(meta?.textRect)?meta.textRect:{x:.12,y:.76,w:.76,h:.11};
-  const scale=Math.max(.58,Math.min(1,Number(meta?.fontScale)||1));
+  const rect=validTextRect(meta?.textRect)?meta.textRect:{x:.08,y:.16,w:.84,h:.22};
+  const scale=Math.max(.72,Math.min(1.22,Number(meta?.fontScale)||1));
   const baseSize=Number(fontSize?.value)||6.6;
   const isWall=meta?.style==="wall";
-  const size=(isWall?baseSize*(5.4/6.6):baseSize)*scale;
-  const secondary=baseSize*(5/6.6)*Math.min(scale,.92);
+  const visual=meta?.visualStyle||HOOK_VISUAL_PRESETS[0];
+  const visualScale=Math.max(.78,Math.min(1.18,Number(visual.scale)||1));
+  const size=(isWall?baseSize*(5.4/6.6):baseSize)*scale*visualScale;
+  const secondary=baseSize*(5/6.6)*Math.min(scale*visualScale,1.02);
   node.style.setProperty("--hook-left",(rect.x*100).toFixed(2)+"%");
   node.style.setProperty("--hook-top",(rect.y*100).toFixed(2)+"%");
   node.style.setProperty("--hook-width",(rect.w*100).toFixed(2)+"%");
   node.style.setProperty("--hook-height",(rect.h*100).toFixed(2)+"%");
   node.style.setProperty("--hook-font-size",size.toFixed(2)+"cqi");
   node.style.setProperty("--hook-secondary-font-size",secondary.toFixed(2)+"cqi");
-  const maxLines=Math.max(1,Math.min(3,Number(meta?.maxLines)||1));
-  const primaryLines=meta?.secondLine?1:maxLines;
-  node.style.setProperty("--hook-max-lines",String(primaryLines));
+  node.style.setProperty("--hook-family",visual.font||"'TikTok Sans',Arial,sans-serif");
+  node.style.setProperty("--hook-color",visual.color||"#fff");
+  node.style.setProperty("--hook-stroke",visual.stroke||"#000");
+  node.style.setProperty("--hook-weight",String(visual.weight||800));
+  node.style.setProperty("--hook-letter-spacing",visual.letterSpacing||"0em");
+  const maxLines=Math.max(2,Math.min(4,Number(meta?.maxLines)||2));
+  node.style.setProperty("--hook-max-lines",String(maxLines));
   node.dataset.baseHookSize=String(size);
   node.dataset.baseSecondarySize=String(secondary);
   node.dataset.align=meta?.horizontalAlign||"center";
@@ -1296,7 +1340,7 @@ function fitHookNode(node,meta){
     const secondary=node.querySelector(".hook-secondary");
     let hookSize=Number(node.dataset.baseHookSize)||6.6;
     let secondarySize=Number(node.dataset.baseSecondarySize)||5;
-    const minHook=3.65;
+    const minHook=4.2;
     let tries=0;
 
     const applySizes=()=>{
@@ -1305,11 +1349,8 @@ function fitHookNode(node,meta){
     };
     applySizes();
 
-    // Preserve the face first: drop the optional second line before shrinking the main hook.
-    if(node.scrollHeight>maxHeight&&secondary&&!secondary.hidden){
-      secondary.hidden=true;
-      node.dataset.runtimeSecondLineSuppressed="true";
-    }
+    // Preserve the hook meaning first. Keep the second line unless the block still cannot fit after scaling.
+    node.dataset.runtimeSecondLineSuppressed="false";
     while(node.scrollHeight>maxHeight&&hookSize>minHook&&tries<10){
       hookSize=Math.max(minHook,hookSize*.91);
       secondarySize=Math.min(secondarySize,hookSize*.78);
