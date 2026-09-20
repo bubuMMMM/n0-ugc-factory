@@ -17,6 +17,14 @@ function parseDatabaseUrl(){
   }catch{return {ok:false,error:'DATABASE_URL_INVALID_FORMAT'}}
 }
 function configured(){return parseDatabaseUrl().ok}
+function normalizedConnectionString(){
+  const raw=String(process.env.DATABASE_URL||'').trim();
+  try{
+    const u=new URL(raw);
+    if(u.searchParams.get('sslmode')==='require')u.searchParams.set('sslmode','verify-full');
+    return u.toString();
+  }catch{return raw}
+}
 
 function getPool(){
   if(!configured()){
@@ -26,7 +34,7 @@ function getPool(){
   }
   if(!pool){
     pool=new Pool({
-      connectionString:process.env.DATABASE_URL,
+      connectionString:normalizedConnectionString(),
       max:3,
       idleTimeoutMillis:10000,
       connectionTimeoutMillis:8000,
