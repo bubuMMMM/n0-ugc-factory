@@ -882,7 +882,9 @@ async function generateVisualBatch(indices){
     else valid.push({index:item.index+1,contactSheet:item.contactSheet});
   });
   if(valid.length){
-    const data=await postJSON("/api/video-hooks",{profile:PROFILE,videos:valid,avoid:HOOKS.filter(Boolean).slice(-60)},90000);
+    const angleUsage={};
+    for(const m of HOOK_META){if(m?.angle)angleUsage[m.angle]=(angleUsage[m.angle]||0)+1}
+    const data=await postJSON("/api/video-hooks",{profile:PROFILE,videos:valid,avoid:HOOKS.filter(Boolean).slice(-60),angleUsage},90000);
     for(const r of data.results||[]){
       const idx=Number(r.index)-1;
       if(idx<0||idx>=ALL.length)continue;
