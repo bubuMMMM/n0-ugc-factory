@@ -17,7 +17,7 @@ function tx(v,n=500){return String(v||'').replace(/\s+/g,' ').trim().slice(0,n)}
 function overall(scores){return Math.round(SCORE_KEYS.reduce((sum,k)=>sum+(Number(scores&&scores[k])||0)*WEIGHTS[k],0))}
 function weakQuality(r){
   const q=r.scores||{},score=overall(q);
-  return score<84||Number(q.visualFit)<82||Number(q.brandFit)<82||Number(q.claimSafety)<95||Number(q.readability)<82||Number(q.novelty)<76||!r.visualAnchor||!r.brandAnchor;
+  return score<84||Number(q.visualFit)<82||Number(q.brandFit)<82||Number(q.claimSafety)<95||Number(q.readability)<82||Number(q.novelty)<76||Number(r.faceOcclusionPenalty)>25||Number(r.layoutScore)<60||!r.visualAnchor||!r.brandAnchor;
 }
 function evaluatorRejected(r){
   return ['jev','openai-fallback'].includes(r.evaluationStatus)&&Number(r.jevAcceptProbability)<0.80;
@@ -91,12 +91,23 @@ async function generate(profile,videos,avoid,mechanismUsage,revision){
   return videos.map(v=>{
     const r=byIndex.get(Number(v.index));if(!r)throw new Error('HOOK_RESULT_MISSING');
     const scores={};for(const k of SCORE_KEYS)scores[k]=Math.max(0,Math.min(100,Number(r.scores&&r.scores[k])||0));
+    const hook=tx(r.hook,500);
+    const secondLine=tx(r.secondLine,260);
+    const style=r.style==='wall'?'wall':'short';
+    const requested=['top','upper','middle','lower','bottom'].includes(r.placement)?r.placement:'lower';
+    const layout=layoutDecision(v.intelligence||{},requested,Boolean(secondLine),style);
     return {
-      index:Number(v.index),hook:tx(r.hook,500),secondLine:tx(r.secondLine,260),
+      index:Number(v.index),hook,
+      secondLine:layout.allowSecondLine?secondLine:'',
+      secondLineSuppressed:Boolean(secondLine)&&!layout.allowSecondLine,
       mechanism:MECHANISMS.includes(r.mechanism)?r.mechanism:'observation',
       visualAnchor:tx(r.visualAnchor,220),brandAnchor:tx(r.brandAnchor,300),
-      placement:['top','upper','middle','lower'].includes(r.placement)?r.placement:'upper',
-      style:r.style==='wall'?'wall':'short',scores,quality:overall(scores),rationale:tx(r.rationale,500)
+      placement:layout.placement,
+      style,scores,quality:overall(scores),rationale:tx(r.rationale,500),
+      faceOcclusionPenalty:layout.faceOcclusionPenalty,
+      layoutScore:layout.layoutScore,
+      hookScale:layout.scale,
+      maxLines:layout.maxLines
     };
   });
 }
@@ -207,7 +218,7 @@ module.exports=async function handler(req,res){
   res.setHeader('Cache-Control','no-store');
   if(req.method==='GET')return res.status(200).json({
     model:MODEL,evaluator:JEV_MODEL,maxItems:MAX_ITEMS,version:VERSION,
-    thresholds:{overall:84,visualFit:82,brandFit:82,claimSafety:95,readability:82,novelty:76,jevAcceptProbability:.80}
+    thresholds:{overall:84,visualFit:82,brandFit:82,claimSafety:95,readability:82,novelty:76,jevAcceptProbability:.80,faceOcclusionPenaltyMax:25,layoutScoreMin:60}
   });
   if(req.method!=='POST')return res.status(405).json({error:'METHOD_NOT_ALLOWED'});
   const profile=req.body&&req.body.profile,videos=Array.isArray(req.body&&req.body.videos)?req.body.videos.slice(0,MAX_ITEMS):[];
