@@ -1,12 +1,52 @@
 const dns=require('node:dns').promises;
 const net=require('node:net');
 const {gatewayJson,MODEL,credential}=require('./_ai');
+const db=require('./_db');
 
 const MAX_PAGE_CHARS=12000;
 const MAX_TOTAL_CHARS=52000;
 const MAX_PAGES=6;
 const PAGE_TIMEOUT_MS=5500;
 const SITEMAP_TIMEOUT_MS=3500;
+
+function siteIdentity(raw){
+  let u;
+  try{u=new URL(String(raw||'').trim())}catch{return null}
+  if(!['http:','https:'].includes(u.protocol)||!u.hostname)return null;
+  return {origin:u.origin,domain:u.hostname.toLowerCase().replace(/\.$/,'')};
+}
+async function cachedBrandProfile(website){
+  if(!db.configured())return null;
+  const id=siteIdentity(website);if(!id)return null;
+  try{
+    const r=await db.query(
+      "select id,website,profile from brand_profiles where domain=$1 and updated_at > now() - interval '24 hours' order by updated_at desc limit 1",
+      [id.domain]
+    );
+    if(!r.rows[0])return null;
+    const profile=r.rows[0].profile&&typeof r.rows[0].profile==='object'?r.rows[0].profile:null;
+    if(!profile||!profile.brand)return null;
+    if(!Array.isArray(profile.benefits))profile.benefits=[];
+    return {id:r.rows[0].id,website:r.rows[0].website||id.origin,profile};
+  }catch(error){
+    console.warn('brand cache read',error&&error.message);
+    return null;
+  }
+}
+async function persistBrandProfile(website,profile){
+  if(!db.configured())return null;
+  const id=siteIdentity(website);if(!id)return null;
+  try{
+    const r=await db.query(
+      "insert into brand_profiles(website,domain,analysis_version,profile) values($1,$2,'brand-intel-v3',$3::jsonb) returning id",
+      [id.origin,id.domain,JSON.stringify(profile)]
+    );
+    return r.rows[0]&&r.rows[0].id||null;
+  }catch(error){
+    console.warn('brand cache write',error&&error.message);
+    return null;
+  }
+}
 
 function isPrivateIP(ip){
   if(net.isIP(ip)===4){
@@ -284,6 +324,20 @@ module.exports=async function handler(req,res){
   if(!website) return res.status(400).json({error:'WEBSITE_REQUIRED'});
   const startedAt=Date.now();
   try{
+    if(req.body?.force!==true){
+      const cached=await cachedBrandProfile(website);
+      if(cached){
+        return res.status(200).json({
+          website:cached.website,
+          profile:cached.profile,
+          brandProfileId:cached.id,
+          pages:[],
+          model:MODEL,
+          cached:true,
+          elapsedMs:Date.now()-startedAt
+        });
+      }
+    }
     const pages=await crawl(website);
     if(!pages.length) return res.status(422).json({error:'SITE_UNREADABLE'});
     const source=pages.map((p,i)=>`--- PAGE ${i+1}: ${p.url}\nTITLE: ${p.title}\nDESCRIPTION: ${p.description}\nSIGNALS: ${JSON.stringify(p.signals)}\nCONTENT:\n${p.text}`).join('\n\n').slice(0,MAX_TOTAL_CHARS);
@@ -298,6 +352,7 @@ module.exports=async function handler(req,res){
         jobsToBeDone:{type:'array',items:{type:'string'}},
         pains:{type:'array',items:{type:'string'}},
         desires:{type:'array',items:{type:'string'}},
+        benefits:{type:'array',items:{type:'string'}},
         objections:{type:'array',items:{type:'string'}},
         offers:{type:'array',items:{
           type:'object',
@@ -354,7 +409,7 @@ module.exports=async function handler(req,res){
           additionalProperties:false
         }}
       },
-      required:['brand','category','summary','primaryOffer','audiences','jobsToBeDone','pains','desires','objections','offers','differentiators','proofPoints','customerLanguage','faqInsights','claimsAllowed','claimsForbidden','tone','contentPillars','awarenessMap','hookPlaybook'],
+      required:['brand','category','summary','primaryOffer','audiences','jobsToBeDone','pains','desires','benefits','objections','offers','differentiators','proofPoints','customerLanguage','faqInsights','claimsAllowed','claimsForbidden','tone','contentPillars','awarenessMap','hookPlaybook'],
       additionalProperties:false
     };
     const profile=await gatewayJson({
@@ -377,7 +432,7 @@ SÉCURITÉ:
 MÉTHODE:
 1. Comprends ce qui est réellement vendu et à qui.
 2. Distingue besoins explicites et motivations profondes.
-3. Extrais douleurs, désirs, objections, déclencheurs d'achat et jobs-to-be-done.
+3. Extrais douleurs, désirs, bénéfices concrets, objections, déclencheurs d'achat et jobs-to-be-done.
 4. Repère les formulations exactes intéressantes du site: mots clients, CTA, questions FAQ, bénéfices formulés naturellement.
 5. Sépare les preuves fortes des simples slogans et rattache chaque preuve à son URL source.
 6. Repère les mots et formulations que la marque utilise réellement: vocabulaire métier, verbes, expressions clients, CTA, questions fréquentes.
@@ -401,7 +456,13 @@ ${source}`
         }
       ]
     });
-    return res.status(200).json({website:new URL(pages[0].url).origin,profile,pages:pages.map(p=>({url:p.url,title:p.title})),model:MODEL,elapsedMs:Date.now()-startedAt});
+    const origin=new URL(pages[0].url).origin;
+    const brandProfileId=await persistBrandProfile(origin,profile);
+    return res.status(200).json({
+      website:origin,profile,brandProfileId,
+      pages:pages.map(p=>({url:p.url,title:p.title})),
+      model:MODEL,cached:false,elapsedMs:Date.now()-startedAt
+    });
   }catch(err){
     console.error('analyze error',err?.message,err?.status||'',err?.detail||'');
     const raw=String(err?.message||'ANALYZE_FAILED');
