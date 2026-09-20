@@ -1,15 +1,16 @@
 const core=require('./_preanalysis-core');
-const JOB_ID='e3f5da69-0a8f-454b-af36-8bd58a591e6c';
 
 module.exports=async function handler(req,res){
   res.setHeader('Cache-Control','no-store');
-  if(req.headers['x-vercel-cron-schedule']!=='* * * * *')return res.status(403).json({error:'CRON_ONLY'});
+  const cronHeader=String(req.headers['x-vercel-cron-schedule']||'');
+  const ua=String(req.headers['user-agent']||'');
+  if(cronHeader!=='* * * * *'&&!ua.toLowerCase().includes('vercel-cron'))return res.status(403).json({error:'CRON_ONLY'});
   try{
-    const job=await core.getJob(JOB_ID);
-    if(!job||!job.active)return res.status(200).json({done:true,active:false});
-    const result=await core.runBatch(JOB_ID);
+    const job=await core.latestActiveJob();
+    if(!job)return res.status(200).json({done:true,active:false});
+    const result=await core.runBatch(job.id);
     return res.status(200).json({
-      done:Boolean(result.stop),
+      done:Boolean(result.stop),paused:Boolean(result.paused),jobId:job.id,
       counts:result.counts||await core.counts(),
       saved:(result.saved||[]).map(x=>x.index),
       lastError:result.lastError||null
