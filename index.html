@@ -5,6 +5,9 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#000000">
 <title>videoma. — 1000 vidéos en moins de 5 minutes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=TikTok+Sans:wght@700&display=swap" rel="stylesheet">
 <meta name="description" content="1000 vidéos verticales pour artisans et PME, générées à partir d’un simple lien ou d’une description. Pack complet : 990€.">
 <style>
 :root{--bg:#05070b;--panel:#0b0e14;--panel2:#0f1420;--fg:#f7f8fb;--muted:#9aa4b5;--line:#1b2432;--blue:#72b7ff;--violet:#9c8cff;--cyan:#9de9ff}
@@ -587,6 +590,44 @@ header{background:transparent}
 .modal-hook[data-placement="middle"]{top:50%;bottom:auto;transform:translateY(-50%)}
 .modal-hook[data-placement="lower"]{bottom:17%;top:auto}
 
+
+/* TikTok-native hook rendering */
+:root{
+  --hook-font:'TikTok Sans',Arial,Helvetica,sans-serif;
+  --hook-short-size:6.6cqi;
+  --hook-wall-size:5.4cqi;
+  --hook-secondary-size:5cqi;
+}
+.card,.player{container-type:inline-size}
+.hook-overlay,.modal-hook{
+  left:10%!important;right:10%!important;width:auto;
+  font-family:var(--hook-font)!important;
+  font-weight:700!important;
+  font-size:var(--hook-short-size)!important;
+  line-height:1.2!important;
+  letter-spacing:0!important;
+  text-align:center!important;
+  color:#fff!important;
+  text-shadow:none!important;
+  -webkit-text-stroke:.125em #000;
+  paint-order:stroke fill;
+}
+.hook-overlay .hook-primary,.modal-hook .hook-primary{display:block}
+.hook-overlay .hook-secondary,.modal-hook .hook-secondary{
+  display:block;
+  margin-top:.3em;
+  font-size:var(--hook-secondary-size);
+  line-height:1.2;
+  font-weight:700;
+}
+.card[data-hook-style="wall"] .hook-overlay,
+.modal-hook[data-hook-style="wall"]{font-size:var(--hook-wall-size)!important}
+.card[data-placement="top"] .hook-overlay,.modal-hook[data-placement="top"]{top:11%!important;bottom:auto!important;transform:none!important}
+.card[data-placement="upper"] .hook-overlay,.modal-hook[data-placement="upper"]{top:18%!important;bottom:auto!important;transform:none!important}
+.card[data-placement="middle"] .hook-overlay,.modal-hook[data-placement="middle"]{top:50%!important;bottom:auto!important;transform:translateY(-50%)!important}
+.card[data-placement="lower"] .hook-overlay,.modal-hook[data-placement="lower"]{top:auto!important;bottom:29%!important;transform:none!important}
+.card[data-accepted="false"]{outline:1px solid rgba(255,177,59,.55);outline-offset:-1px}
+
 </style>
 </head>
 <body>
@@ -628,6 +669,7 @@ header{background:transparent}
   <div class="editor-bar">
     <label>Police
       <select id="fontSelect">
+        <option value="'TikTok Sans', Arial, Helvetica, sans-serif" selected>TikTok Sans Bold</option>
         <option value="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif">Inter</option>
         <option value="Arial, Helvetica, sans-serif">Arial</option>
         <option value="Helvetica, Arial, sans-serif">Helvetica</option>
@@ -638,8 +680,8 @@ header{background:transparent}
       </select>
     </label>
     <label class="size-control">Taille
-      <input id="fontSize" type="range" min="14" max="32" value="20" step="1">
-      <output id="fontSizeValue">20 px</output>
+      <input id="fontSize" type="range" min="4.5" max="9" value="6.6" step="0.1">
+      <output id="fontSizeValue">6.6 %</output>
     </label>
     <button id="continueHooks" class="studio-action" type="button">Compléter les hooks</button>
   </div>
@@ -673,6 +715,7 @@ const VIDEO_URLS = ["https://doublespeed2.blob.core.windows.net/media/media/e3e4
 let ALL=[...VIDEO_URLS], shown=[], cursor=0, active="", activeIndex=-1;
 let HOOKS=new Array(ALL.length).fill("");
 let HOOK_META=new Array(ALL.length).fill(null);
+let VIDEO_MATCHES=new Array(ALL.length).fill(null), BRAND_PROFILE_ID="";
 let PROFILE=null, PROJECT_WEBSITE="", generating=false;
 
 const BATCH=56;
@@ -690,11 +733,15 @@ const io=new IntersectionObserver(es=>es.forEach(e=>{
 
 function hookFor(index){return HOOKS[index]||""}
 function applyHookToCard(card,index){
-  const text=hookFor(index), meta=HOOK_META[index]||{}, node=card.querySelector(".hook-overlay span");
-  if(node) node.textContent=text;
+  const text=hookFor(index),meta=HOOK_META[index]||{};
+  const primary=card.querySelector(".hook-primary"),secondary=card.querySelector(".hook-secondary");
+  if(primary)primary.textContent=text;
+  if(secondary){secondary.textContent=meta.secondLine||"";secondary.hidden=!meta.secondLine}
   card.classList.toggle("has-hook",Boolean(text));
   card.dataset.placement=meta.placement||"upper";
+  card.dataset.hookStyle=meta.style||"short";
   card.dataset.quality=meta.quality||"";
+  card.dataset.accepted=meta.accepted===false?"false":"true";
 }
 function render(reset=false){
   if(reset){grid.innerHTML="";cursor=0}
@@ -702,7 +749,7 @@ function render(reset=false){
   shown.slice(cursor,cursor+BATCH).forEach(u=>{
     const index=ALL.indexOf(u),n=index+1,c=document.createElement("article");
     c.className="card";c.dataset.url=u;c.dataset.index=String(index);
-    c.innerHTML='<div class="skeleton"></div><video muted loop playsinline preload="metadata"></video><div class="hook-overlay"><span></span></div><span class="num">'+String(n).padStart(4,"0")+'</span><span class="play">▶</span>';
+    c.innerHTML='<div class="skeleton"></div><video muted loop playsinline preload="metadata"></video><div class="hook-overlay"><span class="hook-primary"></span><small class="hook-secondary"></small></div><span class="num">'+String(n).padStart(4,"0")+'</span><span class="play">▶</span>';
     applyHookToCard(c,index);
     const v=c.querySelector("video");
     v.addEventListener("loadeddata",()=>c.querySelector(".skeleton")?.remove(),{once:true});
@@ -722,15 +769,15 @@ function updateProgress(message){
   if(message) studioStatus.textContent=message;
 }
 function saveProject(){
-  try{localStorage.setItem("videoma_project_v3",JSON.stringify({website:PROJECT_WEBSITE,profile:PROFILE,hooks:HOOKS,hookMeta:HOOK_META,style:{font:fontSelect.value,size:Number(fontSize.value)}}))}catch{}
+  try{localStorage.setItem("videoma_project_v3",JSON.stringify({website:PROJECT_WEBSITE,profile:PROFILE,brandProfileId:BRAND_PROFILE_ID,hooks:HOOKS,hookMeta:HOOK_META,style:{font:fontSelect.value,size:Number(fontSize.value)}}))}catch{}
 }
 function applyStyle(){
-  const size=Number(fontSize.value)||20,mobile=Math.max(9,Math.round(size*.56)),modalSize=Math.max(24,Math.round(size*1.8));
+  const size=Number(fontSize.value)||6.6;
   document.documentElement.style.setProperty("--hook-font",fontSelect.value);
-  document.documentElement.style.setProperty("--hook-size",size+"px");
-  document.documentElement.style.setProperty("--hook-size-mobile",mobile+"px");
-  document.documentElement.style.setProperty("--hook-size-modal",modalSize+"px");
-  fontSizeValue.textContent=size+" px";
+  document.documentElement.style.setProperty("--hook-short-size",size+"cqi");
+  document.documentElement.style.setProperty("--hook-wall-size",(size*(5.4/6.6))+"cqi");
+  document.documentElement.style.setProperty("--hook-secondary-size",(size*(5/6.6))+"cqi");
+  fontSizeValue.textContent=size.toFixed(1)+" %";
   saveProject();
 }
 fontSelect.addEventListener("change",applyStyle);fontSize.addEventListener("input",applyStyle);
@@ -739,7 +786,7 @@ function restoreProject(){
   try{
     const p=JSON.parse(localStorage.getItem("videoma_project_v3")||localStorage.getItem("videoma_project_v2")||"null");
     if(!p) return;
-    PROJECT_WEBSITE=p.website||"";PROFILE=p.profile||null;
+    PROJECT_WEBSITE=p.website||"";PROFILE=p.profile||null;BRAND_PROFILE_ID=p.brandProfileId||"";
     if(Array.isArray(p.hooks)) HOOKS=p.hooks.slice(0,ALL.length).concat(new Array(Math.max(0,ALL.length-p.hooks.length)).fill(""));
     if(Array.isArray(p.hookMeta)) HOOK_META=p.hookMeta.slice(0,ALL.length).concat(new Array(Math.max(0,ALL.length-p.hookMeta.length)).fill(null));
     if(p.style?.font) fontSelect.value=p.style.font;
@@ -757,10 +804,15 @@ function restoreProject(){
 new IntersectionObserver(es=>{if(es.some(e=>e.isIntersecting)&&cursor<shown.length)render(false)},{rootMargin:"900px"}).observe(document.querySelector("#sentinel"));
 
 function openVideo(u,index){
-  active=u;activeIndex=index;big.src=u;modalHook.textContent=hookFor(index);modalHook.dataset.placement=(HOOK_META[index]?.placement||"upper");modalHook.title=HOOK_META[index]?.rationale||"";
+  active=u;activeIndex=index;big.src=u;
+  const meta=HOOK_META[index]||{};
+  modalHook.innerHTML="";
+  const primary=document.createElement("span");primary.className="hook-primary";primary.textContent=hookFor(index);modalHook.appendChild(primary);
+  if(meta.secondLine){const second=document.createElement("small");second.className="hook-secondary";second.textContent=meta.secondLine;modalHook.appendChild(second)}
+  modalHook.dataset.placement=meta.placement||"upper";modalHook.dataset.hookStyle=meta.style||"short";modalHook.title=meta.rationale||"";
   modal.classList.add("open");big.play().catch(()=>{});
 }
-document.querySelector("#close").onclick=()=>{modal.classList.remove("open");big.pause();big.removeAttribute("src");big.load();modalHook.textContent=""};
+document.querySelector("#close").onclick=()=>{modal.classList.remove("open");big.pause();big.removeAttribute("src");big.load();modalHook.innerHTML=""};
 modal.onclick=e=>{if(e.target===modal)document.querySelector("#close").click()};
 document.querySelector("#copy").onclick=async()=>{
   const text=hookFor(activeIndex);
@@ -911,29 +963,86 @@ async function generateVisualBatch(indices){
   updateProgress("Analyse visuelle + hooks GPT‑5.6…");
   saveProject();
 }
+async function prepareIntelligenceMatches(){
+  VIDEO_MATCHES=new Array(ALL.length).fill(null);BRAND_PROFILE_ID="";
+  try{
+    studioStatus.textContent="Matching marque × 1 017 vidéos…";
+    const data=await postJSON("/api/match-videos",{profile:PROFILE,website:PROJECT_WEBSITE},90000);
+    BRAND_PROFILE_ID=data.brandProfileId||"";
+    for(const m of data.matches||[]){const idx=Number(m.index)-1;if(idx>=0&&idx<ALL.length)VIDEO_MATCHES[idx]=m}
+    const ready=VIDEO_MATCHES.filter(Boolean).length;
+    studioStatus.textContent=ready+" vidéos matchées depuis la base permanente";
+    saveProject();return ready;
+  }catch(e){
+    console.warn("permanent intelligence unavailable",e);
+    studioStatus.textContent="Base permanente indisponible, analyse visuelle de secours…";
+    return 0;
+  }
+}
+async function generateIntelligenceBatch(indices){
+  const videos=indices.map(i=>VIDEO_MATCHES[i]).filter(Boolean);
+  if(!videos.length)return false;
+  const mechanismUsage={};
+  for(const m of HOOK_META){if(m?.mechanism)mechanismUsage[m.mechanism]=(mechanismUsage[m.mechanism]||0)+1}
+  const data=await postJSON("/api/hooks-intelligence",{
+    profile:PROFILE,brandProfileId:BRAND_PROFILE_ID,videos,
+    avoid:HOOKS.filter(Boolean).slice(-100),mechanismUsage
+  },90000);
+  for(const r of data.results||[]){
+    const idx=Number(r.index)-1;if(idx<0||idx>=ALL.length)continue;
+    HOOKS[idx]=String(r.hook||"").trim();
+    HOOK_META[idx]={
+      placement:r.placement||VIDEO_MATCHES[idx]?.intelligence?.textSafeZone?.preferred||"upper",
+      style:r.style||"short",secondLine:r.secondLine||"",quality:Number(r.quality)||0,
+      grounded:true,source:"video-intelligence",accepted:r.accepted!==false,
+      visualCue:r.visualAnchor||"",brandAnchor:r.brandAnchor||"",mechanism:r.mechanism||"",
+      angle:r.mechanism||"",scores:r.scores||null,confidence:Number(r.scores?.visualFit)||0,rationale:r.rationale||""
+    };
+  }
+  refreshVisibleHooks();updateProgress("Hooks depuis la Video Intelligence Database…");saveProject();return true;
+}
 async function generateMissing(){
   if(generating||!PROFILE)return;
   generating=true;continueHooks.disabled=true;
   const missing=[];
-  for(let i=0;i<ALL.length;i++)if(!HOOKS[i]||HOOK_META[i]?.grounded!==true)missing.push(i);
+  for(let i=0;i<ALL.length;i++)if(!HOOKS[i]||HOOK_META[i]?.grounded!==true||HOOK_META[i]?.accepted===false)missing.push(i);
   if(!missing.length){
-    generating=false;continueHooks.disabled=false;updateProgress("Tous les hooks visuels sont prêts");return;
+    generating=false;continueHooks.disabled=false;updateProgress("1 017 hooks validés");return;
   }
-  studioStatus.textContent="Analyse des scènes vidéo avec GPT‑5.6…";
-  let failed=0,next=0;
-  const batches=[];
-  for(let i=0;i<missing.length;i+=8)batches.push(missing.slice(i,i+8));
-  async function worker(){
-    while(next<batches.length){
-      const batch=batches[next++];
-      try{await generateVisualBatch(batch)}catch(e){failed+=batch.length;console.error("visual batch failed",batch,e)}
+
+  const intelligence=missing.filter(i=>VIDEO_MATCHES[i]?.intelligence);
+  const fallback=missing.filter(i=>!VIDEO_MATCHES[i]?.intelligence);
+  let failed=0;
+
+  if(intelligence.length){
+    studioStatus.textContent="Génération depuis les analyses vidéo permanentes…";
+    const batches=[];for(let i=0;i<intelligence.length;i+=24)batches.push(intelligence.slice(i,i+24));
+    let next=0;
+    async function worker(){
+      while(next<batches.length){
+        const batch=batches[next++];
+        try{await generateIntelligenceBatch(batch)}catch(e){failed+=batch.length;console.error("intelligence batch failed",batch,e)}
+      }
     }
+    await Promise.all([worker(),worker(),worker()]);
   }
-  await Promise.all([worker(),worker()]);
+
+  if(fallback.length){
+    studioStatus.textContent="Analyse visuelle de secours pour "+fallback.length+" vidéos…";
+    const batches=[];for(let i=0;i<fallback.length;i+=8)batches.push(fallback.slice(i,i+8));
+    let next=0;
+    async function worker(){
+      while(next<batches.length){
+        const batch=batches[next++];
+        try{await generateVisualBatch(batch)}catch(e){failed+=batch.length;console.error("visual fallback failed",batch,e)}
+      }
+    }
+    await Promise.all([worker(),worker()]);
+  }
+
   generating=false;continueHooks.disabled=false;
-  const done=HOOKS.filter(Boolean).length;
-  const grounded=HOOK_META.filter(x=>x?.grounded).length;
-  updateProgress(grounded===ALL.length?"1 017 hooks adaptés aux vidéos sont prêts":failed?grounded+" hooks visuels prêts — cliquez sur Compléter":done+" hooks prêts");
+  const done=HOOKS.filter(Boolean).length,accepted=HOOK_META.filter(x=>x?.accepted!==false&&x?.grounded).length;
+  updateProgress(accepted===ALL.length?"1 017 hooks adaptés et validés sont prêts":failed?done+" hooks prêts — certains lots sont à reprendre":done+" hooks prêts");
   saveProject();
 }
 
@@ -956,6 +1065,7 @@ siteForm.addEventListener("submit",async e=>{
     studioMeta.textContent=(PROFILE?.summary||PROJECT_WEBSITE).slice(0,180);
     saveProject();
     studio.scrollIntoView({behavior:"smooth",block:"start"});
+    await prepareIntelligenceMatches();
     await generateMissing();
   }catch(err){
     console.error(err);siteError.textContent=errorMessage(err.message);
