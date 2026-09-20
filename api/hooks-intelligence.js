@@ -25,7 +25,11 @@ function evaluatorRejected(r){
   return ['jev','openai-fallback'].includes(r.evaluationStatus)&&Number(r.jevAcceptProbability)<0.80;
 }
 function weak(r){
-  return weakQuality(r)||evaluatorRejected(r);
+  return weakQuality(r)||evaluatorRejected(r)||
+    Number(r.faceOcclusionPenalty)>8||
+    Number(r.layoutScore)<60||
+    Boolean(r.noSafeZone)||
+    r.safeForAutoApproval===false;
 }
 function normalizedWords(s){return tx(s,180).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9 ]/g,' ').split(/\s+/).filter(x=>x.length>2)}
 function similar(a,b){
@@ -356,6 +360,10 @@ module.exports=async function handler(req,res){
         ['jev','openai-fallback'].includes(r.evaluationStatus)&&
         Number(r.jevAcceptProbability)>=.80&&
         !weakQuality(r)&&
+        Number(r.faceOcclusionPenalty)<=8&&
+        Number(r.layoutScore)>=60&&
+        !r.noSafeZone&&
+        r.safeForAutoApproval!==false&&
         !tooSimilar(r.hook,avoid)
     }));
 
