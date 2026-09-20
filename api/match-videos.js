@@ -11,6 +11,7 @@ function signalsFromProfile(p){
   const out=[];
   for(const x of p.pains||[])push(out,'pain',x,{weight:1.18});
   for(const x of p.desires||[])push(out,'desire',x,{weight:1.08});
+  for(const x of p.benefits||[])push(out,'benefit',x,{weight:1.12});
   for(const x of p.objections||[])push(out,'objection',x,{weight:1.2});
   for(const x of p.jobsToBeDone||[])push(out,'job',x,{weight:1.05});
   for(const x of p.differentiators||[])push(out,'differentiator',x,{weight:1.12});
@@ -63,6 +64,7 @@ module.exports=async function handler(req,res){
   if(req.method!=='POST')return res.status(405).json({error:'METHOD_NOT_ALLOWED'});
   if(!db.configured())return res.status(503).json({error:'DATABASE_NOT_CONFIGURED'});
   const profile=req.body&&req.body.profile,website=t(req.body&&req.body.website,1500);
+  const requestedProfileId=t(req.body&&req.body.brandProfileId,80);
   if(!profile||typeof profile!=='object')return res.status(400).json({error:'PROFILE_REQUIRED'});
   try{
     const signals=signalsFromProfile(profile);
@@ -72,11 +74,25 @@ module.exports=async function handler(req,res){
       .concat(profile.pains||[],profile.desires||[],profile.objections||[],profile.differentiators||[])
       .filter(Boolean).join('\n');
     const profileEmbedding=(await embedMany([profileText]))[0];
-    const pr=await db.query(
-      "insert into brand_profiles(website,domain,profile,embedding_model,embedding) values($1,$2,$3::jsonb,$4,$5::vector) returning id",
-      [website,domainOf(website),JSON.stringify(profile),EMBEDDING_MODEL,db.vectorLiteral(profileEmbedding)]
-    );
-    const profileId=pr.rows[0].id;
+    let profileId=null;
+    if(/^[0-9a-f-]{36}$/i.test(requestedProfileId)){
+      const existing=await db.query("select id from brand_profiles where id=$1",[requestedProfileId]);
+      if(existing.rows[0]){
+        profileId=existing.rows[0].id;
+        await db.query(
+          "update brand_profiles set website=$2,domain=$3,profile=$4::jsonb,embedding_model=$5,embedding=$6::vector,analysis_version='brand-intel-v3' where id=$1",
+          [profileId,website,domainOf(website),JSON.stringify(profile),EMBEDDING_MODEL,db.vectorLiteral(profileEmbedding)]
+        );
+        await db.query("delete from brand_signals where brand_profile_id=$1",[profileId]);
+      }
+    }
+    if(!profileId){
+      const pr=await db.query(
+        "insert into brand_profiles(website,domain,analysis_version,profile,embedding_model,embedding) values($1,$2,'brand-intel-v3',$3::jsonb,$4,$5::vector) returning id",
+        [website,domainOf(website),JSON.stringify(profile),EMBEDDING_MODEL,db.vectorLiteral(profileEmbedding)]
+      );
+      profileId=pr.rows[0].id;
+    }
     for(let i=0;i<signals.length;i++){
       const x=signals[i];
       const r=await db.query(
