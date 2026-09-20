@@ -12,9 +12,13 @@ module.exports=async function handler(req,res){
     maxBatch:80
   });
   if(req.method!=='POST') return res.status(405).json({error:'METHOD_NOT_ALLOWED'});
+  const requestedIndices=Array.isArray(req.body?.indices)
+    ? [...new Set(req.body.indices.map(Number).filter(x=>Number.isInteger(x)&&x>0))].slice(0,80)
+    : [];
   const start=Math.max(0,Number(req.body?.start)||0);
-  const count=Math.min(80,Math.max(1,Number(req.body?.count)||40));
-  const total=Math.max(start+count,Number(req.body?.total)||1017);
+  const count=requestedIndices.length||Math.min(80,Math.max(1,Number(req.body?.count)||40));
+  const indices=requestedIndices.length?requestedIndices:Array.from({length:count},(_,i)=>start+i+1);
+  const total=Math.max(Math.max(...indices),Number(req.body?.total)||1017);
   const profile=req.body?.profile;
   const avoid=Array.isArray(req.body?.avoid)?req.body.avoid.slice(-30).map(String):[];
   if(!profile||typeof profile!=='object') return res.status(400).json({error:'PROFILE_REQUIRED'});
@@ -41,8 +45,8 @@ module.exports=async function handler(req,res){
     required:['hooks'],
     additionalProperties:false
   };
-  const from=start+1,to=start+count;
-  const prompt=`Crée exactement ${count} hooks uniques pour les vidéos ${from} à ${to} sur un total de ${total}. Chaque hook doit être en français, immédiat, naturel, très lisible en surimpression vidéo, 4 à 14 mots et idéalement moins de 90 caractères. Varie fortement les mécanismes: curiosité, erreur fréquente, bénéfice, contraste, question, observation, démonstration, objection, conseil, avant/après sans inventer de résultats, appel à l'identité, mini-liste, surprise. N'utilise ni hashtag ni emoji. N'invente aucune preuve ou promesse absente du profil. Ne répète pas une structure dans le même lot. L'index doit aller exactement de ${from} à ${to}.\n\nPROFIL DE MARQUE:\n${compact}\n\nÀ ÉVITER CAR DÉJÀ UTILISÉ:\n${avoid.join('\n')}`;
+  const indexList=indices.join(', ');
+  const prompt=`Crée exactement ${count} hooks uniques pour les vidéos ayant précisément ces index: [${indexList}] sur un catalogue de ${total}. Chaque hook doit être en français, immédiat, naturel, très lisible en surimpression vidéo, 4 à 14 mots et idéalement moins de 90 caractères. Varie fortement les mécanismes: curiosité, erreur fréquente, bénéfice, contraste, question, observation, démonstration, objection, conseil, avant/après sans inventer de résultats, appel à l'identité, mini-liste, surprise. N'utilise ni hashtag ni emoji. N'invente aucune preuve ou promesse absente du profil. Ne répète pas une structure dans le même lot. Retourne une entrée pour CHAQUE index demandé, une seule fois, sans renuméroter ni combler les trous.\n\nPROFIL DE MARQUE:\n${compact}\n\nÀ ÉVITER CAR DÉJÀ UTILISÉ:\n${avoid.join('\n')}`;
   try{
     let data=await gatewayJson({
       name:'videoma_hooks',
@@ -54,11 +58,16 @@ module.exports=async function handler(req,res){
     });
     const hooks=Array.isArray(data?.hooks)?data.hooks:[];
     if(hooks.length!==count) throw new Error('HOOK_COUNT_MISMATCH');
-    const normalized=hooks.map((h,i)=>({
-      index:start+i+1,
-      text:String(h.text||'').replace(/\s+/g,' ').trim().slice(0,120),
-      angle:String(h.angle||'').replace(/\s+/g,' ').trim().slice(0,60)
-    }));
+    const byIndex=new Map(hooks.map(h=>[Number(h.index),h]));
+    const normalized=indices.map(index=>{
+      const h=byIndex.get(index);
+      if(!h)throw new Error('HOOK_INDEX_MISMATCH');
+      return {
+        index,
+        text:String(h.text||'').replace(/\s+/g,' ').trim().slice(0,120),
+        angle:String(h.angle||'').replace(/\s+/g,' ').trim().slice(0,60)
+      };
+    });
     if(normalized.some(h=>!h.text)) throw new Error('EMPTY_HOOK');
     return res.status(200).json({hooks:normalized,model:MODEL});
   }catch(err){
