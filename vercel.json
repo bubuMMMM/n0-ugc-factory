@@ -64,6 +64,29 @@
     },
     "api/admin/process-preanalysis-batch.js": {
       "maxDuration": 60
+    },
+    "api/admin/cron-preanalysis-a7f3c9.js": {
+      "maxDuration": 60
+    },
+    "api/admin/cron-preanalysis-b4e812.js": {
+      "maxDuration": 60
+    },
+    "api/admin/cron-preanalysis-c91d57.js": {
+      "maxDuration": 60
     }
-  }
+  },
+  "crons": [
+    {
+      "path": "/api/admin/cron-preanalysis-a7f3c9",
+      "schedule": "* * * * *"
+    },
+    {
+      "path": "/api/admin/cron-preanalysis-b4e812",
+      "schedule": "* * * * *"
+    },
+    {
+      "path": "/api/admin/cron-preanalysis-c91d57",
+      "schedule": "* * * * *"
+    }
+  ]
 }
