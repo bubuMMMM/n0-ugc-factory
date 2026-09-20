@@ -295,39 +295,35 @@ footer{border-top:1px solid var(--line);padding:28px 0 42px;color:#727d8c;font-s
   .machine-footer{display:none}
 }
 
+
+/* Minimal hero override */
+.hero-minimal .hero-shell{grid-template-columns:minmax(0,.84fr) minmax(520px,1.16fr);gap:46px}
+.hero-minimal .hero-copy-v3{display:flex;flex-direction:column;align-items:flex-start;justify-content:center}
+.hero-minimal h1{font-size:clamp(72px,min(8vw,10.5vh),124px);line-height:.82;margin:0 0 28px;max-width:760px}
+.hero-minimal .content-machine{height:min(72vh,680px)}
+.hero-minimal .machine-frame{width:min(720px,100%);padding:1px}
+.hero-minimal .machine-inner{padding:22px 0;background:linear-gradient(180deg,rgba(13,18,29,.98),rgba(7,10,16,.98))}
+.hero-minimal .hero-rail{padding:0 22px;gap:12px}
+.hero-minimal .rail-card{flex-basis:clamp(132px,20%,158px);border-radius:20px}
+@media(max-width:980px){.hero-minimal .hero-shell{grid-template-columns:1fr;gap:12px}.hero-minimal h1{font-size:clamp(54px,13vw,78px);margin-bottom:18px}.hero-minimal .content-machine{height:44svh;min-height:315px}.hero-minimal .machine-frame{width:min(680px,96vw)}}
+@media(max-width:680px){.hero-minimal{padding-top:70px}.hero-minimal .hero-shell{gap:8px}.hero-minimal h1{font-size:clamp(48px,14.2vw,62px);line-height:.84;margin-bottom:14px}.hero-minimal .hero-buy{padding:12px 15px;font-size:13px}.hero-minimal .content-machine{height:41svh;min-height:265px}.hero-minimal .machine-inner{padding:14px 0}.hero-minimal .hero-rail{padding:0 14px;gap:8px}.hero-minimal .rail-card{flex-basis:102px;border-radius:14px}}
 </style>
 </head>
 <body>
 <header><div class="wrap nav"><div class="logo">videoma.</div><button class="buy-mini" data-buy>Acheter — 990€</button></div></header>
 
-<section class="hero-v3">
+<section class="hero-v3 hero-minimal">
   <div class="warp-beams"><i></i><i></i><i></i><i></i></div>
   <div class="wrap hero-shell">
     <div class="hero-copy-v3">
-      <div class="new-pill"><span class="new-dot"></span><b>Nouveau</b><span>1000 vidéos depuis un lien ou une description</span></div>
-      <h1>Votre contenu social.<br><span class="aurora">À l’échelle.</span></h1>
-      <p class="hero-desc">Pour artisans et PME : transformez une simple URL en une bibliothèque de vidéos verticales prêtes à publier. 1000 contenus, sans tourner 1000 vidéos.</p>
-      <div class="hero-actions-v3">
-        <button class="hero-buy" data-buy><span>Acheter le pack — 990€</span><span>→</span></button>
-        <div class="hero-price">990€</div>
-      </div>
-      <div class="microproof"><span>1000 vidéos</span><span>paiement unique</span><span>textes personnalisés</span><span>prêtes à publier</span></div>
+      <h1>1000 vidéos<br>en moins de<br><span class="aurora">5 minutes.</span></h1>
+      <button class="hero-buy" data-buy><span>Acheter — 990€</span><span>→</span></button>
     </div>
     <div class="content-machine">
       <div class="machine-glow"></div>
       <div class="machine-frame">
         <div class="machine-inner">
-          <div class="machine-top"><div class="machine-dots"><i></i><i></i><i></i></div><div class="machine-title">videoma / content factory</div><div class="machine-live">live</div></div>
-          <div class="machine-body">
-            <div class="machine-label"><strong>Vos vidéos</strong><span class="swipe-hint">← glissez horizontalement →</span></div>
-            <div class="hero-rail" id="heroRail"><article class="rail-card"><video src="https://doublespeed2.blob.core.windows.net/media/media/e3e45b32-d29e-4d2f-a821-c06c4f101bc8/generated/64810d44-8da4-47b6-b392-c28d8a5e35a6-019d4fed-a614-7690-945c-90007fa3799a.mp4" autoplay muted loop playsinline preload="metadata"></video><span class="rail-tag">vidéo 01</span></article><article class="rail-card"><video src="https://doublespeed2.blob.core.windows.net/media/media/2dca701e-9e20-48a8-b642-3fb04aed5ea6/generated/8c1f6534-8585-46b6-968f-33b3d50694b1-019e41f7-375b-7b10-b49c-78de5c896c8a.mp4" autoplay muted loop playsinline preload="metadata"></video><span class="rail-tag">vidéo 02</span></article><article class="rail-card"><video src="https://doublespeed2.blob.core.windows.net/media/media/a8f3d76e-d5c3-47e0-8434-be53cbbab810/generated/27bc7c2d-5cf2-4674-88c8-acc213397bc4-019f62e2-a50e-73d1-b378-3cfdcc15bf49.mp4" autoplay muted loop playsinline preload="metadata"></video><span class="rail-tag">vidéo 03</span></article><article class="rail-card"><video src="https://doublespeed2.blob.core.windows.net/media/media/e3e45b32-d29e-4d2f-a821-c06c4f101bc8/generated/74f92628-dbbd-4c35-b81d-47f76090294e-019e59e5-4360-77e2-a238-c471c4d20932.mp4" autoplay muted loop playsinline preload="metadata"></video><span class="rail-tag">vidéo 04</span></article><article class="rail-card"><video src="https://doublespeed2.blob.core.windows.net/media/media/e3e45b32-d29e-4d2f-a821-c06c4f101bc8/generated/69debb65-342e-4171-b3ba-2402505740ca-019eae2c-a688-7c03-ab0e-94d9e927b37b.mp4" autoplay muted loop playsinline preload="metadata"></video><span class="rail-tag">vidéo 05</span></article><article class="rail-card"><video src="https://doublespeed2.blob.core.windows.net/media/media/6e0873cd-1eb0-430d-9d35-d9210f87c904/generated/373e9786-445e-4cab-ace6-20699db17725-019e4787-f472-7b23-b94d-d3f7121870e8.mp4" autoplay muted loop playsinline preload="metadata"></video><span class="rail-tag">vidéo 06</span></article><article class="rail-card"><video src="https://doublespeed2.blob.core.windows.net/media/media/48156df6-5847-48d2-b66d-3c7a8d4c4bbd/generated/a5c4db94-ce15-48c2-97d4-9ddc8644c797-019f9166-b764-7ed0-9491-c8618b810112.mp4" autoplay muted loop playsinline preload="metadata"></video><span class="rail-tag">vidéo 07</span></article><article class="rail-card"><video src="https://doublespeed2.blob.core.windows.net/media/media/a8f3d76e-d5c3-47e0-8434-be53cbbab810/generated/ab67c89b-bb22-4a5a-a72d-a2758a2e11d5-019f5211-f03e-7553-b555-f809d5152897.mp4" autoplay muted loop playsinline preload="metadata"></video><span class="rail-tag">vidéo 08</span></article></div>
-            <div class="machine-footer">
-              <div class="machine-stat"><b>1000</b><span>vidéos générées</span></div>
-              <div class="machine-stat"><b>5 min</b><span>pour lancer</span></div>
-              <div class="machine-stat"><b>9:16</b><span>prêt pour social</span></div>
-            </div>
-            <div class="machine-caption">une usine à contenu à partir de votre activité</div>
-          </div>
+          <div class="hero-rail" id="heroRail"><article class="rail-card"><video src="https://doublespeed2.blob.core.windows.net/media/media/e3e45b32-d29e-4d2f-a821-c06c4f101bc8/generated/64810d44-8da4-47b6-b392-c28d8a5e35a6-019d4fed-a614-7690-945c-90007fa3799a.mp4" autoplay muted loop playsinline preload="metadata"></video></article><article class="rail-card"><video src="https://doublespeed2.blob.core.windows.net/media/media/2dca701e-9e20-48a8-b642-3fb04aed5ea6/generated/8c1f6534-8585-46b6-968f-33b3d50694b1-019e41f7-375b-7b10-b49c-78de5c896c8a.mp4" autoplay muted loop playsinline preload="metadata"></video></article><article class="rail-card"><video src="https://doublespeed2.blob.core.windows.net/media/media/a8f3d76e-d5c3-47e0-8434-be53cbbab810/generated/27bc7c2d-5cf2-4674-88c8-acc213397bc4-019f62e2-a50e-73d1-b378-3cfdcc15bf49.mp4" autoplay muted loop playsinline preload="metadata"></video></article><article class="rail-card"><video src="https://doublespeed2.blob.core.windows.net/media/media/e3e45b32-d29e-4d2f-a821-c06c4f101bc8/generated/74f92628-dbbd-4c35-b81d-47f76090294e-019e59e5-4360-77e2-a238-c471c4d20932.mp4" autoplay muted loop playsinline preload="metadata"></video></article><article class="rail-card"><video src="https://doublespeed2.blob.core.windows.net/media/media/e3e45b32-d29e-4d2f-a821-c06c4f101bc8/generated/69debb65-342e-4171-b3ba-2402505740ca-019eae2c-a688-7c03-ab0e-94d9e927b37b.mp4" autoplay muted loop playsinline preload="metadata"></video></article><article class="rail-card"><video src="https://doublespeed2.blob.core.windows.net/media/media/6e0873cd-1eb0-430d-9d35-d9210f87c904/generated/373e9786-445e-4cab-ace6-20699db17725-019e4787-f472-7b23-b94d-d3f7121870e8.mp4" autoplay muted loop playsinline preload="metadata"></video></article><article class="rail-card"><video src="https://doublespeed2.blob.core.windows.net/media/media/48156df6-5847-48d2-b66d-3c7a8d4c4bbd/generated/a5c4db94-ce15-48c2-97d4-9ddc8644c797-019f9166-b764-7ed0-9491-c8618b810112.mp4" autoplay muted loop playsinline preload="metadata"></video></article><article class="rail-card"><video src="https://doublespeed2.blob.core.windows.net/media/media/a8f3d76e-d5c3-47e0-8434-be53cbbab810/generated/ab67c89b-bb22-4a5a-a72d-a2758a2e11d5-019f5211-f03e-7553-b555-f809d5152897.mp4" autoplay muted loop playsinline preload="metadata"></video></article></div>
         </div>
       </div>
     </div>
