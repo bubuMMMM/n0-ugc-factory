@@ -17,7 +17,7 @@ module.exports=async function handler(req,res){
 
   const p=new URLSearchParams();
   p.set('mode','payment');
-  p.set('success_url',origin+'/?payment=success');
+  p.set('success_url',origin+'/?payment=success&session_id={CHECKOUT_SESSION_ID}');
   p.set('cancel_url',origin+'/?payment=cancel');
   p.set('customer_creation','always');
   p.set('line_items[0][quantity]','1');
