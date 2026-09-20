@@ -76,11 +76,41 @@ async function counts(){
     "count(*) filter(where status='ready')::int ready,"+
     "count(*) filter(where status='pending')::int pending,"+
     "count(*) filter(where status='error')::int errors,"+
-    "count(*) filter(where status='processing')::int processing from video_intelligence"
+    "count(*) filter(where status='processing')::int processing,"+
+    "count(*) filter(where status='ready' and coalesce(analysis_version,'')<>$1)::int outdated "+
+    "from video_intelligence",
+    [VERSION]
   );
   return q.rows[0];
 }
 function schema(count){
+  const box={
+    type:'object',
+    properties:{
+      frame:{type:'integer',minimum:1,maximum:4},
+      x:{type:'number',minimum:0,maximum:1},
+      y:{type:'number',minimum:0,maximum:1},
+      w:{type:'number',minimum:0.01,maximum:1},
+      h:{type:'number',minimum:0.01,maximum:1},
+      confidence:{type:'number',minimum:0,maximum:1}
+    },
+    required:['frame','x','y','w','h','confidence'],
+    additionalProperties:false
+  };
+  const objectBox={
+    type:'object',
+    properties:{
+      frame:{type:'integer',minimum:1,maximum:4},
+      label:{type:'string'},
+      x:{type:'number',minimum:0,maximum:1},
+      y:{type:'number',minimum:0,maximum:1},
+      w:{type:'number',minimum:0.01,maximum:1},
+      h:{type:'number',minimum:0.01,maximum:1},
+      confidence:{type:'number',minimum:0,maximum:1}
+    },
+    required:['frame','label','x','y','w','h','confidence'],
+    additionalProperties:false
+  };
   return {type:'object',properties:{videos:{type:'array',minItems:count,maxItems:count,items:{
     type:'object',properties:{
       index:{type:'integer'},scene:{type:'string'},action:{type:'string'},primaryEmotion:{type:'string'},
@@ -89,43 +119,33 @@ function schema(count){
       gazeDirection:{type:'string'},reactionIntensity:{type:'integer',minimum:0,maximum:100},energyScore:{type:'integer',minimum:0,maximum:100},
       versatilityScore:{type:'integer',minimum:0,maximum:100},reactionType:{type:'string'},visualFocus:{type:'string'},
       peakFrame:{type:'integer',minimum:1,maximum:4},peakReason:{type:'string'},
-      textSafeZone:{type:'object',properties:{
-        preferred:{type:'string',enum:['top','upper','lower']},
-        horizontal:{type:'string',enum:['left','center','right']},
-        alternatives:{type:'array',items:{type:'string',enum:['top','upper','lower']}},
-        avoid:{type:'array',items:{type:'string'}},
-        reason:{type:'string'},
-        maxLines:{type:'integer',minimum:1,maximum:3},
-        allowSecondLine:{type:'boolean'},
-        faceOcclusionPenalty:{type:'integer',minimum:0,maximum:100}
-      },required:['preferred','horizontal','alternatives','avoid','reason','maxLines','allowSecondLine','faceOcclusionPenalty'],additionalProperties:false},
-      faceRegions:{type:'array',items:{
+      textSafeZone:{
         type:'object',
         properties:{
-          frame:{type:'integer',minimum:1,maximum:4},
-          x:{type:'number',minimum:0,maximum:1},
-          y:{type:'number',minimum:0,maximum:1},
-          w:{type:'number',minimum:0,maximum:1},
-          h:{type:'number',minimum:0,maximum:1},
-          confidence:{type:'integer',minimum:0,maximum:100}
+          preferred:{type:'string',enum:['top','upper','lower','bottom']},
+          horizontal:{type:'string',enum:['left','center','right']},
+          avoid:{type:'array',items:{type:'string'}},
+          reason:{type:'string'},
+          allowSecondLine:{type:'boolean'},
+          maxLines:{type:'integer',minimum:1,maximum:3},
+          zoneScores:{
+            type:'object',
+            properties:{
+              top:{type:'integer',minimum:0,maximum:100},
+              upper:{type:'integer',minimum:0,maximum:100},
+              middle:{type:'integer',minimum:0,maximum:100},
+              lower:{type:'integer',minimum:0,maximum:100},
+              bottom:{type:'integer',minimum:0,maximum:100}
+            },
+            required:['top','upper','middle','lower','bottom'],
+            additionalProperties:false
+          }
         },
-        required:['frame','x','y','w','h','confidence'],
+        required:['preferred','horizontal','avoid','reason','allowSecondLine','maxLines','zoneScores'],
         additionalProperties:false
-      }},
-      objectRegions:{type:'array',items:{
-        type:'object',
-        properties:{
-          frame:{type:'integer',minimum:1,maximum:4},
-          label:{type:'string'},
-          x:{type:'number',minimum:0,maximum:1},
-          y:{type:'number',minimum:0,maximum:1},
-          w:{type:'number',minimum:0,maximum:1},
-          h:{type:'number',minimum:0,maximum:1},
-          importance:{type:'integer',minimum:0,maximum:100}
-        },
-        required:['frame','label','x','y','w','h','importance'],
-        additionalProperties:false
-      }},
+      },
+      faceRegions:{type:'array',items:box},
+      objectRegions:{type:'array',items:objectBox},
       hookCompatibility:{type:'array',items:{type:'string'}},tags:{type:'array',items:{type:'string'}},
       analysisConfidence:{type:'integer',minimum:0,maximum:100}
     },
@@ -136,24 +156,25 @@ function schema(count){
 function prompt(){
   return [
     'Analyse ces clips de réaction verticaux pour une base permanente de Video Intelligence.',
-    'Chaque image est une planche de 4 frames du même clip: début, premier tiers, deuxième tiers, fin.',
-    'Décris uniquement ce qui est utile au matching publicitaire. Ne suppose ni identité ni attribut sensible.',
-    'scene: décor, cadrage, sujet principal. action: évolution visible entre les frames.',
-    'Liste les émotions observables, objets et gestes visibles. Compte approximativement les personnes.',
-    'Détecte téléphone, ordinateur et produit clairement visible. Donne la direction du regard.',
+    'Chaque image est une planche de 4 frames du même clip: frame 1 début, frame 2 premier tiers, frame 3 deuxième tiers, frame 4 fin.',
+    'IMPORTANT: les coordonnées x,y,w,h sont relatives À CHAQUE FRAME INDIVIDUELLE, jamais à la planche complète. Toutes les coordonnées vont de 0 à 1.',
+    'Décris uniquement ce qui est utile au matching créatif. Ne suppose ni identité ni attribut sensible.',
+    'scene: décor/cadrage/sujet. action: évolution visible entre les frames. emotions: seulement ce qui est visuellement observable.',
+    'faceRegions: une bounding box par visage et par frame où il est visible. Encadre le visage complet de façon serrée. confidence 0-1.',
+    'objectRegions: bounding boxes des objets qui ne doivent pas être masqués par le texte (téléphone, ordinateur, produit, mains qui pointent, écran, objet montré).',
+    'textSafeZone: choisis la meilleure zone de texte sur l’ensemble des 4 frames, pas seulement la première.',
+    'preferred doit être top, upper, lower ou bottom. N’utilise jamais middle comme placement préféré.',
+    'horizontal vaut left, center ou right selon la zone libre.',
+    'zoneScores note top/upper/middle/lower/bottom de 0 à 100 selon la sécurité visuelle sur les QUATRE frames.',
+    'Une zone qui touche les yeux, le nez ou la bouche doit recevoir un score très faible. Une zone traversée par le visage à un seul moment reste dangereuse.',
+    'allowSecondLine=false si une deuxième ligne risque de toucher le visage, les mains ou l’objet clé.',
+    'maxLines vaut 1 pour une vidéo très serrée, 2 dans la plupart des cas, 3 uniquement si la scène est réellement aérée.',
     'reactionIntensity et energyScore: 0-100.',
     'reactionType: surprise, frustration, rire, validation, scepticisme, confusion, pointage, démonstration, découverte, réflexion, embarras, soulagement, calme ou autre.',
-    'visualFocus: visage, objet ou geste qui attire naturellement le regard.',
-    'peakFrame: 1-4 et peakReason.',
-    'textSafeZone doit être calculée SUR LES 4 FRAMES. Ne choisis jamais middle si un visage est visible.',
-    'Pour textSafeZone: preferred doit être top, upper ou lower; horizontal doit être left, center ou right selon l’espace réellement libre; alternatives liste les autres bandes sûres; maxLines indique combien de lignes tiennent sans toucher le visage; allowSecondLine=false dès qu’une seconde ligne risquerait de recouvrir le visage; faceOcclusionPenalty 0-100 estime le risque résiduel de couvrir un visage dans la zone choisie.',
-    'Règle absolue: yeux, nez et bouche ne doivent jamais être couverts par le texte.',
-    'faceRegions: retourne UNE bounding box pour chaque visage visible sur chaque frame. Coordonnées normalisées par frame: x=0 gauche, y=0 haut, w/h entre 0 et 1. La box doit entourer le visage entier, pas le corps. Si le même visage apparaît sur les 4 frames, retourne 4 boxes avec frame=1,2,3,4.',
-    'objectRegions: retourne les objets visuellement importants avec frame, label, x, y, w, h et importance 0-100, coordonnées normalisées par frame.',
-    'Ne fusionne pas les boxes entre frames. Le moteur de layout calculera lui-même les collisions texte/visage.',
+    'visualFocus: ce que l’œil regarde naturellement. peakFrame: 1-4 et peakReason.',
     'hookCompatibility: plusieurs mécanismes naturels parmi drama, story, credential, insider, numbered, diagnostic, inversion, overheard, confession, pov, value, take, fourthwall, transformation, wall, proof, pattern_break, product_natural, objection, pain, benefit, comparison, mistake, discovery.',
-    'tags descriptifs. versatilityScore 0-100 selon la capacité du clip à fonctionner pour beaucoup de marques sans forcer le sens.',
-    'Sois factuel, compact et cohérent entre vidéos.'
+    'versatilityScore 0-100 selon la polyvalence du clip. Sois factuel, compact et cohérent entre vidéos.',
+    'Le visage est prioritaire sur le texte: si aucun espace propre n’existe, indique la zone la moins mauvaise, allowSecondLine=false et maxLines=1.'
   ].join('\n');
 }
 function embeddingText(r){
@@ -341,7 +362,7 @@ async function runBatch(jobId){
   }
 
   const c=await counts();
-  if(Number(c.pending)===0&&Number(c.processing)===0){
+  if(Number(c.pending)===0&&Number(c.processing)===0&&Number(c.outdated||0)===0){
     await finishJob(jobId,c,lastError);
     return {stop:true,counts:c,saved,lastError};
   }
