@@ -1,4 +1,5 @@
 const fs=require('node:fs');
+const {statusForAiCode}=require('./_gateway-errors');
 const path=require('node:path');
 const {gatewayJson,MODEL}=require('./_ai');
 const db=require('./_db');
@@ -258,12 +259,7 @@ module.exports=async function handler(req,res){
   }catch(err){
     console.error('hooks intelligence',err&&err.message,err&&err.detail||'');
     const code=String(err&&err.message||'HOOK_INTELLIGENCE_FAILED');
-    const status=
-      code==='AI_GATEWAY_INSUFFICIENT_FUNDS'?402:
-      code==='AI_GATEWAY_RATE_LIMIT'?429:
-      code==='AI_GATEWAY_TIMEOUT'||code==='EMBEDDING_TIMEOUT'||code==='JEV_TIMEOUT'?504:
-      code==='AI_GATEWAY_NOT_CONFIGURED'||code==='AI_GATEWAY_UNAVAILABLE'?503:
-      code==='AI_GATEWAY_AUTH_ERROR'?502:500;
+    const status=statusForAiCode(code);
     return res.status(status).json({error:code});
   }
 };
