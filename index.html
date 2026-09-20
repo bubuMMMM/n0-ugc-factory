@@ -1007,54 +1007,75 @@ const LOCAL_LAYOUT_QUEUE=[];
 let LOCAL_LAYOUT_ACTIVE=0;
 
 function demoHookFor(index){
-  const layout=VIDEO_LAYOUTS[index]||CLIENT_SAFE_LAYOUTS[index];
+  const layout=VIDEO_LAYOUTS[index]||CLIENT_SAFE_LAYOUTS[index]||null;
   const item=DEMO_HOOK_LIBRARY[index%DEMO_HOOK_LIBRARY.length];
   const baseHook=SAFE_DEMO_HOOKS[index%SAFE_DEMO_HOOKS.length]||item.hook;
-  const cycle=Math.floor(index/SAFE_DEMO_HOOKS.length)%5;
-  const hook=[
+  const n=index+1;
+
+  // Before geometry is known, be deliberately conservative: one short line at the very bottom.
+  if(!layout){
+    return {
+      hook:baseHook,
+      secondLine:"",
+      placement:"bottom",
+      horizontalAlign:"center",
+      textRect:{x:.12,y:.855,w:.76,h:.058},
+      fontScale:.54,
+      visualStyle:visualStyleFor(index,{}, {demo:true}),
+      style:"short",
+      demo:true,
+      compact:true,
+      maxLines:1,
+      secondLineSuppressed:true,
+      noSafeZone:true,
+      faceOcclusionPenalty:18,
+      objectOcclusionPenalty:8,
+      layoutScore:58,
+      accepted:true,
+      safeForAutoApproval:false,
+      layoutVersion:"demo-safe-fallback-v2",
+      rationale:"Placement de démonstration conservateur en attendant la géométrie vidéo."
+    };
+  }
+
+  const cycle=Math.floor(index/SAFE_DEMO_HOOKS.length)%4;
+  let hook=[
     baseHook,
     "POV : "+baseHook.charAt(0).toLowerCase()+baseHook.slice(1),
     "La vraie question : "+baseHook.charAt(0).toLowerCase()+baseHook.slice(1),
-    "Personne ne te montre ça : "+baseHook.charAt(0).toLowerCase()+baseHook.slice(1),
-    "Si tu crées du contenu, lis ça : "+baseHook.charAt(0).toLowerCase()+baseHook.slice(1)
+    baseHook
   ][cycle];
-  const n=index+1;
+  if(hook.length>72)hook=baseHook;
+
   const dynamic=[
     "À partir d’une seule URL",
     "1000 vidéos en moins de 5 minutes",
     "Vidéo "+n.toLocaleString("fr-FR")+" sur "+ALL.length.toLocaleString("fr-FR"),
-    item.second||"Videoma transforme ton site en contenu"
+    item.second||""
   ][Math.floor(index/SAFE_DEMO_HOOKS.length)%4];
 
-  const visual=visualStyleFor(index,layout||{}, {demo:true});
-  const defaultPlacements=[
-    {placement:"upper",horizontalAlign:"center",textRect:{x:.08,y:.12,w:.84,h:.20}},
-    {placement:"middle",horizontalAlign:"center",textRect:{x:.08,y:.36,w:.84,h:.22}},
-    {placement:"lower",horizontalAlign:"center",textRect:{x:.08,y:.62,w:.84,h:.20}},
-    {placement:"top",horizontalAlign:"center",textRect:{x:.08,y:.06,w:.84,h:.19}}
-  ];
-  const fallback=defaultPlacements[index%defaultPlacements.length];
-
+  const safeSecond=Boolean(layout.allowSecondLine)&&Number(layout.faceOcclusionPenalty||0)<=8&&!layout.noSafeZone;
   return {
     hook,
-    secondLine:index%3===0?dynamic:"",
-    placement:layout?.placement||fallback.placement,
-    horizontalAlign:layout?.horizontalAlign||fallback.horizontalAlign,
-    textRect:layout?.textRect||fallback.textRect,
-    fontScale:Math.max(.82,Number(layout?.fontScale)||1),
-    visualStyle:visual,
+    secondLine:safeSecond&&index%3===0?dynamic:"",
+    placement:layout.placement||"bottom",
+    horizontalAlign:layout.horizontalAlign||"center",
+    textRect:validTextRect(layout.textRect)?layout.textRect:{x:.12,y:.855,w:.76,h:.058},
+    fontScale:Math.max(.48,Math.min(1,Number(layout.fontScale)||.62)),
+    visualStyle:visualStyleFor(index,layout,{demo:true}),
     style:"short",
     demo:true,
-    compact:false,
-    maxLines:index%3===0?3:2,
-    secondLineSuppressed:false,
-    noSafeZone:false,
-    faceOcclusionPenalty:Number(layout?.faceOcclusionPenalty)||0,
-    objectOcclusionPenalty:Number(layout?.objectOcclusionPenalty)||0,
-    layoutScore:Number(layout?.layoutScore)||70,
+    compact:layout.compact!==false,
+    maxLines:safeSecond?Math.min(2,Number(layout.maxLines)||2):1,
+    secondLineSuppressed:!safeSecond,
+    noSafeZone:Boolean(layout.noSafeZone),
+    faceOcclusionPenalty:Number(layout.faceOcclusionPenalty)||0,
+    objectOcclusionPenalty:Number(layout.objectOcclusionPenalty)||0,
+    layoutScore:Number(layout.layoutScore)||60,
     accepted:true,
-    layoutVersion:layout?.layoutVersion||"expressive-v1",
-    rationale:"Hook de démonstration complet, avec style visuel adapté à la vidéo."
+    safeForAutoApproval:Boolean(layout.safeForAutoApproval),
+    layoutVersion:layout.layoutVersion||CURRENT_LAYOUT_VERSION,
+    rationale:"Hook de démonstration placé selon la zone la plus sûre connue."
   };
 }
 let HOOKS=new Array(ALL.length).fill("");
@@ -1261,53 +1282,74 @@ function validTextRect(rect){
 }
 function metaFor(index){
   const base=HOOK_META[index]||demoHookFor(index);
-  const raw=VIDEO_LAYOUTS[index]||VIDEO_MATCHES[index]?.intelligence||null;
-  const visual=base.visualStyle||visualStyleFor(index,raw||{},base);
+  const serverRaw=VIDEO_LAYOUTS[index]||VIDEO_MATCHES[index]?.intelligence||null;
+  const localRaw=CLIENT_SAFE_LAYOUTS[index]||null;
+  const visual=base.visualStyle||visualStyleFor(index,serverRaw||localRaw||{},base);
 
-  if(raw){
-    const decision=computeFaceSafeLayout(raw,base.placement||"upper",Boolean(base.secondLine),base.style||"short");
+  // Browser-derived layout already contains a concrete approved rectangle.
+  if(localRaw&&!serverRaw){
+    const allowSecond=Boolean(localRaw.allowSecondLine)&&!localRaw.noSafeZone&&Number(localRaw.faceOcclusionPenalty||0)<=8;
+    return {
+      ...base,
+      placement:localRaw.placement||"bottom",
+      horizontalAlign:localRaw.horizontalAlign||"center",
+      textRect:validTextRect(localRaw.textRect)?localRaw.textRect:{x:.12,y:.855,w:.76,h:.058},
+      secondLine:allowSecond?(base.secondLine||""):"",
+      secondLineSuppressed:Boolean(base.secondLine)&&!allowSecond,
+      fontScale:Math.max(.44,Math.min(1,Number(localRaw.fontScale)||.54)),
+      visualStyle:visual,
+      compact:true,
+      faceOcclusionPenalty:Number(localRaw.faceOcclusionPenalty)||0,
+      objectOcclusionPenalty:Number(localRaw.objectOcclusionPenalty)||0,
+      layoutScore:Number(localRaw.layoutScore)||50,
+      maxLines:allowSecond?Math.min(2,Number(localRaw.maxLines)||2):1,
+      noSafeZone:Boolean(localRaw.noSafeZone),
+      safeForAutoApproval:Boolean(localRaw.safeForAutoApproval),
+      layoutVersion:localRaw.layoutVersion||"local-visual-v2"
+    };
+  }
+
+  if(serverRaw){
+    const decision=computeFaceSafeLayout(serverRaw,base.placement||"lower",Boolean(base.secondLine),base.style||"short");
+    const secondLine=decision.allowSecondLine?(base.secondLine||""):"";
     return {
       ...base,
       placement:decision.placement,
       horizontalAlign:decision.horizontalAlign,
       textRect:decision.textRect,
-      secondLine:base.secondLine||"",
-      secondLineSuppressed:false,
-      fontScale:Math.max(.78,Math.min(1.18,Number(base.fontScale||base.hookScale)||1)),
+      secondLine,
+      secondLineSuppressed:Boolean(base.secondLine)&&!secondLine,
+      fontScale:Math.max(.46,Math.min(1,Number(decision.fontScale)||.72)),
       visualStyle:visual,
-      compact:false,
+      compact:Boolean(decision.compact),
       faceOcclusionPenalty:decision.faceOcclusionPenalty,
       objectOcclusionPenalty:decision.objectOcclusionPenalty,
       layoutScore:decision.layoutScore,
-      maxLines:base.secondLine?3:2,
-      noSafeZone:false,
-      safeForAutoApproval:true,
-      layoutVersion:raw.layoutVersion||CURRENT_LAYOUT_VERSION
+      maxLines:secondLine?Math.min(2,decision.maxLines||2):1,
+      noSafeZone:Boolean(decision.noSafeZone),
+      safeForAutoApproval:Boolean(decision.safeForAutoApproval),
+      layoutVersion:serverRaw.layoutVersion||CURRENT_LAYOUT_VERSION
     };
   }
 
-  const fallbackRects=[
-    {placement:"upper",horizontalAlign:"center",textRect:{x:.08,y:.12,w:.84,h:.20}},
-    {placement:"middle",horizontalAlign:"center",textRect:{x:.08,y:.36,w:.84,h:.22}},
-    {placement:"lower",horizontalAlign:"center",textRect:{x:.08,y:.62,w:.84,h:.20}},
-    {placement:"top",horizontalAlign:"center",textRect:{x:.08,y:.06,w:.84,h:.19}}
-  ];
-  const fallback=fallbackRects[index%fallbackRects.length];
+  // Last-resort geometry: no middle placement, one line, low on frame.
   return {
     ...base,
-    ...fallback,
-    secondLine:base.secondLine||"",
-    secondLineSuppressed:false,
-    fontScale:Math.max(.78,Math.min(1.18,Number(base.fontScale||base.hookScale)||1)),
+    placement:"bottom",
+    horizontalAlign:"center",
+    textRect:{x:.12,y:.855,w:.76,h:.058},
+    secondLine:"",
+    secondLineSuppressed:Boolean(base.secondLine),
+    fontScale:.52,
     visualStyle:visual,
-    compact:false,
-    faceOcclusionPenalty:Number(base.faceOcclusionPenalty)||0,
-    objectOcclusionPenalty:Number(base.objectOcclusionPenalty)||0,
-    layoutScore:Number(base.layoutScore)||70,
-    maxLines:base.secondLine?3:2,
-    noSafeZone:false,
-    safeForAutoApproval:true,
-    layoutVersion:"expressive-v1"
+    compact:true,
+    faceOcclusionPenalty:18,
+    objectOcclusionPenalty:8,
+    layoutScore:55,
+    maxLines:1,
+    noSafeZone:true,
+    safeForAutoApproval:false,
+    layoutVersion:"safe-fallback-v2"
   };
 }
 function setHookGeometry(node,meta){
@@ -1331,7 +1373,7 @@ function setHookGeometry(node,meta){
   node.style.setProperty("--hook-stroke",visual.stroke||"#000");
   node.style.setProperty("--hook-weight",String(visual.weight||800));
   node.style.setProperty("--hook-letter-spacing",visual.letterSpacing||"0em");
-  const maxLines=Math.max(2,Math.min(4,Number(meta?.maxLines)||2));
+  const maxLines=Math.max(1,Math.min(3,Number(meta?.maxLines)||1));
   node.style.setProperty("--hook-max-lines",String(maxLines));
   node.dataset.baseHookSize=String(size);
   node.dataset.baseSecondarySize=String(secondary);
@@ -1343,12 +1385,12 @@ function fitHookNode(node,meta){
   requestAnimationFrame(()=>{
     const host=node.offsetParent;
     if(!host||!host.clientHeight||!host.clientWidth)return;
-    const rect=validTextRect(meta?.textRect)?meta.textRect:{x:.12,y:.76,w:.76,h:.11};
-    const maxHeight=Math.max(24,host.clientHeight*rect.h);
+    const rect=validTextRect(meta?.textRect)?meta.textRect:{x:.12,y:.855,w:.76,h:.058};
+    const maxHeight=Math.max(18,host.clientHeight*rect.h);
     const secondary=node.querySelector(".hook-secondary");
-    let hookSize=Number(node.dataset.baseHookSize)||6.6;
-    let secondarySize=Number(node.dataset.baseSecondarySize)||5;
-    const minHook=4.2;
+    let hookSize=Number(node.dataset.baseHookSize)||5.2;
+    let secondarySize=Number(node.dataset.baseSecondarySize)||4.2;
+    const minHook=3.65;
     let tries=0;
 
     const applySizes=()=>{
@@ -1357,15 +1399,29 @@ function fitHookNode(node,meta){
     };
     applySizes();
 
-    // Preserve the hook meaning first. Keep the second line unless the block still cannot fit after scaling.
     node.dataset.runtimeSecondLineSuppressed="false";
-    while(node.scrollHeight>maxHeight&&hookSize>minHook&&tries<10){
-      hookSize=Math.max(minHook,hookSize*.91);
-      secondarySize=Math.min(secondarySize,hookSize*.78);
+
+    // Safety first: if the block exceeds its approved rectangle, remove the secondary line before shrinking the main hook.
+    if(node.scrollHeight>maxHeight&&secondary&&!secondary.hidden){
+      secondary.hidden=true;
+      node.dataset.runtimeSecondLineSuppressed="true";
+    }
+
+    while(node.scrollHeight>maxHeight&&hookSize>minHook&&tries<14){
+      hookSize=Math.max(minHook,hookSize*.92);
+      secondarySize=Math.min(secondarySize,hookSize*.76);
       applySizes();
       tries++;
     }
-    node.dataset.textOverflow=node.scrollHeight>maxHeight?"true":"false";
+
+    // Never allow text to escape the safe rectangle.
+    const overflow=node.scrollHeight>maxHeight;
+    node.dataset.textOverflow=overflow?"true":"false";
+    if(overflow){
+      node.style.setProperty("--hook-max-lines","1");
+      hookSize=Math.max(3.35,hookSize*.9);
+      applySizes();
+    }
   });
 }
 
