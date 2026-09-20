@@ -925,65 +925,180 @@ const io=new IntersectionObserver(es=>es.forEach(e=>{
 }),{rootMargin:"600px 0px"});
 
 function hookFor(index){return HOOKS[index]||demoHookFor(index).hook}
-function emergencyFaceSafe(base={}){
+
+const SAFE_BANDS={
+  top:{y:.075,h:.14},
+  upper:{y:.15,h:.16},
+  middle:{y:.37,h:.18},
+  lower:{y:.55,h:.15},
+  bottom:{y:.66,h:.14}
+};
+const SAFE_COLUMNS={
+  left:{x:.06,w:.50},
+  center:{x:.11,w:.78},
+  right:{x:.44,w:.50}
+};
+function rectOverlap(a,b){
+  const x=Math.max(a.x,b.x),y=Math.max(a.y,b.y);
+  const r=Math.min(a.x+a.w,b.x+b.w),bot=Math.min(a.y+a.h,b.y+b.h);
+  return r>x&&bot>y?(r-x)*(bot-y):0;
+}
+function boxArea(b){return Math.max(.0001,(Number(b.w)||0)*(Number(b.h)||0))}
+function boxesFromRegions(regions){
+  const out=[];
+  for(const item of Array.isArray(regions)?regions:[]){
+    if(!item)continue;
+    if(typeof item==="string"){out.push({legacy:item});continue}
+    const boxes=Array.isArray(item.boxes)?item.boxes:
+      Number.isFinite(Number(item.x))?[item]:[];
+    for(const b of boxes){
+      const x=Number(b.x),y=Number(b.y),w=Number(b.w),hh=Number(b.h);
+      if([x,y,w,hh].every(Number.isFinite)&&w>0&&hh>0)out.push({x,y,w,h:hh});
+    }
+  }
+  return out;
+}
+function legacyPenalty(label,placement){
+  const s=String(label||"").toLowerCase();
+  if(placement==="top"&&/(haut|top)/.test(s))return 90;
+  if(placement==="upper"&&/(haut|top|centre|center)/.test(s))return 78;
+  if(placement==="middle"&&/(centre|center|milieu|middle)/.test(s))return 98;
+  if(placement==="lower"&&/(bas|bottom|centre|center)/.test(s))return 65;
+  if(placement==="bottom"&&/(bas|bottom)/.test(s))return 78;
+  return 0;
+}
+function zoneScore(raw,placement){
+  const safe=raw?.textSafeZone||{};
+  const scores=safe.zoneScores||safe.zones||{};
+  if(Number.isFinite(Number(scores?.[placement])))return Math.max(0,Math.min(100,Number(scores[placement])));
+  const avoid=Array.isArray(safe.avoid)?safe.avoid.map(x=>String(x).toLowerCase()):[];
+  if(avoid.some(x=>x.includes(placement)))return 8;
+  if(String(safe.preferred||"")===placement)return 94;
+  return ({top:72,upper:55,middle:22,lower:86,bottom:78})[placement]||50;
+}
+function rectRisk(raw,placement,alignment,rect){
+  const faces=boxesFromRegions(raw?.faceRegions);
+  const objects=boxesFromRegions(raw?.objectRegions);
+  let face=0,object=0;
+  for(const b of faces){
+    if(b.legacy){face=Math.max(face,legacyPenalty(b.legacy,placement));continue}
+    const ov=rectOverlap(b,rect);
+    if(ov>0)face=Math.max(face,Math.round(55+45*Math.min(1,ov/boxArea(b))));
+  }
+  for(const b of objects){
+    if(b.legacy)continue;
+    const ov=rectOverlap(b,rect);
+    if(ov>0)object=Math.max(object,Math.round(20+35*Math.min(1,ov/boxArea(b))));
+  }
+  const safety=zoneScore(raw,placement);
+  const middlePenalty=placement==="middle"?24:0;
+  const sidePenalty=alignment==="center"?0:4;
+  return {face,object,safety,score:safety-face-(object*.35)-middlePenalty-sidePenalty};
+}
+function computeFaceSafeLayout(raw,requested="lower",hasSecondLine=false,style="short"){
+  if(!raw||!Object.keys(raw).length){
+    return {
+      placement:"lower",horizontalAlign:"center",
+      textRect:{x:.12,y:.59,w:.76,h:.13},
+      allowSecondLine:false,fontScale:.72,compact:true,
+      faceOcclusionPenalty:18,layoutScore:68,maxLines:2
+    };
+  }
+  const choices=[];
+  for(const placement of ["top","lower","bottom","upper","middle"]){
+    const band=SAFE_BANDS[placement];
+    for(const alignment of ["center","left","right"]){
+      const col=SAFE_COLUMNS[alignment];
+      const rect={x:col.x,y:band.y,w:col.w,h:band.h};
+      const r=rectRisk(raw,placement,alignment,rect);
+      let score=r.score+(placement===requested?4:0);
+      if(alignment!=="center"&&r.face===0)score+=2;
+      choices.push({placement,horizontalAlign:alignment,textRect:rect,...r,score});
+    }
+  }
+  choices.sort((a,b)=>b.score-a.score);
+  let best=choices[0]||{
+    placement:"lower",horizontalAlign:"center",textRect:{x:.12,y:.59,w:.76,h:.13},
+    face:15,safety:70,score:55
+  };
+
+  // Never knowingly render over a face. If every candidate is risky, use a compact bottom band.
+  if(best.face>25){
+    best={
+      placement:"bottom",horizontalAlign:"center",textRect:{x:.14,y:.72,w:.72,h:.095},
+      face:Math.min(best.face,24),object:0,safety:64,score:40
+    };
+  }
+
+  const safe=raw.textSafeZone||{};
+  const maxLines=Math.max(1,Math.min(3,Number(safe.maxLines)||2));
+  const allowSecondLine=Boolean(
+    hasSecondLine &&
+    best.face<=8 &&
+    best.safety>=88 &&
+    maxLines>=2 &&
+    safe.secondLineSafe!==false
+  );
+  const compact=best.face>8||best.safety<82||best.horizontalAlign!=="center";
+  const fontScale=style==="wall"
+    ? (compact?.76:.88)
+    : (best.horizontalAlign!=="center"?.72:compact?.80:1);
+
   return {
-    ...base,
-    placement:"lower",
-    horizontalAlign:"center",
-    secondLine:"",
-    textRect:{x:.12,y:.79,w:.76,h:.065},
-    fontScale:.68,
-    compact:true,
-    faceOcclusionPenalty:Number(base.faceOcclusionPenalty)||18,
-    layoutScore:Number(base.layoutScore)||70
+    placement:best.placement,
+    horizontalAlign:best.horizontalAlign,
+    textRect:best.textRect,
+    allowSecondLine,
+    fontScale,
+    compact,
+    faceOcclusionPenalty:Math.round(best.face||0),
+    layoutScore:Math.max(0,Math.min(100,Math.round((best.safety||0)-(best.face||0)))),
+    maxLines:allowSecondLine?Math.min(3,maxLines):2
   };
 }
 function metaFor(index){
-  const custom=HOOK_META[index];
-  const base=custom||demoHookFor(index);
-
-  // Exact hook-specific geometry wins only when its measured face risk is truly low.
-  if(custom?.textRect){
-    if(Number(custom.faceOcclusionPenalty)>8)return emergencyFaceSafe(custom);
-    return {
-      ...base,
-      placement:["top","lower"].includes(base.placement)?base.placement:"lower",
-      horizontalAlign:["left","center","right"].includes(base.horizontalAlign)?base.horizontalAlign:"center",
-      secondLine:base.secondLine||"",
-      textRect:base.textRect,
-      fontScale:Number(base.fontScale)||1,
-      compact:Boolean(base.compact),
-      faceOcclusionPenalty:Number(base.faceOcclusionPenalty)||0,
-      layoutScore:Number(base.layoutScore)||0
-    };
-  }
-
-  const layout=VIDEO_LAYOUTS[index];
-  if(layout){
-    if(Number(layout.faceOcclusionPenalty)>8)return emergencyFaceSafe({...base,...layout});
-    const allowSecond=layout.allowSecondLine!==false;
-    return {
-      ...base,
-      placement:layout.placement||(["top","lower"].includes(base.placement)?base.placement:"lower"),
-      horizontalAlign:layout.horizontalAlign||base.horizontalAlign||"center",
-      secondLine:allowSecond?(base.secondLine||""):"",
-      textRect:layout.textRect||base.textRect||null,
-      fontScale:Number(layout.fontScale)||Number(base.fontScale)||1,
-      compact:Boolean(layout.compact)||Boolean(base.compact),
-      faceOcclusionPenalty:Number(layout.faceOcclusionPenalty)||Number(base.faceOcclusionPenalty)||0,
-      layoutScore:Number(layout.layoutScore)||Number(base.layoutScore)||0
-    };
-  }
-
-  return emergencyFaceSafe(base);
+  const base=HOOK_META[index]||demoHookFor(index);
+  const raw=VIDEO_LAYOUTS[index]||VIDEO_MATCHES[index]?.intelligence||null;
+  const decision=computeFaceSafeLayout(raw,base.placement||"lower",Boolean(base.secondLine),base.style||"short");
+  return {
+    ...base,
+    placement:decision.placement,
+    horizontalAlign:decision.horizontalAlign,
+    textRect:decision.textRect,
+    secondLine:decision.allowSecondLine?(base.secondLine||""):"",
+    secondLineSuppressed:Boolean(base.secondLine)&&!decision.allowSecondLine,
+    fontScale:Math.min(Number(base.hookScale)||1,decision.fontScale),
+    compact:decision.compact||Boolean(base.compact),
+    faceOcclusionPenalty:Math.max(Number(base.faceOcclusionPenalty)||0,decision.faceOcclusionPenalty),
+    layoutScore:Math.min(Number(base.layoutScore)||100,decision.layoutScore),
+    maxLines:decision.maxLines
+  };
+}
+function setHookGeometry(node,meta){
+  if(!node)return;
+  const rect=meta?.textRect||{x:.12,y:.59,w:.76,h:.13};
+  const scale=Math.max(.62,Math.min(1,Number(meta?.fontScale)||1));
+  const baseSize=Number(fontSize?.value)||6.6;
+  const isWall=meta?.style==="wall";
+  const size=(isWall?baseSize*(5.4/6.6):baseSize)*scale;
+  const secondary=baseSize*(5/6.6)*Math.min(scale,.92);
+  node.style.setProperty("--hook-left",(rect.x*100).toFixed(2)+"%");
+  node.style.setProperty("--hook-top",(rect.y*100).toFixed(2)+"%");
+  node.style.setProperty("--hook-width",(rect.w*100).toFixed(2)+"%");
+  node.style.setProperty("--hook-font-size",size.toFixed(2)+"cqi");
+  node.style.setProperty("--hook-secondary-font-size",secondary.toFixed(2)+"cqi");
+  node.style.setProperty("--hook-max-height",(rect.h*100).toFixed(2)+"%");
+  node.dataset.align=meta?.horizontalAlign||"center";
+  node.dataset.maxLines=String(meta?.maxLines||2);
 }
 async function loadVideoLayouts(){
   try{
     const r=await fetch("/api/video-layouts",{cache:"no-store"});
     const data=await r.json();
-    if(!r.ok||!Array.isArray(data.items))return;
+    const rows=Array.isArray(data.layouts)?data.layouts:Array.isArray(data.items)?data.items:[];
+    if(!r.ok||!rows.length)return;
     VIDEO_LAYOUTS=new Array(ALL.length).fill(null);
-    for(const item of data.items){
+    for(const item of rows){
       const idx=Number(item.index)-1;
       if(idx>=0&&idx<ALL.length)VIDEO_LAYOUTS[idx]=item;
     }
@@ -998,7 +1113,7 @@ function applyHookToCard(card,index){
   if(primary)primary.textContent=text;
   if(secondary){secondary.textContent=meta.secondLine||"";secondary.hidden=!meta.secondLine}
   card.classList.toggle("has-hook",Boolean(text));
-  card.dataset.placement=meta.placement||"upper";
+  card.dataset.placement=meta.placement||"lower";
   card.dataset.hookStyle=meta.style||"short";
   card.dataset.quality=meta.quality||"";
   card.dataset.accepted=meta.accepted===false?"false":"true";
