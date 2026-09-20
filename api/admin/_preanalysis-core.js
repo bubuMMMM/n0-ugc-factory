@@ -6,7 +6,7 @@ const {extract}=require('../_video-frames');
 const db=require('../_db');
 
 const VERSION='video-intel-v4-visual-only';
-const BATCH=4;
+const BATCH=2;
 
 function s(v,n=400){return String(v||'').replace(/\s+/g,' ').trim().slice(0,n)}
 function readUrls(){
@@ -176,12 +176,18 @@ async function analyze(rows){
 }
 async function createJob(){
   await ensureJobTable();
+  await db.query("update preanalysis_jobs set active=false,updated_at=now() where active=true");
   const c=await counts();
   const r=await db.query(
     "insert into preanalysis_jobs(active,total,ready,pending,errors,processing) values(true,$1,$2,$3,$4,$5) returning id",
     [c.total,c.ready,c.pending,c.errors,c.processing]
   );
   return r.rows[0].id;
+}
+async function latestActiveJob(){
+  await ensureJobTable();
+  const r=await db.query("select * from preanalysis_jobs where active=true order by started_at desc limit 1");
+  return r.rows[0]||null;
 }
 async function getJob(id){
   await ensureJobTable();
@@ -202,6 +208,19 @@ async function finishJob(id,c,lastError){
     [id,c.total,c.ready,c.pending,c.errors,c.processing,lastError||null]
   );
 }
+async function pauseJob(id,c,lastError){
+  await ensureJobTable();
+  await db.query(
+    "update preanalysis_jobs set active=false,total=$2,ready=$3,pending=$4,errors=$5,processing=$6,last_error=$7,updated_at=now(),completed_at=null where id=$1",
+    [id,c.total,c.ready,c.pending,c.errors,c.processing,lastError||null]
+  );
+}
+function transientError(code){
+  return ['AI_GATEWAY_RATE_LIMIT','AI_GATEWAY_TIMEOUT','AI_GATEWAY_UNAVAILABLE','EMBEDDING_TIMEOUT'].includes(code);
+}
+function blockingGatewayError(code){
+  return ['AI_GATEWAY_INSUFFICIENT_FUNDS','AI_GATEWAY_AUTH_ERROR','AI_GATEWAY_NOT_CONFIGURED','AI_MODEL_UNAVAILABLE'].includes(code);
+}
 async function resetErrors(){
   await db.query("update video_intelligence set status='pending',error_message=null where status='error'");
 }
@@ -212,16 +231,36 @@ async function runBatch(jobId){
   await recoverStale();
   const rows=await claim(BATCH);
   let lastError=null,saved=[];
+
   if(rows.length){
-    try{saved=await analyze(rows)}
-    catch(error){
-      lastError=s(error?.message||'BATCH_FAILED',500);
-      await Promise.allSettled(rows.map(row=>db.query(
-        "update video_intelligence set status='error',error_message=$2 where id=$1",
-        [row.id,lastError]
-      )));
+    try{
+      saved=await analyze(rows);
+    }catch(error){
+      const code=s(error&&error.message||'BATCH_FAILED',500);
+      lastError=code;
+      if(blockingGatewayError(code)){
+        await Promise.allSettled(rows.map(row=>db.query(
+          "update video_intelligence set status='pending',error_message=$2 where id=$1",
+          [row.id,code]
+        )));
+        const c=await counts();
+        await pauseJob(jobId,c,code);
+        return {stop:true,paused:true,counts:c,saved,lastError:code};
+      }
+      if(transientError(code)){
+        await Promise.allSettled(rows.map(row=>db.query(
+          "update video_intelligence set status='pending',error_message=$2 where id=$1",
+          [row.id,code]
+        )));
+      }else{
+        await Promise.allSettled(rows.map(row=>db.query(
+          "update video_intelligence set status='error',error_message=$2 where id=$1",
+          [row.id,code]
+        )));
+      }
     }
   }
+
   const c=await counts();
   if(Number(c.pending)===0&&Number(c.processing)===0){
     await finishJob(jobId,c,lastError);
@@ -230,8 +269,7 @@ async function runBatch(jobId){
   await updateJob(jobId,c,lastError);
   return {stop:false,counts:c,saved,lastError};
 }
-
 module.exports={
   VERSION,BATCH,MODEL,EMBEDDING_MODEL,
-  seed,recoverStale,counts,createJob,getJob,updateJob,finishJob,resetErrors,runBatch
+  seed,recoverStale,counts,createJob,getJob,latestActiveJob,updateJob,finishJob,pauseJob,resetErrors,runBatch
 };
