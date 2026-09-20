@@ -38,8 +38,10 @@ function schemaFor(count){
             action:{type:'string'},
             emotion:{type:'string'},
             visualCue:{type:'string'},
+            brandAnchor:{type:'string'},
             hook:{type:'string'},
             angle:{type:'string'},
+            mechanism:{type:'string',enum:['question','objection','pain','benefit','contrast','demonstration','list','opinion','curiosity','identity','proof','mistake','observation']},
             placement:{type:'string',enum:['top','upper','middle','lower']},
             confidence:{type:'integer',minimum:0,maximum:100},
             scores:{
@@ -56,7 +58,7 @@ function schemaFor(count){
             },
             rationale:{type:'string'}
           },
-          required:['index','scene','action','emotion','visualCue','hook','angle','placement','confidence','scores','rationale'],
+          required:['index','scene','action','emotion','visualCue','brandAnchor','hook','angle','mechanism','placement','confidence','scores','rationale'],
           additionalProperties:false
         }
       }
@@ -76,8 +78,10 @@ function normalize(videos,data){
       action:trim(r.action,140),
       emotion:trim(r.emotion,80),
       visualCue:trim(r.visualCue,120),
+      brandAnchor:trim(r.brandAnchor,180),
       hook:trim(r.hook,120),
       angle:trim(r.angle,90),
+      mechanism:['question','objection','pain','benefit','contrast','demonstration','list','opinion','curiosity','identity','proof','mistake','observation'].includes(r.mechanism)?r.mechanism:'observation',
       placement:['top','upper','middle','lower'].includes(r.placement)?r.placement:'upper',
       confidence:Math.max(0,Math.min(100,Number(r.confidence)||0)),
       scores:{
@@ -147,7 +151,9 @@ RÈGLES DE COPY:
 - Si joie/validation: bénéfice crédible ou objection résolue, sans résultat inventé.
 - Si scène neutre: insight client spécifique, FAQ ou opinion utile.
 - "visualCue" nomme le détail de la scène qui justifie le hook.
-- "rationale" explique en une phrase pourquoi hook + scène + marque fonctionnent ensemble.
+- "brandAnchor" reprend une information précise du profil (douleur, désir, FAQ, offre, preuve, différenciateur ou formulation client) qui justifie le hook. Pas de généralité.
+- "mechanism" décrit le mécanisme créatif dominant utilisé.
+- "rationale" explique en une phrase pourquoi brandAnchor + visualCue + hook fonctionnent ensemble.
 - placement évite visage, mains et objet clé.
 ${revision?`\\nMODE RÉVISION:\\n${revision}`:''}
 
@@ -192,10 +198,11 @@ module.exports=async function handler(req,res){
 
   try{
     let results=await generate(videos,profile,avoid,angleUsage);
-    const weak=results.filter(r=>r.confidence<76||score(r)<82||Math.min(...Object.values(r.scores))<QUALITY_MIN||genericHook(r.hook)||tooSimilar(r.hook,avoid));
+    const currentHooks=results.map(r=>r.hook);
+    const weak=results.filter(r=>r.confidence<76||score(r)<82||Math.min(...Object.values(r.scores))<QUALITY_MIN||genericHook(r.hook)||!r.visualCue||r.visualCue.length<5||!r.brandAnchor||r.brandAnchor.length<5||tooSimilar(r.hook,[...avoid,...currentHooks.filter(x=>x!==r.hook)]));
     if(weak.length){
       const weakVideos=videos.filter(v=>weak.some(w=>w.index===v.index));
-      const critique=weak.map(r=>`#${r.index} REJETÉ — hook: "${r.hook}" — scores: ${JSON.stringify(r.scores)} — raison: ${r.rationale}. Réécris avec une accroche plus spécifique au visualCue "${r.visualCue}" et à un insight précis de la marque.`).join('\\n');
+      const critique=weak.map(r=>`#${r.index} REJETÉ — hook: "${r.hook}" — scores: ${JSON.stringify(r.scores)} — raison: ${r.rationale}. Réécris avec une accroche plus spécifique au visualCue "${r.visualCue}" et à l'ancre marque "${r.brandAnchor}".`).join('\\n');
       const revised=await generate(weakVideos,profile,[...avoid,...results.map(r=>r.hook)],angleUsage,critique);
       const revisedMap=new Map(revised.map(r=>[r.index,r]));
       results=results.map(r=>revisedMap.get(r.index)||r);
