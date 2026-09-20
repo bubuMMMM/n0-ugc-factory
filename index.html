@@ -942,7 +942,7 @@ function demoHookFor(index){
   }
 
   return {
-    hook:safeHook,
+    hook:item.hook||safeHook,
     secondLine:layout.allowSecondLine?(dynamic||item.second||""):"",
     placement:layout.placement||"top",
     horizontalAlign:layout.horizontalAlign||"center",
@@ -1263,10 +1263,13 @@ function render(reset=false){
 function apply(){shown=[...ALL];render(true)}
 function refreshVisibleHooks(){document.querySelectorAll(".card[data-index]").forEach(card=>applyHookToCard(card,Number(card.dataset.index)))}
 function updateProgress(message){
-  const done=HOOKS.filter(Boolean).length,pct=Math.round(done/ALL.length*100);
-  hookCount.textContent=done.toLocaleString("fr-FR")+" / "+ALL.length.toLocaleString("fr-FR");
-  progressFill.style.width=pct+"%";progressTrack?.setAttribute("aria-valuenow",String(done));
-  if(message) studioStatus.textContent=message;
+  const generated=HOOKS.filter(Boolean).length;
+  const validated=HOOK_META.filter(x=>x?.grounded===true&&x?.accepted!==false).length;
+  const pct=Math.round(validated/ALL.length*100);
+  hookCount.textContent=validated.toLocaleString("fr-FR")+" validés · "+generated.toLocaleString("fr-FR")+" générés / "+ALL.length.toLocaleString("fr-FR");
+  progressFill.style.width=pct+"%";
+  progressTrack?.setAttribute("aria-valuenow",String(validated));
+  if(message)studioStatus.textContent=message;
 }
 function saveProject(){
   try{localStorage.setItem("videoma_project_v3",JSON.stringify({website:PROJECT_WEBSITE,profile:PROFILE,brandProfileId:BRAND_PROFILE_ID,hooks:HOOKS,hookMeta:HOOK_META,style:{font:fontSelect.value,size:Number(fontSize.value)}}))}catch{}
@@ -1467,7 +1470,7 @@ async function fallbackTextHooks(indices){
   for(const group of groups){
     const start=group[0],count=group.length;
     try{
-      const data=await postJSON("/api/hooks",{profile:PROFILE,start,count,total:ALL.length,avoid:HOOKS.filter(Boolean).slice(-40)});
+      const data=await postJSON("/api/hooks",{profile:PROFILE,indices:group.map(i=>i+1),total:ALL.length,avoid:HOOKS.filter(Boolean).slice(-40)});
       for(const h of data.hooks||[]){
         const idx=Number(h.index)-1;
         if(group.includes(idx)&&idx>=0&&idx<ALL.length){
@@ -1577,11 +1580,11 @@ function generateLocalProjectHooks(reason='Mode local'){
   const angleNames=['question','pov','value','diagnostic','comparison','objection','benefit','observation'];
   for(let i=0;i<ALL.length;i++){
     HOOKS[i]=localPersonalizedHook(i,PROFILE);
-    HOOK_META[i]={placement:'lower',style:'short',secondLine:'',quality:68,grounded:true,source:'local-html-fallback',accepted:true,mechanism:angleNames[i%angleNames.length],angle:angleNames[i%angleNames.length],brandAnchor:shortWords(PROFILE&&PROFILE.primaryOffer||PROFILE&&PROFILE.summary||'',8,70),visualCue:'',scores:null,confidence:60,faceOcclusionPenalty:0,layoutScore:70,hookScale:.9,maxLines:2,rationale:'Hook local construit à partir du contenu réel du site; placement recalculé côté navigateur pour protéger le visage.'};
+    HOOK_META[i]={placement:'lower',style:'short',secondLine:'',quality:55,grounded:false,source:'local-html-fallback',accepted:false,mechanism:angleNames[i%angleNames.length],angle:angleNames[i%angleNames.length],brandAnchor:shortWords(PROFILE&&PROFILE.primaryOffer||PROFILE&&PROFILE.summary||'',8,70),visualCue:'',scores:null,confidence:50,faceOcclusionPenalty:35,layoutScore:45,hookScale:.78,maxLines:2,rationale:'Brouillon local construit à partir du contenu du site. Visible dans la démo mais non validé tant que la vidéo n’a pas passé le matching et le QA.'};
   }
   refreshVisibleHooks();
-  updateProgress('1 017 hooks prêts · '+reason);
-  studioStatus.textContent='1 017 hooks générés · mode local sans dépendance IA';
+  updateProgress('1 017 brouillons visibles · '+reason);
+  studioStatus.textContent='1 017 brouillons affichés · validation IA/vidéo encore requise';
   saveProject();
 }
 
@@ -1673,7 +1676,7 @@ async function generateMissing(){
           catch(e){
             failed+=batch.length;
             console.error("intelligence batch failed",batch,e);
-            if(/^AI_|^EMBEDDING_|^JEV_/.test(e.message||""))throw e;
+            if(/^(AI_|OPENAI_|EMBEDDING_|JEV_)/.test(e.message||""))throw e;
           }
         }
       }
@@ -1689,7 +1692,7 @@ async function generateMissing(){
         catch(e){
           failed+=batch.length;
           console.error("visual preview failed",batch,e);
-          if(/^AI_|^JEV_/.test(e.message||""))throw e;
+          if(/^(AI_|OPENAI_|JEV_)/.test(e.message||""))throw e;
         }
       }
     }
