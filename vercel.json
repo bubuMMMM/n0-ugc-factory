@@ -30,7 +30,7 @@
   ],
   "functions": {
     "api/analyze.js": {
-      "maxDuration": 60
+      "maxDuration": 180
     },
     "api/hooks.js": {
       "maxDuration": 60
