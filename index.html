@@ -519,6 +519,96 @@ header{background:transparent}
   .hero-note{font-size:11.5px}
 }
 
+
+/* Hero spacing + annotation polish */
+.hero-simple{
+  padding:76px 0 0;
+  align-items:stretch;
+}
+.hero-simple-inner{
+  min-height:0;
+  height:100%;
+  justify-content:flex-start;
+  padding-top:clamp(28px,6.5svh,62px);
+}
+.hero-simple h1{
+  margin-bottom:15px;
+}
+.hero-subtitle{
+  margin-bottom:24px;
+  line-height:1.42;
+}
+.hero-form-wrap{
+  padding-bottom:50px;
+}
+.site-form{
+  position:relative;
+}
+.site-error{
+  position:absolute;
+  left:24px;
+  top:calc(100% + 6px);
+  margin:0;
+  min-height:0;
+  font-size:11px;
+}
+.hero-note{
+  right:18px;
+  bottom:1px;
+  align-items:flex-start;
+  gap:7px;
+  transform:rotate(-1.5deg);
+}
+.note-arrow{
+  width:94px;
+  height:50px;
+  margin-top:-25px;
+  flex:0 0 auto;
+}
+@media(max-width:680px){
+  .hero-simple{
+    padding:62px 0 0;
+  }
+  .hero-simple-inner{
+    padding-top:20px;
+    justify-content:flex-start;
+  }
+  .hero-simple h1{
+    margin-bottom:11px;
+  }
+  .hero-subtitle{
+    margin-bottom:16px;
+    line-height:1.38;
+  }
+  .hero-form-wrap{
+    padding-bottom:45px;
+  }
+  .site-error{
+    left:12px;
+    top:calc(100% + 3px);
+    font-size:10px;
+  }
+  .hero-note{
+    right:4px;
+    bottom:1px;
+    gap:3px;
+    font-size:12px;
+  }
+  .note-arrow{
+    width:66px;
+    height:39px;
+    margin-top:-19px;
+  }
+}
+@media(max-width:390px) and (max-height:720px){
+  .hero-simple-inner{padding-top:11px}
+  .hero-simple h1{margin-bottom:8px}
+  .hero-subtitle{margin-bottom:11px}
+  .hero-form-wrap{padding-bottom:39px}
+  .hero-note{font-size:10.5px}
+  .note-arrow{width:58px;height:34px;margin-top:-16px}
+}
+
 </style>
 </head>
 <body>
@@ -540,8 +630,11 @@ header{background:transparent}
         <div id="siteError" class="site-error" aria-live="polite"></div>
       </form>
       <div class="hero-note" aria-hidden="true">
-        <svg class="note-arrow" viewBox="0 0 88 54" fill="none"><path d="M84 48C57 47 31 39 19 22C14 15 10 8 8 4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M3 12L8 4L16 8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
         <span>Collez votre site web<br>et laissez l’IA travailler</span>
+        <svg class="note-arrow" viewBox="0 0 118 62" fill="none">
+          <path d="M8 54C38 53 57 43 71 29C82 18 91 10 107 7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <path d="M98 3L108 7L102 16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
       </div>
     </div>
   </div>
