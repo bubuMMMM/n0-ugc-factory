@@ -628,6 +628,14 @@ header{background:transparent}
 .card[data-placement="lower"] .hook-overlay,.modal-hook[data-placement="lower"]{top:auto!important;bottom:29%!important;transform:none!important}
 .card[data-accepted="false"]{outline:1px solid rgba(255,177,59,.55);outline-offset:-1px}
 
+
+.studio-labels{display:flex;align-items:center;gap:8px}
+.qa-pill{
+  display:inline-flex;align-items:center;height:22px;padding:0 8px;border:1px solid #1d3551;
+  border-radius:999px;background:#07111d;color:#78baff;font:650 9px/1 ui-monospace,SFMono-Regular,Menlo,monospace;
+  letter-spacing:.02em;text-transform:none
+}
+
 </style>
 </head>
 <body>
@@ -656,7 +664,7 @@ header{background:transparent}
 <section id="studio" class="wrap studio-panel" hidden>
   <div class="studio-head">
     <div>
-      <span class="studio-kicker">Studio</span>
+      <div class="studio-labels"><span class="studio-kicker">Studio</span><span class="qa-pill">GPT‑5.6 → Jev QA</span></div>
       <h2 id="studioTitle">Analyse du site…</h2>
       <p id="studioMeta">GPT‑5.6 prépare les hooks.</p>
     </div>
@@ -999,7 +1007,7 @@ async function generateIntelligenceBatch(indices){
       angle:r.mechanism||"",scores:r.scores||null,confidence:Number(r.scores?.visualFit)||0,rationale:r.rationale||""
     };
   }
-  refreshVisibleHooks();updateProgress("Hooks depuis la Video Intelligence Database…");saveProject();return true;
+  refreshVisibleHooks();updateProgress("GPT‑5.6 génère · Jev valide…");saveProject();return true;
 }
 async function generateMissing(){
   if(generating||!PROFILE)return;
