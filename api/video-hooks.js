@@ -2,6 +2,7 @@ const {gatewayJson,MODEL,credential,canDirect}=require('./_ai');
 const {statusForAiCode}=require('./_gateway-errors');
 const {evaluateHook,mapLimit,JEV_MODEL}=require('./_jev');
 const {resolveLayout}=require('./_layout');
+const {LAYOUT_VERSION}=require('./_versions');
 
 const MAX_ITEMS=8;
 const QUALITY_MIN=78;
@@ -234,7 +235,12 @@ async function generate(videos,profile,avoid,angleUsage={},revision=''){
       textRect:layout.textRect||null,
       fontScale:Number(layout.fontScale)||1,
       compact:Boolean(layout.compact),
-      layoutScore:Number(layout.layoutScore)||0
+      layoutScore:Number(layout.layoutScore)||0,
+      objectOcclusionPenalty:Number(layout.objectOcclusionPenalty)||0,
+      maxLines:Number(layout.maxLines)||2,
+      noSafeZone:Boolean(layout.noSafeZone),
+      safeForAutoApproval:Boolean(layout.safeForAutoApproval),
+      layoutVersion:LAYOUT_VERSION
     };
   });
 }
@@ -363,6 +369,8 @@ module.exports=async function handler(req,res){
         ['jev','openai-fallback'].includes(r.evaluationStatus)&&
         Number(r.jevAcceptProbability)>=.80&&
         Number(r.faceOcclusionPenalty)<=8&&
+        r.safeForAutoApproval!==false&&
+        !r.noSafeZone&&
         !qaWeak(r)&&
         !genericHook(r.hook)&&
         !tooSimilar(r.hook,avoid)
@@ -371,7 +379,6 @@ module.exports=async function handler(req,res){
     return res.status(200).json({
       results,model:MODEL,evaluator:JEV_MODEL,grounded:true,revised:weak.length,
       jevEvaluated:results.filter(x=>x.evaluationStatus==='jev').length,
-      openaiEvaluated:results.filter(x=>x.evaluationStatus==='openai').length,
       openaiEvaluated:results.filter(x=>x.evaluationStatus==='openai-fallback').length,
       faceSafe:results.filter(x=>Number(x.faceOcclusionPenalty)<=22).length
     });
