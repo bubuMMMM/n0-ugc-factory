@@ -223,10 +223,18 @@ async function pauseJob(id,c,lastError){
   );
 }
 function transientError(code){
-  return ['AI_GATEWAY_RATE_LIMIT','AI_GATEWAY_TIMEOUT','AI_GATEWAY_UNAVAILABLE','EMBEDDING_TIMEOUT'].includes(code);
+  return [
+    'AI_GATEWAY_RATE_LIMIT','AI_GATEWAY_TIMEOUT','AI_GATEWAY_UNAVAILABLE','EMBEDDING_TIMEOUT',
+    'OPENAI_API_RATE_LIMIT','OPENAI_API_TIMEOUT','OPENAI_API_UNAVAILABLE',
+    'OPENAI_EMBEDDING_RATE_LIMIT','OPENAI_EMBEDDING_TIMEOUT','OPENAI_EMBEDDING_UNAVAILABLE'
+  ].includes(code);
 }
 function blockingGatewayError(code){
-  return ['AI_GATEWAY_INSUFFICIENT_FUNDS','AI_GATEWAY_AUTH_ERROR','AI_GATEWAY_NOT_CONFIGURED','AI_MODEL_UNAVAILABLE'].includes(code);
+  return [
+    'AI_GATEWAY_INSUFFICIENT_FUNDS','AI_GATEWAY_AUTH_ERROR','AI_GATEWAY_NOT_CONFIGURED','AI_MODEL_UNAVAILABLE',
+    'OPENAI_API_INSUFFICIENT_FUNDS','OPENAI_API_AUTH_ERROR','OPENAI_API_NOT_CONFIGURED',
+    'OPENAI_EMBEDDING_INSUFFICIENT_FUNDS','OPENAI_EMBEDDING_AUTH_ERROR'
+  ].includes(code);
 }
 async function resetErrors(){
   await db.query("update video_intelligence set status='pending',error_message=null where status='error'");
