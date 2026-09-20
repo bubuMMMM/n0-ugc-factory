@@ -15,8 +15,22 @@ function gatewayError(raw,status,fallback='AI_GATEWAY_ERROR'){
   e.code=code;e.status=status;e.detail=String(raw||'').slice(0,1200);
   return e;
 }
+function openaiError(raw,status,prefix='OPENAI_API'){
+  const data=parseJson(raw);
+  const type=String(data&&data.error&&data.error.type||'');
+  const codeValue=String(data&&data.error&&data.error.code||'');
+  const message=String(data&&data.error&&data.error.message||raw||'');
+  let code=prefix+'_ERROR';
+  if(status===401||status===403)code=prefix+'_AUTH_ERROR';
+  else if(status===429&&(/insufficient_quota|billing|credit|quota/i.test(type+' '+codeValue+' '+message)))code=prefix+'_INSUFFICIENT_FUNDS';
+  else if(status===429)code=prefix+'_RATE_LIMIT';
+  else if(status>=500)code=prefix+'_UNAVAILABLE';
+  const e=new Error(code);
+  e.code=code;e.status=status;e.detail=String(raw||'').slice(0,1200);
+  return e;
+}
 function isTimeout(error){
   const s=String(error&&error.message||error||'');
   return error&&error.name==='AbortError'||/aborted|timeout/i.test(s);
 }
-module.exports={gatewayError,isTimeout};
+module.exports={gatewayError,openaiError,isTimeout};
