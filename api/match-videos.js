@@ -76,7 +76,8 @@ module.exports=async function handler(req,res){
     const profileEmbedding=(await embedMany([profileText]))[0];
     let profileId=null;
     if(/^[0-9a-f-]{36}$/i.test(requestedProfileId)){
-      const existing=await db.query("select id from brand_profiles where id=$1",[requestedProfileId]);
+      const requestedDomain=domainOf(website);
+      const existing=await db.query("select id from brand_profiles where id=$1 and domain=$2",[requestedProfileId,requestedDomain]);
       if(existing.rows[0]){
         profileId=existing.rows[0].id;
         await db.query(
