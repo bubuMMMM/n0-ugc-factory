@@ -1,4 +1,4 @@
-const {gatewayJson,MODEL,credential}=require('./_ai');
+const {gatewayJson,MODEL,credential,canDirect}=require('./_ai');
 const {evaluateHook,mapLimit,JEV_MODEL}=require('./_jev');
 
 const MAX_ITEMS=8;
@@ -43,7 +43,8 @@ function schemaFor(count){
             hook:{type:'string'},
             angle:{type:'string'},
             mechanism:{type:'string',enum:['question','objection','pain','benefit','contrast','demonstration','list','opinion','curiosity','identity','proof','mistake','observation']},
-            placement:{type:'string',enum:['top','upper','middle','lower']},
+            placement:{type:'string',enum:['top','lower']},
+            faceOcclusionPenalty:{type:'integer',minimum:0,maximum:100},
             confidence:{type:'integer',minimum:0,maximum:100},
             scores:{
               type:'object',
@@ -59,7 +60,7 @@ function schemaFor(count){
             },
             rationale:{type:'string'}
           },
-          required:['index','scene','action','emotion','visualCue','brandAnchor','hook','angle','mechanism','placement','confidence','scores','rationale'],
+          required:['index','scene','action','emotion','visualCue','brandAnchor','hook','angle','mechanism','placement','faceOcclusionPenalty','confidence','scores','rationale'],
           additionalProperties:false
         }
       }
@@ -83,7 +84,8 @@ function normalize(videos,data){
       hook:trim(r.hook,120),
       angle:trim(r.angle,90),
       mechanism:['question','objection','pain','benefit','contrast','demonstration','list','opinion','curiosity','identity','proof','mistake','observation'].includes(r.mechanism)?r.mechanism:'observation',
-      placement:['top','upper','middle','lower'].includes(r.placement)?r.placement:'upper',
+      placement:['top','lower'].includes(r.placement)?r.placement:'top',
+      faceOcclusionPenalty:Math.max(0,Math.min(100,Number(r.faceOcclusionPenalty)||0)),
       confidence:Math.max(0,Math.min(100,Number(r.confidence)||0)),
       scores:{
         visualFit:Math.max(0,Math.min(100,Number(r.scores?.visualFit)||0)),
@@ -157,7 +159,9 @@ RÈGLES DE COPY:
 - "brandAnchor" reprend une information précise du profil (douleur, désir, FAQ, offre, preuve, différenciateur ou formulation client) qui justifie le hook. Pas de généralité.
 - "mechanism" décrit le mécanisme créatif dominant utilisé.
 - "rationale" explique en une phrase pourquoi brandAnchor + visualCue + hook fonctionnent ensemble.
-- placement évite visage, mains et objet clé.
+- FACE-FIRST: placement est uniquement "top" ou "lower". Compare les 4 frames et choisis la bande qui ne couvre jamais les yeux, le nez ou la bouche.
+- faceOcclusionPenalty: 0 signifie aucune collision probable avec un visage sur les 4 frames; 100 signifie que le texte masque clairement un visage. Au-dessus de 22, le résultat est rejeté et doit être réécrit/repositionné.
+- Si aucune zone n’est parfaite, raccourcis le hook plutôt que de couvrir le visage.
 ${revision?`\\nMODE RÉVISION:\\n${revision}`:''}
 
 PROFIL DE MARQUE:
@@ -196,14 +200,15 @@ function jevOverall(scores){
 }
 function jevWeak(r){
   const q=r.jevScores||{};
-  return r.evaluationStatus==='jev'&&(
+  return ['jev','openai-fallback'].includes(r.evaluationStatus)&&(
     Number(r.jevAcceptProbability)<.80||
     jevOverall(q)<84||
     Number(q.visualFit)<82||
     Number(q.brandFit)<82||
     Number(q.claimSafety)<95||
     Number(q.readability)<82||
-    Number(q.novelty)<76
+    Number(q.novelty)<76||
+    Number(r.faceOcclusionPenalty)>22
   );
 }
 async function evaluateVisualResults(profile,results,avoid){
@@ -216,6 +221,8 @@ async function evaluateVisualResults(profile,results,avoid){
         mechanism:r.mechanism||r.angle||'observation',
         visualAnchor:r.visualCue,
         brandAnchor:r.brandAnchor,
+        placement:r.placement,
+        faceOcclusionPenalty:r.faceOcclusionPenalty,
         video:{
           scene:r.scene,
           action:r.action,
@@ -236,7 +243,7 @@ async function evaluateVisualResults(profile,results,avoid){
         jevAcceptProbability:ev.acceptProbability,
         jevAnswers:ev.answers,
         evaluatorModel:ev.model||JEV_MODEL,
-        evaluationStatus:'jev',
+        evaluationStatus:ev.provider||'jev',
         quality:jevOverall(ev.scores)
       };
     }catch(error){
@@ -256,7 +263,7 @@ async function evaluateVisualResults(profile,results,avoid){
 module.exports=async function handler(req,res){
   res.setHeader('Cache-Control','no-store');
   if(req.method==='GET')return res.status(200).json({
-    configured:Boolean(credential()),model:MODEL,evaluator:JEV_MODEL,maxItems:MAX_ITEMS,vision:true,qualityMin:QUALITY_MIN
+    configured:Boolean(credential()||canDirect()),gatewayConfigured:Boolean(credential()),directOpenAIConfigured:Boolean(canDirect()),model:MODEL,evaluator:JEV_MODEL,maxItems:MAX_ITEMS,vision:true,qualityMin:QUALITY_MIN
   });
   if(req.method!=='POST')return res.status(405).json({error:'METHOD_NOT_ALLOWED'});
   const profile=req.body?.profile;
@@ -279,6 +286,7 @@ module.exports=async function handler(req,res){
       !r.visualCue||r.visualCue.length<5||
       !r.brandAnchor||r.brandAnchor.length<5||
       tooSimilar(r.hook,[...avoid,...currentHooks.filter(x=>x!==r.hook)])||
+      Number(r.faceOcclusionPenalty)>22||
       jevWeak(r)
     );
 
@@ -300,10 +308,11 @@ module.exports=async function handler(req,res){
 
     results=results.map(r=>({
       ...r,
-      quality:r.evaluationStatus==='jev'?jevOverall(r.jevScores):score(r),
+      quality:['jev','openai-fallback'].includes(r.evaluationStatus)?jevOverall(r.jevScores):score(r),
       accepted:
-        r.evaluationStatus==='jev'&&
+        ['jev','openai-fallback'].includes(r.evaluationStatus)&&
         Number(r.jevAcceptProbability)>=.80&&
+        Number(r.faceOcclusionPenalty)<=22&&
         !jevWeak(r)&&
         !genericHook(r.hook)&&
         !tooSimilar(r.hook,avoid)
@@ -311,7 +320,9 @@ module.exports=async function handler(req,res){
 
     return res.status(200).json({
       results,model:MODEL,evaluator:JEV_MODEL,grounded:true,revised:weak.length,
-      jevEvaluated:results.filter(x=>x.evaluationStatus==='jev').length
+      jevEvaluated:results.filter(x=>x.evaluationStatus==='jev').length,
+      openaiEvaluated:results.filter(x=>x.evaluationStatus==='openai-fallback').length,
+      faceSafe:results.filter(x=>Number(x.faceOcclusionPenalty)<=22).length
     });
   }catch(err){
     console.error('video hooks error',err?.message,err?.status||'',err?.detail||'');
