@@ -1,0 +1,12 @@
+{
+  "name": "videoma",
+  "private": true,
+  "version": "0.2.0",
+  "description": "Video intelligence and brand-to-video hook matching",
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "pg": "^8.16.3"
+  }
+}
