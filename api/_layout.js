@@ -1,17 +1,32 @@
 function norm(value){
   return String(value||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
 }
+function verticalClass(region){
+  const r=norm(region);
+  const low=/\bbas\b|bottom|lower|inferieur/.test(r);
+  const high=/\bhaut\b|top|superieur/.test(r);
+  const center=/centre|center|middle|milieu/.test(r);
+  const spansCenter=/\ba\b centre|vers le centre|to center/.test(r);
+  if(low&&center)return 'lowcenter';
+  if(high&&center)return spansCenter?'highcenter':'high';
+  if(low)return 'low';
+  if(high)return 'high';
+  if(center)return 'center';
+  return 'unknown';
+}
 function facePenalty(faceRegions,placement){
-  const regions=(faceRegions||[]).map(norm);
+  const regions=(faceRegions||[]).map(verticalClass);
   if(!regions.length)return placement==='top'?12:18;
   let penalty=0;
-  for(const r of regions){
-    const high=/haut|top/.test(r),center=/centre|center|middle/.test(r),low=/bas|bottom|lower/.test(r);
-    let p=0;
-    if(placement==='top')p=high?95:center?28:low?4:18;
-    else if(placement==='upper')p=high?78:center?72:low?12:25;
-    else if(placement==='lower')p=low?88:center?58:high?8:22;
-    else p=90;
+  for(const cls of regions){
+    let p=18;
+    if(placement==='top'){
+      p=cls==='high'?92:cls==='highcenter'?82:cls==='center'?38:cls==='lowcenter'?14:cls==='low'?5:18;
+    }else if(placement==='upper'){
+      p=cls==='high'?78:cls==='highcenter'?82:cls==='center'?72:cls==='lowcenter'?30:cls==='low'?10:25;
+    }else if(placement==='lower'){
+      p=cls==='low'?92:cls==='lowcenter'?82:cls==='center'?62:cls==='highcenter'?24:cls==='high'?7:20;
+    }else p=90;
     penalty=Math.max(penalty,p);
   }
   return penalty;
