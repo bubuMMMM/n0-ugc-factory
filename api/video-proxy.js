@@ -13,8 +13,18 @@ module.exports=async function handler(req,res){
   try{
     const headers={'User-Agent':'videoma-video-proxy/1.0','Accept-Encoding':'identity'};
     if(req.headers.range)headers.Range=req.headers.range;
-    const upstream=await fetch(url,{headers,redirect:'follow',signal:AbortSignal.timeout(20000)});
-    if(!upstream.ok&&upstream.status!==206)return res.status(upstream.status).end();
+    let current=url,upstream;
+    for(let hop=0;hop<4;hop++){
+      upstream=await fetch(current,{headers,redirect:'manual',signal:AbortSignal.timeout(20000)});
+      if(upstream.status>=300&&upstream.status<400){
+        const loc=upstream.headers.get('location');if(!loc)return res.status(502).end();
+        current=validate(new URL(loc,current).href);continue;
+      }
+      break;
+    }
+    if(!upstream||(!upstream.ok&&upstream.status!==206))return res.status(upstream?.status||502).end();
+    const type=(upstream.headers.get('content-type')||'').toLowerCase();
+    if(type&&!type.startsWith('video/')&&!type.includes('octet-stream'))return res.status(415).end();
     res.status(upstream.status);
     for(const key of ['content-type','content-length','content-range','accept-ranges','etag','last-modified']){
       const value=upstream.headers.get(key);if(value)res.setHeader(key,value);
