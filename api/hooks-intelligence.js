@@ -204,8 +204,8 @@ async function persist(brandProfileId,videos,results){
       'insert into hook_assignments(',
       'brand_profile_id,video_id,brand_signal_id,hook,second_line,mechanism,visual_anchor,brand_anchor,placement,',
       'visual_fit,brand_fit,hook_strength,specificity,naturalness,claim_safety,novelty,readability,emotion_match,quality_score,accepted,rationale,generator_version,',
-      'jev_accept_probability,jev_answers,evaluator_model,evaluation_version,face_occlusion_penalty,layout_score,second_line_suppressed,layout_version,horizontal_align,text_rect,font_scale',
-      ') values($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24::jsonb,$25,$26,$27,$28,$29,$30,$31,$32::jsonb,$33)',
+      'jev_accept_probability,jev_answers,evaluator_model,evaluation_version,face_occlusion_penalty,layout_score,second_line_suppressed,layout_version,horizontal_align,text_rect,font_scale,hook_style,max_lines,safe_for_auto_approval',
+      ') values($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24::jsonb,$25,$26,$27,$28,$29,$30,$31,$32::jsonb,$33,$34,$35,$36)',
       'on conflict(brand_profile_id,video_id) do update set ',
       'brand_signal_id=excluded.brand_signal_id,hook=excluded.hook,second_line=excluded.second_line,mechanism=excluded.mechanism,',
       'visual_anchor=excluded.visual_anchor,brand_anchor=excluded.brand_anchor,placement=excluded.placement,',
@@ -214,7 +214,7 @@ async function persist(brandProfileId,videos,results){
       'emotion_match=excluded.emotion_match,quality_score=excluded.quality_score,accepted=excluded.accepted,rationale=excluded.rationale,',
       'generator_version=excluded.generator_version,jev_accept_probability=excluded.jev_accept_probability,jev_answers=excluded.jev_answers,',
       'evaluator_model=excluded.evaluator_model,evaluation_version=excluded.evaluation_version,',
-      'face_occlusion_penalty=excluded.face_occlusion_penalty,layout_score=excluded.layout_score,second_line_suppressed=excluded.second_line_suppressed,layout_version=excluded.layout_version,horizontal_align=excluded.horizontal_align,text_rect=excluded.text_rect,font_scale=excluded.font_scale'
+      'face_occlusion_penalty=excluded.face_occlusion_penalty,layout_score=excluded.layout_score,second_line_suppressed=excluded.second_line_suppressed,layout_version=excluded.layout_version,horizontal_align=excluded.horizontal_align,text_rect=excluded.text_rect,font_scale=excluded.font_scale,hook_style=excluded.hook_style,max_lines=excluded.max_lines,safe_for_auto_approval=excluded.safe_for_auto_approval'
     ].join(' ');
     await db.query(sql,[
       brandProfileId,v.intelligence.id,v.signal&&v.signal.id||null,r.hook,r.secondLine||null,r.mechanism,r.visualAnchor,r.brandAnchor,r.placement,
@@ -222,7 +222,8 @@ async function persist(brandProfileId,videos,results){
       r.scores.novelty,r.scores.readability,r.scores.emotionMatch,r.quality,Boolean(r.accepted),r.rationale,VERSION,
       Number(r.jevAcceptProbability)||0,JSON.stringify(r.jevAnswers||{}),r.evaluatorModel||JEV_MODEL,'evaluator-v2',
       Number(r.faceOcclusionPenalty)||0,Number(r.layoutScore)||0,Boolean(r.secondLineSuppressed),LAYOUT_VERSION,r.horizontalAlign||'center',
-      JSON.stringify(r.textRect||null),Number(r.fontScale)||1
+      JSON.stringify(r.textRect||null),Number(r.fontScale)||1,r.style==='wall'?'wall':'short',
+      Math.max(1,Math.min(3,Number(r.maxLines)||2)),Boolean(r.safeForAutoApproval)
     ]);
   }
 }
