@@ -1,6 +1,7 @@
 const {gatewayJson,MODEL,credential,canDirect}=require('./_ai');
 const {statusForAiCode}=require('./_gateway-errors');
 const {evaluateHook,mapLimit,JEV_MODEL}=require('./_jev');
+const {resolveLayout}=require('./_layout');
 
 const MAX_ITEMS=8;
 const QUALITY_MIN=78;
@@ -47,6 +48,19 @@ function schemaFor(count){
             placement:{type:'string',enum:['top','lower']},
             horizontalAlign:{type:'string',enum:['left','center','right']},
             faceOcclusionPenalty:{type:'integer',minimum:0,maximum:100},
+            faceRegions:{type:'array',items:{
+              type:'object',
+              properties:{
+                frame:{type:'integer',minimum:1,maximum:4},
+                x:{type:'number',minimum:0,maximum:1},
+                y:{type:'number',minimum:0,maximum:1},
+                w:{type:'number',minimum:0,maximum:1},
+                h:{type:'number',minimum:0,maximum:1},
+                confidence:{type:'integer',minimum:0,maximum:100}
+              },
+              required:['frame','x','y','w','h','confidence'],
+              additionalProperties:false
+            }},
             confidence:{type:'integer',minimum:0,maximum:100},
             scores:{
               type:'object',
@@ -62,7 +76,7 @@ function schemaFor(count){
             },
             rationale:{type:'string'}
           },
-          required:['index','scene','action','emotion','visualCue','brandAnchor','hook','angle','mechanism','placement','horizontalAlign','faceOcclusionPenalty','confidence','scores','rationale'],
+          required:['index','scene','action','emotion','visualCue','brandAnchor','hook','angle','mechanism','placement','horizontalAlign','faceOcclusionPenalty','faceRegions','confidence','scores','rationale'],
           additionalProperties:false
         }
       }
@@ -89,6 +103,14 @@ function normalize(videos,data){
       placement:['top','lower'].includes(r.placement)?r.placement:'top',
       horizontalAlign:['left','center','right'].includes(r.horizontalAlign)?r.horizontalAlign:'center',
       faceOcclusionPenalty:Math.max(0,Math.min(100,Number(r.faceOcclusionPenalty)||0)),
+      faceRegions:Array.isArray(r.faceRegions)?r.faceRegions.filter(x=>x&&typeof x==='object').map(x=>({
+        frame:Math.max(1,Math.min(4,Number(x.frame)||1)),
+        x:Math.max(0,Math.min(1,Number(x.x)||0)),
+        y:Math.max(0,Math.min(1,Number(x.y)||0)),
+        w:Math.max(0,Math.min(1,Number(x.w)||0)),
+        h:Math.max(0,Math.min(1,Number(x.h)||0)),
+        confidence:Math.max(0,Math.min(100,Number(x.confidence)||0))
+      })):[],
       confidence:Math.max(0,Math.min(100,Number(r.confidence)||0)),
       scores:{
         visualFit:Math.max(0,Math.min(100,Number(r.scores?.visualFit)||0)),
@@ -164,7 +186,9 @@ RÈGLES DE COPY:
 - "rationale" explique en une phrase pourquoi brandAnchor + visualCue + hook fonctionnent ensemble.
 - FACE-FIRST: placement est uniquement "top" ou "lower". Compare les 4 frames et choisis la bande qui ne couvre jamais les yeux, le nez ou la bouche.
 - horizontalAlign vaut left, center ou right. Si le visage est clairement d’un côté, décale le texte de l’autre côté plutôt que de le superposer au visage.
-- faceOcclusionPenalty: 0 signifie aucune collision probable avec un visage sur les 4 frames; 100 signifie que le texte masque clairement un visage. Au-dessus de 22, le résultat est rejeté et doit être réécrit/repositionné.
+- faceRegions: retourne une bounding box pour chaque visage visible sur chaque frame, coordonnées normalisées x/y/w/h de 0 à 1 relativement à LA FRAME, avec frame=1..4 et confidence 0-100.
+- Ne fusionne jamais les boxes entre frames. Entoure le visage entier, pas le buste.
+- faceOcclusionPenalty fourni par toi est indicatif: le serveur recalculera ensuite géométriquement la collision.
 - Si aucune zone n’est parfaite, raccourcis le hook plutôt que de couvrir le visage.
 ${revision?`\\nMODE RÉVISION:\\n${revision}`:''}
 
@@ -193,7 +217,26 @@ async function generate(videos,profile,avoid,angleUsage={},revision=''){
       {role:'user',content}
     ]
   });
-  return normalize(videos,data);
+  return normalize(videos,data).map(r=>{
+    const layout=resolveLayout(
+      {
+        faceRegions:r.faceRegions,
+        personCount:r.faceRegions.length?1:0,
+        textSafeZone:{preferred:r.placement,horizontal:r.horizontalAlign,allowSecondLine:false,maxLines:2}
+      },
+      {requested:r.placement,hook:r.hook,secondLine:'',style:'short'}
+    );
+    return {
+      ...r,
+      placement:layout.placement,
+      horizontalAlign:layout.horizontalAlign,
+      faceOcclusionPenalty:layout.faceOcclusionPenalty,
+      textRect:layout.textRect||null,
+      fontScale:Number(layout.fontScale)||1,
+      compact:Boolean(layout.compact),
+      layoutScore:Number(layout.layoutScore)||0
+    };
+  });
 }
 
 
@@ -212,7 +255,7 @@ function jevWeak(r){
     Number(q.claimSafety)<95||
     Number(q.readability)<82||
     Number(q.novelty)<76||
-    Number(r.faceOcclusionPenalty)>22
+    Number(r.faceOcclusionPenalty)>8
   );
 }
 async function evaluateVisualResults(profile,results,avoid){
@@ -236,7 +279,9 @@ async function evaluateVisualResults(profile,results,avoid){
           energyScore:r.confidence,
           reactionIntensity:r.confidence,
           visualFocus:r.visualCue,
-          hookCompatibility:[r.mechanism||r.angle||'observation']
+          hookCompatibility:[r.mechanism||r.angle||'observation'],
+          faceRegions:r.faceRegions||[],
+          textSafeZone:{preferred:r.placement,horizontal:r.horizontalAlign,allowSecondLine:false}
         },
         signal:{type:r.mechanism||'angle',text:r.brandAnchor},
         brand:profile,
@@ -291,7 +336,7 @@ module.exports=async function handler(req,res){
       !r.visualCue||r.visualCue.length<5||
       !r.brandAnchor||r.brandAnchor.length<5||
       tooSimilar(r.hook,[...avoid,...currentHooks.filter(x=>x!==r.hook)])||
-      Number(r.faceOcclusionPenalty)>22||
+      Number(r.faceOcclusionPenalty)>8||
       jevWeak(r)
     );
 
@@ -317,7 +362,7 @@ module.exports=async function handler(req,res){
       accepted:
         ['jev','openai-fallback'].includes(r.evaluationStatus)&&
         Number(r.jevAcceptProbability)>=.80&&
-        Number(r.faceOcclusionPenalty)<=22&&
+        Number(r.faceOcclusionPenalty)<=8&&
         !jevWeak(r)&&
         !genericHook(r.hook)&&
         !tooSimilar(r.hook,avoid)
