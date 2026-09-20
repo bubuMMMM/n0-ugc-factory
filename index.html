@@ -950,8 +950,8 @@ function demoHookFor(index){
       secondLine:"",
       placement:"top",
       horizontalAlign:right?"right":"left",
-      textRect:right?{x:.50,y:.025,w:.46,h:.068}:{x:.04,y:.025,w:.46,h:.068},
-      fontScale:.52,
+      textRect:right?{x:.56,y:.028,w:.40,h:.060}:{x:.04,y:.028,w:.40,h:.060},
+      fontScale:.46,
       style:"short",
       demo:true,
       compact:true,
@@ -1053,9 +1053,9 @@ const SAFE_BANDS={
   bottom:{y:.815,h:.085}
 };
 const SAFE_COLUMNS={
-  left:{x:.06,w:.50},
-  center:{x:.11,w:.78},
-  right:{x:.44,w:.50}
+  left:{x:.04,w:.40},
+  center:{x:.12,w:.76},
+  right:{x:.56,w:.40}
 };
 function rectOverlap(a,b){
   const x=Math.max(a.x,b.x),y=Math.max(a.y,b.y);
@@ -1311,10 +1311,10 @@ async function loadVideoLayouts(){
 
 function localRectCandidates(){
   return [
-    {placement:"top",horizontalAlign:"left",textRect:{x:.04,y:.025,w:.46,h:.068}},
-    {placement:"top",horizontalAlign:"right",textRect:{x:.50,y:.025,w:.46,h:.068}},
-    {placement:"bottom",horizontalAlign:"left",textRect:{x:.04,y:.892,w:.46,h:.060}},
-    {placement:"bottom",horizontalAlign:"right",textRect:{x:.50,y:.892,w:.46,h:.060}}
+    {placement:"top",horizontalAlign:"left",textRect:{x:.04,y:.028,w:.40,h:.060}},
+    {placement:"top",horizontalAlign:"right",textRect:{x:.56,y:.028,w:.40,h:.060}},
+    {placement:"bottom",horizontalAlign:"left",textRect:{x:.04,y:.885,w:.40,h:.058}},
+    {placement:"bottom",horizontalAlign:"right",textRect:{x:.56,y:.885,w:.40,h:.058}}
   ];
 }
 function pixelClutter(data,width,height,rect,frameOffsetX){
@@ -1401,7 +1401,7 @@ async function deriveLocalSafeLayout(contactSheet,index){
     placement:best.placement,
     horizontalAlign:best.horizontalAlign,
     textRect:best.textRect,
-    fontScale:.52,
+    fontScale:.46,
     compact:true,
     maxLines:1,
     allowSecondLine:false,
