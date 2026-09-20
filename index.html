@@ -685,7 +685,7 @@ header{background:transparent}
   right:auto!important;
   width:var(--hook-width,80%)!important;
   max-width:none!important;
-  top:var(--hook-top,59.5%)!important;
+  top:var(--hook-top,72.5%)!important;
   bottom:auto!important;
   transform:none!important;
   margin:0!important;
@@ -890,8 +890,8 @@ function demoHookFor(index){
       secondLine:"",
       placement:"lower",
       horizontalAlign:"center",
-      textRect:{x:.10,y:.595,w:.80,h:.09},
-      fontScale:.78,
+      textRect:{x:.10,y:.725,w:.80,h:.075},
+      fontScale:.72,
       style:"short",
       demo:true,
       compact:true,
@@ -978,8 +978,8 @@ function metaFor(index){
     placement:"lower",
     horizontalAlign:"center",
     secondLine:"",
-    textRect:base.textRect||{x:.10,y:.595,w:.80,h:.09},
-    fontScale:Number(base.fontScale)||.78,
+    textRect:base.textRect||{x:.10,y:.725,w:.80,h:.075},
+    fontScale:Number(base.fontScale)||.72,
     compact:true,
     faceOcclusionPenalty:Number(base.faceOcclusionPenalty)||18,
     layoutScore:Number(base.layoutScore)||72
@@ -994,7 +994,7 @@ function setHookGeometry(node,meta){
     ? meta.textRect
     : (meta.placement==="top"
       ? {x:.10,y:.07,w:.80,h:.11}
-      : {x:.10,y:.595,w:.80,h:.09});
+      : {x:.10,y:.725,w:.80,h:.075});
   const x=Math.max(0,Math.min(.92,Number(rect.x)||0));
   const y=Math.max(0,Math.min(.88,Number(rect.y)||0));
   const w=Math.max(.28,Math.min(1-x,Number(rect.w)||.80));
