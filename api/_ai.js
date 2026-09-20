@@ -3,6 +3,7 @@ const OPENAI_URL='https://api.openai.com/v1/chat/completions';
 const MODEL=process.env.VIDEOMA_AI_MODEL||'openai/gpt-5.6-sol';
 const DIRECT_MODEL=process.env.VIDEOMA_OPENAI_MODEL||MODEL.replace(/^openai\//,'')||'gpt-5.6-sol';
 const {gatewayError,openaiError,isTimeout}=require('./_gateway-errors');
+let gatewayBlockedUntil=0;
 
 function credential(){
   return process.env.AI_GATEWAY_API_KEY||process.env.VERCEL_OIDC_TOKEN||'';
@@ -68,14 +69,16 @@ async function gatewayJson({messages,name,schema,timeoutMs=55000}){
     const e=new Error('AI_NOT_CONFIGURED');e.code='AI_NOT_CONFIGURED';throw e;
   }
 
-  if(gatewayToken){
+  if(gatewayToken&&Date.now()>=gatewayBlockedUntil){
     try{
       return await structuredRequest({
         url:GATEWAY_URL,token:gatewayToken,model:MODEL,messages,name,schema,timeoutMs,errorPrefix:'AI_GATEWAY'
       });
     }catch(error){
+      const code=String(error&&error.message||error);
+      if(code==='AI_GATEWAY_INSUFFICIENT_FUNDS'||code==='AI_GATEWAY_AUTH_ERROR')gatewayBlockedUntil=Date.now()+5*60*1000;
       if(!directToken||!fallbackable(error))throw error;
-      console.warn('AI Gateway fallback to direct OpenAI',String(error&&error.message||error));
+      console.warn('AI Gateway fallback to direct OpenAI',code);
     }
   }
 
