@@ -21,13 +21,16 @@ async function download(url){
   return file;
 }
 async function probe(file){
-  const {stdout}=await execFileAsync(ffprobe,['-v','error','-print_format','json','-show_streams','-show_format',file],{timeout:15000,maxBuffer:2*1024*1024});
+  const {stdout}=await execFileAsync(
+    ffprobe,
+    ['-v','error','-select_streams','v:0','-show_entries','stream=width,height:format=duration','-print_format','json',file],
+    {timeout:15000,maxBuffer:1024*1024}
+  );
   const data=JSON.parse(stdout||'{}');
   const duration=Number(data.format&&data.format.duration||0);
-  const video=(data.streams||[]).find(x=>x.codec_type==='video')||{};
-  const audio=(data.streams||[]).find(x=>x.codec_type==='audio')||null;
+  const video=(data.streams||[])[0]||{};
   if(!Number.isFinite(duration)||duration<=0)throw new Error('VIDEO_DURATION_INVALID');
-  return {duration,width:Number(video.width)||0,height:Number(video.height)||0,hasAudio:Boolean(audio)};
+  return {duration,width:Number(video.width)||0,height:Number(video.height)||0};
 }
 async function contactSheet(file,duration){
   const out=file.replace(/\.mp4$/,'.jpg');
@@ -56,7 +59,7 @@ async function extract(url){
   try{
     const meta=await probe(file);
     sheet=await contactSheet(file,meta.duration);
-    return {durationMs:Math.round(meta.duration*1000),hasAudio:meta.hasAudio,contactSheet:sheet.data,keyframes:sheet.keyframes};
+    return {durationMs:Math.round(meta.duration*1000),width:meta.width,height:meta.height,contactSheet:sheet.data,keyframes:sheet.keyframes};
   }finally{
     try{fs.unlinkSync(file)}catch{}
     if(sheet&&sheet.out){try{fs.unlinkSync(sheet.out)}catch{}}
