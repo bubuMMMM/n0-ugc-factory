@@ -262,7 +262,10 @@ function qaWeak(r){
     Number(q.claimSafety)<95||
     Number(q.readability)<82||
     Number(q.novelty)<76||
-    Number(r.faceOcclusionPenalty)>8
+    Number(r.faceOcclusionPenalty)>8||
+    Number(r.layoutScore)<60||
+    Boolean(r.noSafeZone)||
+    r.safeForAutoApproval===false
   );
 }
 async function evaluateVisualResults(profile,results,avoid){
@@ -372,6 +375,10 @@ module.exports=async function handler(req,res){
         ['jev','openai-fallback'].includes(r.evaluationStatus)&&
         Number(r.jevAcceptProbability)>=.80&&
         !qaWeak(r)&&
+        Number(r.faceOcclusionPenalty)<=8&&
+        Number(r.layoutScore)>=60&&
+        !r.noSafeZone&&
+        r.safeForAutoApproval!==false&&
         !genericHook(r.hook)&&
         !tooSimilar(r.hook,avoid)
     }));
