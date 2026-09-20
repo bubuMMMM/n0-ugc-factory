@@ -73,9 +73,14 @@ function schema(count){
       versatilityScore:{type:'integer',minimum:0,maximum:100},reactionType:{type:'string'},visualFocus:{type:'string'},
       peakFrame:{type:'integer',minimum:1,maximum:4},peakReason:{type:'string'},
       textSafeZone:{type:'object',properties:{
-        preferred:{type:'string',enum:['top','upper','middle','lower']},
-        avoid:{type:'array',items:{type:'string'}},reason:{type:'string'}
-      },required:['preferred','avoid','reason'],additionalProperties:false},
+        preferred:{type:'string',enum:['top','upper','lower']},
+        alternatives:{type:'array',items:{type:'string',enum:['top','upper','lower']}},
+        avoid:{type:'array',items:{type:'string'}},
+        reason:{type:'string'},
+        maxLines:{type:'integer',minimum:1,maximum:3},
+        allowSecondLine:{type:'boolean'},
+        faceOcclusionPenalty:{type:'integer',minimum:0,maximum:100}
+      },required:['preferred','alternatives','avoid','reason','maxLines','allowSecondLine','faceOcclusionPenalty'],additionalProperties:false},
       faceRegions:{type:'array',items:{type:'string'}},objectRegions:{type:'array',items:{type:'string'}},
       hookCompatibility:{type:'array',items:{type:'string'}},tags:{type:'array',items:{type:'string'}},
       analysisConfidence:{type:'integer',minimum:0,maximum:100}
@@ -96,8 +101,10 @@ function prompt(){
     'reactionType: surprise, frustration, rire, validation, scepticisme, confusion, pointage, démonstration, découverte, réflexion, embarras, soulagement, calme ou autre.',
     'visualFocus: visage, objet ou geste qui attire naturellement le regard.',
     'peakFrame: 1-4 et peakReason.',
-    'textSafeZone doit éviter visage, mains et objet principal sur les 4 frames.',
-    'faceRegions/objectRegions: zones grossières de l’image.',
+    'textSafeZone doit être calculée SUR LES 4 FRAMES. Ne choisis jamais middle si un visage est visible.',
+    'Pour textSafeZone: preferred doit être top, upper ou lower; alternatives liste les autres bandes sûres; maxLines indique combien de lignes tiennent sans toucher le visage; allowSecondLine=false dès qu’une seconde ligne risquerait de recouvrir le visage; faceOcclusionPenalty 0-100 estime le risque résiduel de couvrir un visage dans la zone choisie.',
+    'Règle absolue: yeux, nez et bouche ne doivent jamais être couverts par le texte.',
+    'faceRegions/objectRegions: zones grossières de l’image, consolidées à partir des 4 frames.',
     'hookCompatibility: plusieurs mécanismes naturels parmi drama, story, credential, insider, numbered, diagnostic, inversion, overheard, confession, pov, value, take, fourthwall, transformation, wall, proof, pattern_break, product_natural, objection, pain, benefit, comparison, mistake, discovery.',
     'tags descriptifs. versatilityScore 0-100 selon la capacité du clip à fonctionner pour beaucoup de marques sans forcer le sens.',
     'Sois factuel, compact et cohérent entre vidéos.'
