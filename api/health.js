@@ -19,6 +19,8 @@ module.exports=async function handler(req,res){
     databaseConfigured:db.configured(),
     stripeConfigured:Boolean(process.env.STRIPE_SECRET_KEY),
     blobConfigured:Boolean(process.env.BLOB_READ_WRITE_TOKEN||process.env.VERCEL_OIDC_TOKEN),
+    directMp4RenderConfigured:true,
+    persistentMp4RenderConfigured:Boolean(process.env.BLOB_READ_WRITE_TOKEN||process.env.VERCEL_OIDC_TOKEN),
     layoutVersion:LAYOUT_VERSION,
     renderVersion:RENDER_VERSION,
     videoIntelligence:{ready:0,pending:0,processing:0,errors:0,total:0,currentVersionReady:0,geometryReady:0}
