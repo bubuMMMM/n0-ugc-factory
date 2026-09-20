@@ -1,6 +1,6 @@
 const dns=require('node:dns').promises;
 const net=require('node:net');
-const {gatewayJson,MODEL,credential}=require('./_ai');
+const {gatewayJson,MODEL,DIRECT_MODEL,credential,canDirect}=require('./_ai');
 const db=require('./_db');
 
 const MAX_PAGE_CHARS=12000;
@@ -318,7 +318,13 @@ async function crawl(website){
 
 module.exports=async function handler(req,res){
   res.setHeader('Cache-Control','no-store');
-  if(req.method==='GET') return res.status(200).json({configured:Boolean(credential()),model:MODEL});
+  if(req.method==='GET') return res.status(200).json({
+    configured:Boolean(credential()||canDirect()),
+    gatewayConfigured:Boolean(credential()),
+    directOpenAIConfigured:Boolean(canDirect()),
+    model:MODEL,
+    directModel:DIRECT_MODEL
+  });
   if(req.method!=='POST') return res.status(405).json({error:'METHOD_NOT_ALLOWED'});
   const website=String(req.body?.website||'').trim();
   if(!website) return res.status(400).json({error:'WEBSITE_REQUIRED'});
@@ -472,7 +478,11 @@ ${source}`
       code==='AI_GATEWAY_RATE_LIMIT'?429:
       code==='AI_GATEWAY_TIMEOUT'||code==='ANALYZE_TIMEOUT'?504:
       code==='AI_GATEWAY_NOT_CONFIGURED'||code==='AI_GATEWAY_UNAVAILABLE'?503:
-      code==='AI_GATEWAY_AUTH_ERROR'?502:
+      code==='AI_GATEWAY_AUTH_ERROR'||code==='OPENAI_API_AUTH_ERROR'?502:
+      code==='OPENAI_API_INSUFFICIENT_FUNDS'?402:
+      code==='OPENAI_API_RATE_LIMIT'?429:
+      code==='OPENAI_API_TIMEOUT'?504:
+      code==='OPENAI_API_UNAVAILABLE'?503:
       code.startsWith('SITE_')||code==='SITE_UNREADABLE'?422:
       code==='INVALID_URL'||code==='INVALID_PROTOCOL'||code==='PRIVATE_HOST'?400:500;
     return res.status(status).json({error:code});
