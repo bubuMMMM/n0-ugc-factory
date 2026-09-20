@@ -960,9 +960,15 @@ async function generateVisualBatch(indices){
         brandAnchor:r.brandAnchor||"",
         angle:r.angle||"",
         mechanism:r.mechanism||"",
-        scores:r.scores||null,
+        scores:r.jevScores||r.scores||null,
+        generatorScores:r.scores||null,
         confidence:Number(r.confidence)||0,
-        rationale:r.rationale||""
+        rationale:r.rationale||"",
+        accepted:r.accepted!==false,
+        evaluator:r.evaluatorModel||"typesafe-ai/jev",
+        jevAcceptProbability:Number(r.jevAcceptProbability)||0,
+        evaluationStatus:r.evaluationStatus||"",
+        jevAnswers:r.jevAnswers||{}
       };
     }
   }
