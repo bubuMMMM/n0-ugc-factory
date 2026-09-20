@@ -5,7 +5,7 @@ function credential(){
   return process.env.AI_GATEWAY_API_KEY||process.env.VERCEL_OIDC_TOKEN||'';
 }
 
-async function gatewayJson({messages,name,schema}){
+async function gatewayJson({messages,name,schema,timeoutMs=55000}){
   const token=credential();
   if(!token){
     const e=new Error('AI_GATEWAY_NOT_CONFIGURED');
@@ -27,7 +27,7 @@ async function gatewayJson({messages,name,schema}){
         json_schema:{name,strict:true,schema}
       }
     }),
-    signal:AbortSignal.timeout(55000)
+    signal:AbortSignal.timeout(timeoutMs)
   });
   const body=await response.text();
   if(!response.ok){
