@@ -4,17 +4,18 @@
   "version": "0.2.0",
   "description": "Video intelligence and brand-to-video hook matching",
   "engines": {
-    "node": ">=20"
+    "node": "20.x"
   },
   "dependencies": {
-    "pg": "^8.16.3",
-    "ffmpeg-static": "^5.2.0",
-    "ffprobe-static": "^3.1.0",
-    "@vercel/functions": "^2.2.0",
-    "ipaddr.js": "^2.2.0",
-    "@vercel/blob": "^1.1.1"
+    "pg": "8.16.3",
+    "ffmpeg-static": "5.2.0",
+    "ffprobe-static": "3.1.0",
+    "@vercel/functions": "2.2.0",
+    "ipaddr.js": "2.2.0",
+    "@vercel/blob": "1.1.1"
   },
   "scripts": {
-    "test": "node --test tests/*.test.js"
+    "test": "node --test tests/*.test.js",
+    "check": "find api tests -name '*.js' -print0 | xargs -0 -n1 node --check"
   }
 }
