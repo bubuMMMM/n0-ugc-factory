@@ -2,6 +2,7 @@ const db=require('./_db');
 const {statusForAiCode}=require('./_gateway-errors');
 const {embedMany,EMBEDDING_MODEL}=require('./_embedding');
 const {VIDEO_INTELLIGENCE_VERSION}=require('./_versions');
+const {requireProject,limitProject}=require('./_project-auth');
 
 function t(x,n=500){return String(x||'').replace(/\s+/g,' ').trim().slice(0,n)}
 function domainOf(raw){try{return new URL(raw).hostname.toLowerCase()}catch{return t(raw,255)}}
@@ -80,9 +81,12 @@ module.exports=async function handler(req,res){
   }
   if(req.method!=='POST')return res.status(405).json({error:'METHOD_NOT_ALLOWED'});
   if(!db.configured())return res.status(503).json({error:'DATABASE_NOT_CONFIGURED'});
-  const profile=req.body&&req.body.profile,website=t(req.body&&req.body.website,1500);
-  const requestedProfileId=t(req.body&&req.body.brandProfileId,80);
-  if(!profile||typeof profile!=='object')return res.status(400).json({error:'PROFILE_REQUIRED'});
+  let project;
+  try{project=await requireProject(req)}catch{return res.status(401).json({error:'PROJECT_UNAUTHORIZED'})}
+  const quota=await limitProject(project,'match',12,3600).catch(()=>({allowed:true}));
+  if(!quota.allowed)return res.status(429).json({error:'PROJECT_RATE_LIMIT'});
+  const profile=project.profile,website=t(project.website,1500);
+  const requestedProfileId=t(project.brand_profile_id,80);
   try{
     const signals=signalsFromProfile(profile);
     if(!signals.length)return res.status(422).json({error:'NO_BRAND_SIGNALS'});
