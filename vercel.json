@@ -40,6 +40,15 @@
     },
     "api/video-proxy.js": {
       "maxDuration": 60
+    },
+    "api/admin/preanalyze.js": {
+      "maxDuration": 60
+    },
+    "api/match-videos.js": {
+      "maxDuration": 60
+    },
+    "api/hooks-intelligence.js": {
+      "maxDuration": 60
     }
   }
 }
