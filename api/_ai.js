@@ -14,7 +14,7 @@ function openaiCredential(){
 function canDirect(){return Boolean(openaiCredential())}
 function fallbackable(error){
   const code=String(error&&error.message||error&&error.code||'');
-  return !code||code.startsWith('AI_GATEWAY_')||code==='AI_MODEL_UNAVAILABLE';
+  return !code||code.startsWith('AI_GATEWAY_')||code==='AI_MODEL_UNAVAILABLE'||code==='AI_GATEWAY_NETWORK_ERROR';
 }
 async function structuredRequest({url,token,model,messages,name,schema,timeoutMs,errorPrefix}){
   let response;
@@ -40,7 +40,8 @@ async function structuredRequest({url,token,model,messages,name,schema,timeoutMs
     if(isTimeout(error)){
       const e=new Error(errorPrefix+'_TIMEOUT');e.code=errorPrefix+'_TIMEOUT';throw e;
     }
-    throw error;
+    const code=errorPrefix+'_NETWORK_ERROR';
+    const e=new Error(code);e.code=code;e.cause=error;throw e;
   }
   const body=await response.text();
   if(!response.ok){
