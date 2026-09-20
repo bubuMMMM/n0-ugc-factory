@@ -706,6 +706,13 @@ header{background:transparent}
   }
 }
 
+
+/* Remove hero annotation */
+.hero-note,.note-arrow{display:none!important}
+.hero-form-wrap{padding-bottom:10px!important}
+@media(max-width:680px){.hero-form-wrap{padding-bottom:8px!important}}
+@media(max-width:390px) and (max-height:720px){.hero-form-wrap{padding-bottom:6px!important}}
+
 </style>
 </head>
 <body>
@@ -726,14 +733,7 @@ header{background:transparent}
         </div>
         <div id="siteError" class="site-error" aria-live="polite"></div>
       </form>
-      <div class="hero-note" aria-hidden="true">
-        <span>Collez votre site web<br>et laissez l’IA travailler</span>
-        <svg class="note-arrow" viewBox="0 0 118 62" fill="none">
-          <path d="M8 54C38 53 57 43 71 29C82 18 91 10 107 7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-          <path d="M98 3L108 7L102 16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-      </div>
-    </div>
+</div>
   </div>
 </section>
 
