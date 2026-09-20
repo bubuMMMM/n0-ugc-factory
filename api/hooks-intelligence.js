@@ -6,7 +6,8 @@ const db=require('./_db');
 const {HOOK_RULES}=require('./_hook-rules');
 const {evaluateHook,mapLimit,JEV_MODEL}=require('./_jev');
 const {resolveLayout}=require('./_layout');
-const {LAYOUT_VERSION,HOOK_INTELLIGENCE_VERSION}=require('./_versions');
+const {LAYOUT_VERSION,HOOK_INTELLIGENCE_VERSION,VIDEO_INTELLIGENCE_VERSION}=require('./_versions');
+const {requireProject,limitProject}=require('./_project-auth');
 
 const MAX_ITEMS=24;
 const VERSION=HOOK_INTELLIGENCE_VERSION;
@@ -233,11 +234,16 @@ module.exports=async function handler(req,res){
     thresholds:{overall:84,visualFit:82,brandFit:82,claimSafety:95,readability:82,novelty:76,jevAcceptProbability:.80,faceOcclusionPenaltyMax:25,layoutScoreMin:60}
   });
   if(req.method!=='POST')return res.status(405).json({error:'METHOD_NOT_ALLOWED'});
-  const profile=req.body&&req.body.profile,videos=Array.isArray(req.body&&req.body.videos)?req.body.videos.slice(0,MAX_ITEMS):[];
+  let project;
+  try{project=await requireProject(req)}catch{return res.status(401).json({error:'PROJECT_UNAUTHORIZED'})}
+  const quota=await limitProject(project,'intelligence-hooks',120,3600).catch(()=>({allowed:true}));
+  if(!quota.allowed)return res.status(429).json({error:'PROJECT_RATE_LIMIT'});
+  const profile=project.profile;
+  const videos=Array.isArray(req.body&&req.body.videos)?req.body.videos.slice(0,MAX_ITEMS):[];
   const avoid=Array.isArray(req.body&&req.body.avoid)?req.body.avoid.slice(-100).map(x=>tx(x,180)):[];
   const mechanismUsage=req.body&&req.body.mechanismUsage&&typeof req.body.mechanismUsage==='object'?req.body.mechanismUsage:{};
-  const brandProfileId=tx(req.body&&req.body.brandProfileId,80);
-  if(!profile||!videos.length)return res.status(400).json({error:'PROFILE_AND_VIDEOS_REQUIRED'});
+  const brandProfileId=tx(project.brand_profile_id,80);
+  if(!videos.length)return res.status(400).json({error:'VIDEOS_REQUIRED'});
   try{
     let results=await generate(profile,videos,avoid,mechanismUsage,'');
     results=applySafeLayouts(videos,results);
