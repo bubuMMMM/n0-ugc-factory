@@ -1857,35 +1857,62 @@ siteForm.addEventListener("submit",async e=>{
   }
 });
 
+async function saveResponseAsMp4(response,index){
+  if(!response.ok){
+    const body=await response.json().catch(()=>({}));
+    throw new Error(body.error||"RENDER_DOWNLOAD_FAILED");
+  }
+  const blob=await response.blob();
+  const objectUrl=URL.createObjectURL(blob);
+  const a=document.createElement("a");
+  a.href=objectUrl;
+  a.download="videoma-"+String(index+1).padStart(4,"0")+".mp4";
+  document.body.appendChild(a);a.click();a.remove();
+  setTimeout(()=>URL.revokeObjectURL(objectUrl),30000);
+}
+async function directRenderDownload(index){
+  const ctrl=new AbortController(),timer=setTimeout(()=>ctrl.abort(),295000);
+  try{
+    const response=await fetch("/api/render-direct",{
+      method:"POST",
+      headers:{"Content-Type":"application/json",...(PROJECT_TOKEN?{"X-Project-Token":PROJECT_TOKEN}:{})},
+      body:JSON.stringify({index:index+1}),
+      signal:ctrl.signal
+    });
+    await saveResponseAsMp4(response,index);
+  }catch(error){
+    if(error?.name==="AbortError")throw new Error("REQUEST_TIMEOUT");
+    throw error;
+  }finally{clearTimeout(timer)}
+}
 async function downloadRenderedVideo(index){
   if(!PROJECT_TOKEN||index<0)return;
   renderDownload.disabled=true;
   renderDownload.textContent="Rendu MP4…";
   try{
     let data=null;
-    for(let attempt=0;attempt<12;attempt++){
-      data=await postJSON("/api/render-video",{index:index+1},290000);
-      if(data.status==="ready")break;
-      renderDownload.textContent="Finalisation…";
-      await new Promise(r=>setTimeout(r,3500));
+    try{
+      for(let attempt=0;attempt<12;attempt++){
+        data=await postJSON("/api/render-video",{index:index+1},290000);
+        if(data.status==="ready")break;
+        renderDownload.textContent="Finalisation…";
+        await new Promise(r=>setTimeout(r,3500));
+      }
+    }catch(error){
+      if(error.message!=="BLOB_NOT_CONFIGURED")throw error;
+      renderDownload.textContent="Rendu direct…";
+      await directRenderDownload(index);
+      renderDownload.textContent="MP4 téléchargé ✓";
+      setTimeout(()=>{renderDownload.textContent="Télécharger MP4";renderDownload.disabled=false},1800);
+      return;
     }
-    if(!data||data.status!=="ready"||!data.renderId)throw new Error("RENDER_NOT_READY");
 
+    if(!data||data.status!=="ready"||!data.renderId)throw new Error("RENDER_NOT_READY");
     renderDownload.textContent="Téléchargement…";
     const response=await fetch("/api/render-download?id="+encodeURIComponent(data.renderId),{
       headers:PROJECT_TOKEN?{"X-Project-Token":PROJECT_TOKEN}:{}
     });
-    if(!response.ok){
-      const body=await response.json().catch(()=>({}));
-      throw new Error(body.error||"RENDER_DOWNLOAD_FAILED");
-    }
-    const blob=await response.blob();
-    const objectUrl=URL.createObjectURL(blob);
-    const a=document.createElement("a");
-    a.href=objectUrl;
-    a.download="videoma-"+String(index+1).padStart(4,"0")+".mp4";
-    document.body.appendChild(a);a.click();a.remove();
-    setTimeout(()=>URL.revokeObjectURL(objectUrl),30000);
+    await saveResponseAsMp4(response,index);
     renderDownload.textContent="MP4 téléchargé ✓";
     setTimeout(()=>{renderDownload.textContent="Télécharger MP4";renderDownload.disabled=false},1800);
   }catch(error){
