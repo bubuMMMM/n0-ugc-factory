@@ -1,6 +1,6 @@
 const db=require('./_db');
 const {VIDEO_INTELLIGENCE_VERSION,LAYOUT_VERSION}=require('./_versions');
-const {resolveLayout}=require('./_layout');
+const {resolveLayout,hasUsableGeometry}=require('./_layout');
 
 module.exports=async function handler(req,res){
   if(req.method!=='GET')return res.status(405).json({error:'METHOD_NOT_ALLOWED'});
@@ -21,8 +21,9 @@ module.exports=async function handler(req,res){
         reactionType:x.reaction_type||'',
         energyScore:Number(x.energy_score)||0
       };
-      const current=x.analysis_version===VIDEO_INTELLIGENCE_VERSION;
-      if(current)currentVersionReady++;
+      const current=x.analysis_version===VIDEO_INTELLIGENCE_VERSION&&hasUsableGeometry(intelligence);
+      if(!current)return null;
+      currentVersionReady++;
       const preferred=intelligence.textSafeZone&&intelligence.textSafeZone.preferred||'bottom';
       const resolved=resolveLayout(intelligence,{requested:preferred,secondLine:'1',style:'short'});
       return {
@@ -49,7 +50,7 @@ module.exports=async function handler(req,res){
         layoutScore:resolved.layoutScore,
         safeForAutoApproval:resolved.safeForAutoApproval
       };
-    });
+    }).filter(Boolean);
     return res.status(200).json({
       configured:true,
       ready:layouts.length,
