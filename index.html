@@ -310,26 +310,129 @@ footer{border-top:1px solid var(--line);padding:28px 0 42px;color:#727d8c;font-s
 
 .video-only{padding:14px 0 90px}
 @media(max-width:680px){.video-only{padding-top:8px}}
+
+/* ===== Pure black / simplified URL hero ===== */
+html,body{background:#000!important}
+body{background:#000!important}
+header{background:transparent}
+.proof,.steps,.offer,footer,.section,.video-only{background:#000}
+.step{background:#050505;border-color:#181818}
+.offer-card{background:#050505;border-color:#1b1b1b}
+.hero-simple{
+  background:#000;
+  height:100svh;
+  min-height:640px;
+  max-height:940px;
+  padding:86px 0 28px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.hero-simple:before,.hero-simple:after{display:none}
+.hero-simple .warp-beams,.hero-simple .content-machine{display:none!important}
+.hero-simple-inner{
+  min-height:100%;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  position:relative;
+}
+.hero-simple h1{
+  font-family:Georgia,"Times New Roman",serif;
+  font-weight:400;
+  font-size:clamp(68px,min(9vw,12vh),132px);
+  line-height:.82;
+  letter-spacing:-.07em;
+  margin:0 0 42px;
+  max-width:980px;
+}
+.hero-simple h1 .aurora{
+  font-style:italic;
+  background:linear-gradient(90deg,#fff,#a7d7ff 42%,#9e8cff 75%,#fff);
+  background-size:180% 100%;
+  -webkit-background-clip:text;
+  background-clip:text;
+  color:transparent;
+}
+.site-form{width:min(720px,100%)}
+.site-field{
+  width:100%;
+  min-height:68px;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:7px 7px 7px 18px;
+  border:1px solid #282828;
+  border-radius:999px;
+  background:#080808;
+  box-shadow:0 22px 70px rgba(0,0,0,.55),inset 0 1px rgba(255,255,255,.035);
+  transition:border-color .2s,box-shadow .2s;
+}
+.site-field:focus-within{
+  border-color:#546a8f;
+  box-shadow:0 0 0 4px rgba(120,160,255,.07),0 22px 70px rgba(0,0,0,.6);
+}
+.site-icon{font-size:17px;color:#697386;flex:0 0 auto}
+.site-field input{
+  flex:1;
+  min-width:0;
+  border:0;
+  outline:0;
+  background:transparent;
+  color:#fff;
+  font-size:17px;
+  padding:0 4px;
+}
+.site-field input::placeholder{color:#5f636c}
+.site-submit{
+  flex:0 0 auto;
+  min-height:54px;
+  border:0;
+  border-radius:999px;
+  padding:0 20px;
+  display:inline-flex;
+  align-items:center;
+  gap:18px;
+  cursor:pointer;
+  font-weight:800;
+  color:#05080e;
+  background:linear-gradient(110deg,#f7fbff,#cfe8ff 52%,#beb6ff);
+  box-shadow:0 8px 28px rgba(92,129,255,.18);
+}
+.site-submit:disabled{opacity:.55;cursor:wait}
+.site-error{min-height:21px;margin-top:10px;color:#8e98aa;font-size:12px}
+@media(max-width:680px){
+  .hero-simple{min-height:100svh;padding:68px 0 18px}
+  .hero-simple-inner{justify-content:center}
+  .hero-simple h1{font-size:clamp(52px,15.5vw,68px);line-height:.84;margin-bottom:30px}
+  .site-field{display:grid;grid-template-columns:auto 1fr;gap:8px;padding:10px;border-radius:22px}
+  .site-icon{padding-left:5px}
+  .site-field input{font-size:16px;height:44px}
+  .site-submit{grid-column:1/-1;width:100%;justify-content:center;min-height:50px;font-size:14px}
+}
+@media(max-width:390px) and (max-height:720px){
+  .hero-simple h1{font-size:46px;margin-bottom:22px}
+  .site-field{padding:8px}
+  .site-submit{min-height:46px}
+}
 </style>
 </head>
 <body>
-<header><div class="wrap nav"><div class="logo">videoma.</div><button class="buy-mini" data-buy>Acheter — 990€</button></div></header>
+<header><div class="wrap nav"><div class="logo">videoma.</div></div></header>
 
-<section class="hero-v3 hero-minimal">
-  <div class="warp-beams"><i></i><i></i><i></i><i></i></div>
-  <div class="wrap hero-shell">
-    <div class="hero-copy-v3">
-      <h1>1000 vidéos<br>en moins de<br><span class="aurora">5 minutes.</span></h1>
-      <button class="hero-buy" data-buy><span>Acheter — 990€</span><span>→</span></button>
-    </div>
-    <div class="content-machine">
-      <div class="machine-glow"></div>
-      <div class="machine-frame">
-        <div class="machine-inner">
-          <div class="hero-rail" id="heroRail"><article class="rail-card"><video src="https://doublespeed2.blob.core.windows.net/media/media/e3e45b32-d29e-4d2f-a821-c06c4f101bc8/generated/64810d44-8da4-47b6-b392-c28d8a5e35a6-019d4fed-a614-7690-945c-90007fa3799a.mp4" autoplay muted loop playsinline preload="metadata"></video></article><article class="rail-card"><video src="https://doublespeed2.blob.core.windows.net/media/media/2dca701e-9e20-48a8-b642-3fb04aed5ea6/generated/8c1f6534-8585-46b6-968f-33b3d50694b1-019e41f7-375b-7b10-b49c-78de5c896c8a.mp4" autoplay muted loop playsinline preload="metadata"></video></article><article class="rail-card"><video src="https://doublespeed2.blob.core.windows.net/media/media/a8f3d76e-d5c3-47e0-8434-be53cbbab810/generated/27bc7c2d-5cf2-4674-88c8-acc213397bc4-019f62e2-a50e-73d1-b378-3cfdcc15bf49.mp4" autoplay muted loop playsinline preload="metadata"></video></article><article class="rail-card"><video src="https://doublespeed2.blob.core.windows.net/media/media/e3e45b32-d29e-4d2f-a821-c06c4f101bc8/generated/74f92628-dbbd-4c35-b81d-47f76090294e-019e59e5-4360-77e2-a238-c471c4d20932.mp4" autoplay muted loop playsinline preload="metadata"></video></article><article class="rail-card"><video src="https://doublespeed2.blob.core.windows.net/media/media/e3e45b32-d29e-4d2f-a821-c06c4f101bc8/generated/69debb65-342e-4171-b3ba-2402505740ca-019eae2c-a688-7c03-ab0e-94d9e927b37b.mp4" autoplay muted loop playsinline preload="metadata"></video></article><article class="rail-card"><video src="https://doublespeed2.blob.core.windows.net/media/media/6e0873cd-1eb0-430d-9d35-d9210f87c904/generated/373e9786-445e-4cab-ace6-20699db17725-019e4787-f472-7b23-b94d-d3f7121870e8.mp4" autoplay muted loop playsinline preload="metadata"></video></article><article class="rail-card"><video src="https://doublespeed2.blob.core.windows.net/media/media/48156df6-5847-48d2-b66d-3c7a8d4c4bbd/generated/a5c4db94-ce15-48c2-97d4-9ddc8644c797-019f9166-b764-7ed0-9491-c8618b810112.mp4" autoplay muted loop playsinline preload="metadata"></video></article><article class="rail-card"><video src="https://doublespeed2.blob.core.windows.net/media/media/a8f3d76e-d5c3-47e0-8434-be53cbbab810/generated/ab67c89b-bb22-4a5a-a72d-a2758a2e11d5-019f5211-f03e-7553-b555-f809d5152897.mp4" autoplay muted loop playsinline preload="metadata"></video></article></div>
-        </div>
+<section class="hero-v3 hero-simple">
+  <div class="wrap hero-simple-inner">
+    <h1>1000 vidéos<br>en moins de<br><span class="aurora">5 minutes.</span></h1>
+    <form id="siteForm" class="site-form" novalidate>
+      <div class="site-field">
+        <span class="site-icon">↗</span>
+        <input id="siteUrl" name="website" type="url" inputmode="url" autocomplete="url" placeholder="votresite.fr" aria-label="Adresse de votre site web" required>
+        <button type="submit" class="site-submit"><span>Créer mes 1000 vidéos</span><span>→</span></button>
       </div>
-    </div>
+      <div id="siteError" class="site-error" aria-live="polite"></div>
+    </form>
   </div>
 </section>
 
@@ -392,6 +495,35 @@ const modal=document.querySelector("#modal"),big=document.querySelector("#big");
   raf=requestAnimationFrame(tick);
 })();
 
+const siteForm=document.querySelector("#siteForm");
+const siteUrlInput=document.querySelector("#siteUrl");
+const siteError=document.querySelector("#siteError");
+function normalizeSite(value){
+  let v=(value||"").trim();
+  if(!v) return "";
+  if(!/^https?:\/\//i.test(v)) v="https://"+v;
+  try{const u=new URL(v);return /^https?:$/.test(u.protocol)&&u.hostname.includes(".")?u.href:""}catch{return ""}
+}
+if(siteForm){
+  siteForm.addEventListener("submit",async e=>{
+    e.preventDefault();
+    const website=normalizeSite(siteUrlInput.value);
+    if(!website){siteError.textContent="Entrez une adresse de site valide.";siteUrlInput.focus();return}
+    siteError.textContent="";
+    sessionStorage.setItem("videoma_website",website);
+    const btn=siteForm.querySelector(".site-submit"),label=btn.innerHTML;
+    btn.disabled=true;btn.textContent="Préparation…";
+    try{
+      const r=await fetch("/api/checkout",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({website})});
+      const data=await r.json();
+      if(!r.ok||!data.url) throw new Error(data.error||"PAYMENT_ERROR");
+      location.href=data.url;
+    }catch(err){
+      siteError.textContent=err.message==="STRIPE_NOT_CONFIGURED"?"Paiement en cours de connexion.":"Impossible de continuer pour le moment.";
+      btn.disabled=false;btn.innerHTML=label;
+    }
+  });
+}
 const payMsg=document.querySelector("#payMsg");
 function flashPay(message){payMsg.textContent=message;payMsg.classList.add("show");setTimeout(()=>payMsg.classList.remove("show"),3200)}
 document.querySelectorAll("[data-buy]").forEach(btn=>btn.addEventListener("click",async()=>{
