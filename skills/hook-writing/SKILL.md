@@ -55,6 +55,24 @@ Use the mechanism that fits both the reaction and the brand signal.
 - **pattern_break**: surprising but useful contrast; must still be true.
 - **product_natural**: product enters inside a story, demonstration, proof, or lesson instead of as an ad.
 
+
+## Slideshow-style decision map
+
+Use these as strategic families, not copy templates:
+
+- **when they have the problem**: late recognition, false promise, default habit, missing fact, recurring pain.
+- **when curiosity is the lever**: reluctant reveal, delayed payoff, surprising effectiveness, hindsight gap, time-boxed experiment.
+- **when trust is low**: real review, expert response, customer receipt, founder proof, visible artifact.
+- **when speaking to one specific person**: life-stage callout, unresolved pain, exhausted audience, identity-specific useful outcome, peer-to-peer question.
+- **when authority earns attention**: firsthand credentials, borrowed expertise, insider rulebook, expert conviction, one concrete credibility detail.
+- **when story carries retention**: scene interruption, unfinished message, confession plus hindsight, unexpected backstory, ordinary expectation with a specific turn.
+- **when result is the hook**: before/method/after, outcome plus supported timeframe, visible proof, recovery rule, side-by-side test.
+- **when useful beats mysterious**: numbered payoff, diagnostic checklist, useful scripts, outcome without unwanted tradeoff, aspirational how-to.
+- **when a pattern break is needed**: useful contrarian view, cultural contrast, status contradiction, unusual rabbit hole, unexpected visual detail.
+- **when the viewer should enter the scene**: POV, overheard question, fourth-wall opener, recognition cue, playful discovery.
+- **when the product should enter naturally**: casual name-drop inside a real story, tool in use, lesson then product fit, proof matching the sentence.
+- **when polishing the first slide**: everyday speech, one emphasized word at most, specific detail over vague hype, second line only when it earns the next second.
+
 ## Match reaction to mechanism
 
 - surprise/shock → drama, reveal, mistake, inversion, discovery
