@@ -33,10 +33,10 @@
       "maxDuration": 180
     },
     "api/hooks.js": {
-      "maxDuration": 60
+      "maxDuration": 120
     },
     "api/video-hooks.js": {
-      "maxDuration": 60
+      "maxDuration": 240
     },
     "api/video-proxy.js": {
       "maxDuration": 60
@@ -45,10 +45,10 @@
       "maxDuration": 60
     },
     "api/match-videos.js": {
-      "maxDuration": 60
+      "maxDuration": 180
     },
     "api/hooks-intelligence.js": {
-      "maxDuration": 60
+      "maxDuration": 300
     },
     "api/admin/run-preanalysis.js": {
       "maxDuration": 60
@@ -63,16 +63,19 @@
       "maxDuration": 60
     },
     "api/admin/process-preanalysis-batch.js": {
-      "maxDuration": 60
+      "maxDuration": 180
     },
     "api/admin/cron-preanalysis-a7f3c9.js": {
-      "maxDuration": 60
+      "maxDuration": 180
     },
     "api/admin/cron-preanalysis-b4e812.js": {
-      "maxDuration": 60
+      "maxDuration": 180
     },
     "api/admin/cron-preanalysis-c91d57.js": {
-      "maxDuration": 60
+      "maxDuration": 180
+    },
+    "api/checkout.js": {
+      "maxDuration": 30
     }
   },
   "crons": [
