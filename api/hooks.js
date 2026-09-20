@@ -1,9 +1,16 @@
-const {gatewayJson,MODEL,credential}=require('./_ai');
+const {gatewayJson,MODEL,credential,canDirect,DIRECT_MODEL}=require('./_ai');
 const {statusForAiCode}=require('./_gateway-errors');
 
 module.exports=async function handler(req,res){
   res.setHeader('Cache-Control','no-store');
-  if(req.method==='GET') return res.status(200).json({configured:Boolean(credential()),model:MODEL,maxBatch:80});
+  if(req.method==='GET') return res.status(200).json({
+    configured:Boolean(credential()||canDirect()),
+    gatewayConfigured:Boolean(credential()),
+    directOpenAIConfigured:Boolean(canDirect()),
+    model:MODEL,
+    directModel:DIRECT_MODEL,
+    maxBatch:80
+  });
   if(req.method!=='POST') return res.status(405).json({error:'METHOD_NOT_ALLOWED'});
   const start=Math.max(0,Number(req.body?.start)||0);
   const count=Math.min(80,Math.max(1,Number(req.body?.count)||40));
