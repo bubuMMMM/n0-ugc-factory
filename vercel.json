@@ -94,6 +94,9 @@
     },
     "api/render-download.js": {
       "maxDuration": 60
+    },
+    "api/render-direct.js": {
+      "maxDuration": 300
     }
   },
   "crons": [
