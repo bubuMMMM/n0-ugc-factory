@@ -1,7 +1,7 @@
 const fs=require('node:fs');
 const crypto=require('node:crypto');
 const path=require('node:path');
-const {gatewayJson,MODEL}=require('../_ai');
+const {gatewayJson,MODEL,credential,canDirect}=require('../_ai');
 const {embedMany,EMBEDDING_MODEL}=require('../_embedding');
 const {extract}=require('../_video-frames');
 const db=require('../_db');
@@ -276,6 +276,33 @@ async function latestJob(){
   const r=await db.query("select * from preanalysis_jobs order by started_at desc limit 1");
   return r.rows[0]||null;
 }
+async function ensureActiveJob(){
+  let active=await latestActiveJob();
+  if(active)return active;
+
+  const latest=await latestJob();
+  const c=await counts();
+  if(Number(c.pending||0)===0&&Number(c.outdated||0)===0)return null;
+
+  if(!latest){
+    const id=await createJob();
+    return getJob(id);
+  }
+
+  const last=String(latest.last_error||'');
+  const updatedAt=new Date(latest.updated_at||latest.started_at||0).getTime();
+  const ageMs=Date.now()-updatedAt;
+  const blocked=/^(AI_GATEWAY_|OPENAI_API_|OPENAI_EMBEDDING_|AI_MODEL_)/.test(last);
+  const providerAvailable=Boolean(credential()||canDirect());
+
+  // A paused billing/auth job is retried conservatively so replacing a key
+  // or restoring credits resumes the permanent catalogue without manual work.
+  if(blocked&&providerAvailable&&ageMs>=10*60*1000){
+    const id=await createJob();
+    return getJob(id);
+  }
+  return null;
+}
 async function getJob(id){
   await ensureJobTable();
   const r=await db.query("select * from preanalysis_jobs where id=$1",[id]);
@@ -371,5 +398,5 @@ async function runBatch(jobId){
 }
 module.exports={
   VERSION,BATCH,MODEL,EMBEDDING_MODEL,
-  seed,recoverStale,counts,prepareCurrentVersion,createJob,getJob,latestActiveJob,latestJob,updateJob,finishJob,pauseJob,resetErrors,runBatch
+  seed,recoverStale,counts,prepareCurrentVersion,createJob,getJob,latestActiveJob,latestJob,ensureActiveJob,updateJob,finishJob,pauseJob,resetErrors,runBatch
 };
