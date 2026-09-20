@@ -1909,13 +1909,7 @@ siteForm.addEventListener("submit",async e=>{
   studioTitle.textContent="Analyse du site…";
   studioMeta.textContent=manual?description.slice(0,160):website;
   studioStatus.textContent="Lecture du site puis analyse GPT‑5.6…";
-  HOOKS=new Array(ALL.length).fill("");
-  HOOK_META=new Array(ALL.length).fill(null);
-  VIDEO_MATCHES=new Array(ALL.length).fill(null);
-  BRAND_PROFILE_ID="";
-  PROJECT_TOKEN="";
-  refreshVisibleHooks();
-  updateProgress("Analyse du site…");
+  updateProgress("Analyse en cours — votre projet actuel reste intact…");
 
   let data;
   try{
@@ -1928,6 +1922,13 @@ siteForm.addEventListener("submit",async e=>{
     btn.innerHTML=label;
     return;
   }
+
+  HOOKS=new Array(ALL.length).fill("");
+  HOOK_META=new Array(ALL.length).fill(null);
+  VIDEO_MATCHES=new Array(ALL.length).fill(null);
+  BRAND_PROFILE_ID="";
+  PROJECT_TOKEN="";
+  refreshVisibleHooks();
 
   PROFILE=data.profile;
   PROJECT_WEBSITE=data.website||website||"Description manuelle";
