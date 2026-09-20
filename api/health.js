@@ -1,4 +1,4 @@
-const {credential,MODEL}=require('./_ai');
+const {credential,canDirect,MODEL,DIRECT_MODEL}=require('./_ai');
 const {JEV_MODEL}=require('./_jev');
 const db=require('./_db');
 
@@ -8,7 +8,10 @@ module.exports=async function handler(req,res){
   const result={
     ok:true,
     aiGatewayConfigured:Boolean(credential()),
+    directOpenAIConfigured:Boolean(canDirect()),
+    aiConfigured:Boolean(credential()||canDirect()),
     generatorModel:MODEL,
+    directOpenAIModel:DIRECT_MODEL,
     evaluatorModel:JEV_MODEL,
     databaseConfigured:db.configured(),
     stripeConfigured:Boolean(process.env.STRIPE_SECRET_KEY),
