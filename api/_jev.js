@@ -1,4 +1,4 @@
-const {credential}=require('./_ai');
+const {credential,openaiCredential,openaiJson,DIRECT_MODEL}=require('./_ai');
 const {gatewayError,isTimeout}=require('./_gateway-errors');
 
 const JEV_MODEL=process.env.VIDEOMA_EVALUATOR_MODEL||'typesafe-ai/jev';
@@ -86,6 +86,54 @@ function hookQuestions(){
   };
 }
 
+function openAiEvalSchema(){
+  const scoreProps={};
+  for(const key of ['visualFit','brandFit','hookStrength','specificity','naturalness','claimSafety','novelty','readability','emotionMatch']){
+    scoreProps[key]={type:'integer',minimum:0,maximum:100};
+  }
+  return {
+    type:'object',
+    properties:{
+      scores:{
+        type:'object',
+        properties:scoreProps,
+        required:Object.keys(scoreProps),
+        additionalProperties:false
+      },
+      acceptProbability:{type:'number',minimum:0,maximum:1},
+      rationale:{type:'string'}
+    },
+    required:['scores','acceptProbability','rationale'],
+    additionalProperties:false
+  };
+}
+async function evaluateWithOpenAI(state){
+  if(!openaiCredential())throw new Error('OPENAI_API_NOT_CONFIGURED');
+  const data=await openaiJson({
+    name:'videoma_hook_quality_fallback',
+    schema:openAiEvalSchema(),
+    timeoutMs:90000,
+    messages:[
+      {
+        role:'system',
+        content:'You are a strict QA evaluator for short-form reaction-video hooks. Score only from the supplied structured evidence. Unsupported claims must score very low on claimSafety. A hook that covers or conflicts with the face/reaction should score low on visualFit and readability.'
+      },
+      {
+        role:'user',
+        content:'Evaluate this candidate independently. Return harsh scores and an acceptance probability. State:\n'+JSON.stringify(state)
+      }
+    ]
+  });
+  return {
+    scores:data.scores,
+    acceptProbability:Number(data.acceptProbability)||0,
+    answers:{fallbackRationale:data.rationale||''},
+    model:DIRECT_MODEL,
+    usage:null,
+    providerMetadata:{fallback:'direct-openai'},
+    provider:'openai-fallback'
+  };
+}
 async function evaluateHook({hook,secondLine,mechanism,visualAnchor,brandAnchor,video,signal,brand,previousHooks}){
   const state={
     candidate:{
@@ -109,7 +157,10 @@ async function evaluateHook({hook,secondLine,mechanism,visualAnchor,brandAnchor,
       hasComputer:Boolean(video&&video.hasComputer),
       hasProduct:Boolean(video&&video.hasProduct),
       hookCompatibility:video&&video.hookCompatibility||[],
-      peakReason:video&&video.peakReason||''
+      peakReason:video&&video.peakReason||'',
+      textSafeZone:video&&video.textSafeZone||{},
+      faceRegions:video&&video.faceRegions||[],
+      objectRegions:video&&video.objectRegions||[]
     },
     matchedBrandSignal:signal||{},
     brand:{
@@ -121,20 +172,28 @@ async function evaluateHook({hook,secondLine,mechanism,visualAnchor,brandAnchor,
     },
     previousHooks:(previousHooks||[]).slice(-40)
   };
-  const result=await evaluateJev(state,hookQuestions());
-  const scores={};
-  for(const key of ['visualFit','brandFit','hookStrength','specificity','naturalness','claimSafety','novelty','readability','emotionMatch']){
-    scores[key]=scoreTo100(result.answers[key]);
+
+  try{
+    const result=await evaluateJev(state,hookQuestions());
+    const scores={};
+    for(const key of ['visualFit','brandFit','hookStrength','specificity','naturalness','claimSafety','novelty','readability','emotionMatch']){
+      scores[key]=scoreTo100(result.answers[key]);
+    }
+    const acceptProbability=Math.max(0,Math.min(1,Number(result.answers.accept&&result.answers.accept.probability)||0));
+    return {
+      scores,
+      acceptProbability,
+      answers:result.answers,
+      model:result.model||JEV_MODEL,
+      usage:result.usage||null,
+      providerMetadata:result.providerMetadata||null,
+      provider:'jev'
+    };
+  }catch(error){
+    if(!openaiCredential())throw error;
+    console.warn('Jev fallback to direct OpenAI',String(error&&error.message||error));
+    return evaluateWithOpenAI(state);
   }
-  const acceptProbability=Math.max(0,Math.min(1,Number(result.answers.accept&&result.answers.accept.probability)||0));
-  return {
-    scores,
-    acceptProbability,
-    answers:result.answers,
-    model:result.model||JEV_MODEL,
-    usage:result.usage||null,
-    providerMetadata:result.providerMetadata||null
-  };
 }
 
 async function mapLimit(items,limit,fn){
