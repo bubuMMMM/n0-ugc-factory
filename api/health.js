@@ -1,6 +1,8 @@
 const {credential,canDirect,MODEL,DIRECT_MODEL}=require('./_ai');
 const {JEV_MODEL}=require('./_jev');
 const db=require('./_db');
+const {isAdmin}=require('./admin/_auth');
+const {VIDEO_INTELLIGENCE_VERSION}=require('./_versions');
 
 module.exports=async function handler(req,res){
   res.setHeader('Cache-Control','no-store');
@@ -27,8 +29,25 @@ module.exports=async function handler(req,res){
         "count(*) filter(where status='error')::int errors from video_intelligence"
       );
       result.videoIntelligence=r.rows[0]||result.videoIntelligence;
+      const current=await db.query(
+        "select count(*)::int ready from video_intelligence where status='ready' and analysis_version=$1",
+        [VIDEO_INTELLIGENCE_VERSION]
+      );
+      result.videoIntelligence.currentVersionReady=current.rows[0]?.ready||0;
       const j=await db.query("select id,active,last_error,updated_at from preanalysis_jobs order by started_at desc limit 1").catch(()=>({rows:[]}));
-      result.preanalysisJob=j.rows[0]||null;
+      const job=j.rows[0]||null;
+      result.functional={
+        ai:Boolean(credential()||canDirect()),
+        database:true,
+        preanalysisBlocked:Boolean(job&&!job.active&&/INSUFFICIENT_FUNDS|AUTH_ERROR|NOT_CONFIGURED/.test(String(job.last_error||'')))
+      };
+      result.preanalysis={
+        active:Boolean(job&&job.active),
+        blocked:Boolean(job&&!job.active&&job.last_error),
+        lastErrorCode:job&&job.last_error?String(job.last_error):null,
+        updatedAt:job&&job.updated_at||null
+      };
+      if(isAdmin(req))result.preanalysisJob=job;
     }catch(error){
       result.ok=false;
       result.databaseError=String(error&&error.message||'DATABASE_ERROR');
