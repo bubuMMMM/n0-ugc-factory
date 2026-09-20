@@ -1,17 +1,15 @@
-const crypto=require('node:crypto');
 const db=require('../_db');
 const core=require('./_preanalysis-core');
+const {isAdmin,adminConfigured}=require('./_auth');
 
-const TOKEN_HASH='9996e925d80a5c88d8754d6363747a4811e06827d02ffcf227e8e7247b256214';
-
-function authorized(req){
-  const token=String(req.query&&req.query.token||req.headers['x-preanalysis-token']||'');
-  if(!token)return false;
-  return crypto.createHash('sha256').update(token).digest('hex')===TOKEN_HASH;
-}
 module.exports=async function handler(req,res){
   res.setHeader('Cache-Control','no-store');
-  if(!authorized(req))return res.status(401).json({error:'UNAUTHORIZED'});
+  if(req.method!=='POST'){
+    res.setHeader('Allow','POST');
+    return res.status(405).json({error:'METHOD_NOT_ALLOWED'});
+  }
+  if(!adminConfigured())return res.status(503).json({error:'ADMIN_AUTH_NOT_CONFIGURED'});
+  if(!isAdmin(req))return res.status(401).json({error:'UNAUTHORIZED'});
   if(!db.configured())return res.status(503).json({error:'DATABASE_NOT_CONFIGURED'});
   try{
     await core.seed();
