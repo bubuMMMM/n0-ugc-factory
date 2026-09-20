@@ -1,11 +1,12 @@
 const fs=require('node:fs');
+const crypto=require('node:crypto');
 const path=require('node:path');
 const {gatewayJson,MODEL}=require('../_ai');
 const {embedMany,EMBEDDING_MODEL}=require('../_embedding');
 const {extract}=require('../_video-frames');
 const db=require('../_db');
+const {VIDEO_INTELLIGENCE_VERSION:VERSION,MANIFEST_VERSION}=require('../_versions');
 
-const VERSION='video-intel-v6-face-boxes';
 const BATCH=2;
 
 function s(v,n=400){return String(v||'').replace(/\s+/g,' ').trim().slice(0,n)}
@@ -15,46 +16,59 @@ function readUrls(){
 async function ensureJobTable(){
   await db.query("create table if not exists preanalysis_jobs (id uuid primary key default gen_random_uuid(), active boolean not null default true, total integer not null default 0, ready integer not null default 0, pending integer not null default 0, errors integer not null default 0, processing integer not null default 0, last_error text, started_at timestamptz not null default now(), updated_at timestamptz not null default now(), completed_at timestamptz)");
 }
+function hash(value){return crypto.createHash('sha256').update(String(value)).digest('hex')}
 async function seed(){
   const urls=readUrls();
-  const count=await db.query("select count(*)::int n from video_intelligence");
-  if(Number(count.rows[0]?.n||0)<urls.length){
-    const indexes=urls.map((_,i)=>i+1);
-    await db.query(
-      "insert into video_intelligence(canonical_index,source_url,analysis_version,status) "+
-      "select x.i,x.u,$3,'pending' from unnest($1::int[],$2::text[]) as x(i,u) "+
-      "on conflict(canonical_index) do update set source_url=excluded.source_url",
-      [indexes,urls,VERSION]
-    );
-  }
-  await db.query(
-    "update video_intelligence set status='ready',error_message=null where status='pending' and embedding is not null and analyzed_at is not null and scene is not null"
-  );
-  return urls.length;
-}
-async function recoverStale(){
-  await db.query("update video_intelligence set status='pending',error_message='Recovered stale worker' where status='processing' and updated_at < now() - interval '4 minutes'");
-}
-async function claim(limit=BATCH){
+  await db.ensureSchema();
+  const manifestHash=hash(MANIFEST_VERSION+'\n'+urls.join('\n'));
+  const indexes=urls.map((_,i)=>i+1);
+  const ids=urls.map(hash);
   const client=await db.getPool().connect();
   try{
     await client.query('begin');
-    const r=await client.query(
-      "select id,canonical_index,source_url from video_intelligence where status='pending' order by canonical_index for update skip locked limit $1",
-      [limit]
+    // Move existing indexes out of the way so a reorder can be applied without unique conflicts.
+    await client.query("update video_intelligence set canonical_index=canonical_index+100000 where canonical_index < 100000");
+    await client.query(
+      "insert into video_intelligence(canonical_index,source_url,media_id,manifest_version,analysis_version,status) "+
+      "select x.i,x.u,x.m,$4,$5,'pending' from unnest($1::int[],$2::text[],$3::text[]) as x(i,u,m) "+
+      "on conflict(source_url) do update set canonical_index=excluded.canonical_index,media_id=excluded.media_id,manifest_version=excluded.manifest_version",
+      [indexes,urls,ids,manifestHash,VERSION]
     );
-    if(r.rows.length){
-      await client.query(
-        "update video_intelligence set status='processing',analysis_version=$1,error_message=null where id = any($2::uuid[])",
-        [VERSION,r.rows.map(x=>x.id)]
-      );
-    }
+    await client.query("delete from video_intelligence where manifest_version is distinct from $1",[manifestHash]);
     await client.query('commit');
-    return r.rows;
-  }catch(e){
+  }catch(error){
     try{await client.query('rollback')}catch{}
-    throw e;
+    throw error;
   }finally{client.release()}
+  await prepareCurrentVersion();
+  return urls.length;
+}
+async function recoverStale(){
+  await db.query(
+    "update video_intelligence set status='pending',lease_owner=null,lease_expires_at=null,next_retry_at=now(),error_message='Recovered stale worker' "+
+    "where status='processing' and (lease_expires_at is null or lease_expires_at < now())"
+  );
+}
+async function claim(limit=BATCH){
+  const owner=crypto.randomUUID();
+  const r=await db.query(
+    "with picked as ("+
+    " select id from video_intelligence"+
+    " where status='pending'"+
+    "   and (next_retry_at is null or next_retry_at<=now())"+
+    "   and analysis_attempt_count < 6"+
+    " order by canonical_index"+
+    " for update skip locked limit $1"+
+    ") "+
+    "update video_intelligence v set "+
+    " status='processing',analysis_version=$2,error_message=null,"+
+    " lease_owner=$3,lease_expires_at=now()+interval '4 minutes',"+
+    " analysis_attempt_count=v.analysis_attempt_count+1,next_retry_at=null"+
+    " from picked p where v.id=p.id"+
+    " returning v.id,v.canonical_index,v.source_url,v.lease_owner,v.analysis_attempt_count",
+    [limit,VERSION,owner]
+  );
+  return r.rows;
 }
 async function counts(){
   const q=await db.query(
@@ -162,8 +176,8 @@ async function analyze(rows){
       extracted.push({...row,...await extract(row.source_url)});
     }catch(error){
       await db.query(
-        "update video_intelligence set status='error',error_message=$2 where id=$1",
-        [row.id,s(error.message,500)]
+        "update video_intelligence set status='error',error_message=$2,lease_owner=null,lease_expires_at=null where id=$1 and lease_owner=$3",
+        [row.id,s(error.message,500),row.lease_owner]
       );
     }
   }
@@ -193,7 +207,7 @@ async function analyze(rows){
     const v=extracted[i],r=byIndex.get(v.canonical_index);
     const ratio=[.08,.34,.64,.90][Math.max(0,Math.min(3,(Number(r.peakFrame)||1)-1))];
     await db.query(
-      "update video_intelligence set duration_ms=$2,status='ready',scene=$3,action=$4,primary_emotion=$5,emotions=$6,objects=$7,gestures=$8,person_count=$9,has_phone=$10,has_computer=$11,has_product=$12,gaze_direction=$13,reaction_intensity=$14,energy_score=$15,versatility_score=$16,reaction_type=$17,visual_focus=$18,peak_moment_ms=$19,peak_reason=$20,text_safe_zone=$21::jsonb,face_regions=$22::jsonb,object_regions=$23::jsonb,hook_compatibility=$24,tags=$25,keyframes=$26::jsonb,contact_sheet_data=$27,has_audio=false,audio_status='ignored',transcript='',embedding_text=$28,embedding_model=$29,embedding=$30::vector,raw_analysis=$31::jsonb,error_message=null,analyzed_at=now(),analysis_version=$32 where id=$1",
+      "update video_intelligence set duration_ms=$2,status='ready',scene=$3,action=$4,primary_emotion=$5,emotions=$6,objects=$7,gestures=$8,person_count=$9,has_phone=$10,has_computer=$11,has_product=$12,gaze_direction=$13,reaction_intensity=$14,energy_score=$15,versatility_score=$16,reaction_type=$17,visual_focus=$18,peak_moment_ms=$19,peak_reason=$20,text_safe_zone=$21::jsonb,face_regions=$22::jsonb,object_regions=$23::jsonb,hook_compatibility=$24,tags=$25,keyframes=$26::jsonb,contact_sheet_data=$27,has_audio=false,audio_status='ignored',transcript='',embedding_text=$28,embedding_model=$29,embedding=$30::vector,raw_analysis=$31::jsonb,error_message=null,analyzed_at=now(),analysis_version=$32,lease_owner=null,lease_expires_at=null,next_retry_at=null where id=$1 and lease_owner=$33",
       [
         v.id,v.durationMs,s(r.scene,500),s(r.action,500),s(r.primaryEmotion,100),
         r.emotions||[],r.objects||[],r.gestures||[],Number(r.personCount)||0,
@@ -203,7 +217,7 @@ async function analyze(rows){
         JSON.stringify(r.textSafeZone||{}),JSON.stringify(r.faceRegions||[]),JSON.stringify(r.objectRegions||[]),
         r.hookCompatibility||[],r.tags||[],JSON.stringify(v.keyframes),v.contactSheet,
         embeddingTexts[i],EMBEDDING_MODEL,db.vectorLiteral(embeddings[i]),
-        JSON.stringify({...r,analysisConfidence:Number(r.analysisConfidence)||0}),VERSION
+        JSON.stringify({...r,analysisConfidence:Number(r.analysisConfidence)||0}),VERSION,v.lease_owner
       ]
     );
     saved.push({
@@ -215,8 +229,8 @@ async function analyze(rows){
 }
 async function prepareCurrentVersion(){
   await db.query(
-    "update video_intelligence set status='pending',error_message=null "+
-    "where status='error' or (status='ready' and analysis_version is distinct from $1)",
+    "update video_intelligence set status='pending',error_message=null,next_retry_at=null,lease_owner=null,lease_expires_at=null "+
+    "where status in ('ready','error') and analysis_version is distinct from $1",
     [VERSION]
   );
 }
@@ -305,8 +319,8 @@ async function runBatch(jobId){
       lastError=code;
       if(blockingGatewayError(code)){
         await Promise.allSettled(rows.map(row=>db.query(
-          "update video_intelligence set status='pending',error_message=$2 where id=$1",
-          [row.id,code]
+          "update video_intelligence set status='pending',error_message=$2,lease_owner=null,lease_expires_at=null,next_retry_at=now()+interval '15 minutes' where id=$1 and lease_owner=$3",
+          [row.id,code,row.lease_owner]
         )));
         const c=await counts();
         await pauseJob(jobId,c,code);
@@ -314,13 +328,13 @@ async function runBatch(jobId){
       }
       if(transientError(code)){
         await Promise.allSettled(rows.map(row=>db.query(
-          "update video_intelligence set status='pending',error_message=$2 where id=$1",
-          [row.id,code]
+          "update video_intelligence set status=case when analysis_attempt_count>=6 then 'error' else 'pending' end,error_message=$2,lease_owner=null,lease_expires_at=null,next_retry_at=case when analysis_attempt_count>=6 then null else now()+interval '60 seconds' end where id=$1 and lease_owner=$3",
+          [row.id,code,row.lease_owner]
         )));
       }else{
         await Promise.allSettled(rows.map(row=>db.query(
-          "update video_intelligence set status='error',error_message=$2 where id=$1",
-          [row.id,code]
+          "update video_intelligence set status='error',error_message=$2,lease_owner=null,lease_expires_at=null where id=$1 and lease_owner=$3",
+          [row.id,code,row.lease_owner]
         )));
       }
     }
