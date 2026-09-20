@@ -30,6 +30,10 @@ const MIGRATIONS=[
   {
     "id": "007_manifest_and_leases.sql",
     "sql": "alter table if exists video_intelligence\n  add column if not exists media_id text,\n  add column if not exists manifest_version text;\n\ncreate unique index if not exists video_intelligence_media_id_idx\n  on video_intelligence(media_id)\n  where media_id is not null;\n\nalter table if exists video_intelligence\n  add column if not exists analysis_attempt_count integer not null default 0,\n  add column if not exists next_retry_at timestamptz,\n  add column if not exists lease_owner text,\n  add column if not exists lease_expires_at timestamptz;\n"
+  },
+  {
+    "id": "008_project_tokens.sql",
+    "sql": "create table if not exists generation_projects (\n  id uuid primary key default gen_random_uuid(),\n  token_hash text not null unique,\n  brand_profile_id uuid not null references brand_profiles(id) on delete cascade,\n  website text not null,\n  domain text not null,\n  status text not null default 'active' check (status in ('active','expired','revoked')),\n  expires_at timestamptz not null default (now() + interval '24 hours'),\n  created_at timestamptz not null default now(),\n  updated_at timestamptz not null default now()\n);\n\ncreate index if not exists generation_projects_brand_idx on generation_projects(brand_profile_id);\ncreate index if not exists generation_projects_expiry_idx on generation_projects(expires_at);\n\ncreate table if not exists api_rate_limits (\n  scope text not null,\n  key_hash text not null,\n  window_start bigint not null,\n  hits integer not null default 0,\n  updated_at timestamptz not null default now(),\n  primary key(scope,key_hash,window_start)\n);\n\ncreate index if not exists api_rate_limits_updated_idx on api_rate_limits(updated_at);\n"
   }
 ];
 module.exports={MIGRATIONS};
