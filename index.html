@@ -1618,7 +1618,12 @@ function applyHookToCard(card,index){
   card.dataset.demo=meta.demo?"true":"false";
   card.dataset.faceRisk=String(Math.round(Number(meta.faceOcclusionPenalty)||0));
   card.dataset.align=meta.horizontalAlign||"center";
-  const safeKnown=Boolean(VIDEO_LAYOUTS[index]||CLIENT_SAFE_LAYOUTS[index]||VIDEO_MATCHES[index]?.intelligence);
+  const hookLayoutCurrent=Boolean(
+    HOOK_META[index] &&
+    HOOK_META[index].layoutVersion===CURRENT_LAYOUT_VERSION &&
+    validTextRect(HOOK_META[index].textRect)
+  );
+  const safeKnown=Boolean(VIDEO_LAYOUTS[index]||CLIENT_SAFE_LAYOUTS[index]||hookLayoutCurrent);
   card.dataset.layoutPending=safeKnown?"false":"true";
   const overlay=card.querySelector(".hook-overlay");
   setHookGeometry(overlay,meta);
@@ -1639,7 +1644,8 @@ function render(reset=false){
     const v=c.querySelector("video");
     v.addEventListener("loadeddata",()=>{
       c.querySelector(".skeleton")?.remove();
-      if(!VIDEO_LAYOUTS[index])queueLocalLayoutScan(index);
+      const currentHookLayout=Boolean(HOOK_META[index]?.layoutVersion===CURRENT_LAYOUT_VERSION&&validTextRect(HOOK_META[index]?.textRect));
+      if(!VIDEO_LAYOUTS[index]&&!currentHookLayout)queueLocalLayoutScan(index);
     },{once:true});
     v.addEventListener("error",()=>{const s=c.querySelector(".skeleton");if(s){s.style.animation="none";s.style.background="#151515"}});
     c.onclick=()=>openVideo(u,index);
