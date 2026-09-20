@@ -30,7 +30,7 @@ async function issueProject({brandProfileId,website}){
   if(!db.configured()||!brandProfileId)return null;
   const token=crypto.randomBytes(32).toString('base64url');
   await db.query(
-    "insert into generation_projects(token_hash,brand_profile_id,website,domain) values($1,$2,$3,$4)",
+    "insert into generation_projects(token_hash,brand_profile_id,website,domain,expires_at) values($1,$2,$3,$4,now()+interval '7 days')",
     [hash(token),brandProfileId,String(website||''),domainOf(website)]
   );
   return token;
