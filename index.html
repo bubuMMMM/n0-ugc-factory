@@ -763,6 +763,16 @@ header{background:transparent}
 .profile-editor-actions .studio-action{width:auto}
 @media(max-width:680px){.profile-editor{grid-template-columns:1fr}.profile-summary,.profile-editor-actions{grid-column:1}}
 
+
+/* Never show a reaction hook before a safe geometry decision exists. */
+.card[data-layout-pending="true"] .hook-overlay{
+  opacity:0!important;
+}
+.card[data-layout-pending="false"] .hook-overlay{
+  opacity:1;
+  transition:opacity .14s ease;
+}
+
 </style>
 </head>
 <body>
@@ -1608,6 +1618,8 @@ function applyHookToCard(card,index){
   card.dataset.demo=meta.demo?"true":"false";
   card.dataset.faceRisk=String(Math.round(Number(meta.faceOcclusionPenalty)||0));
   card.dataset.align=meta.horizontalAlign||"center";
+  const safeKnown=Boolean(VIDEO_LAYOUTS[index]||CLIENT_SAFE_LAYOUTS[index]||VIDEO_MATCHES[index]?.intelligence);
+  card.dataset.layoutPending=safeKnown?"false":"true";
   const overlay=card.querySelector(".hook-overlay");
   setHookGeometry(overlay,meta);
   fitHookNode(overlay,meta);
