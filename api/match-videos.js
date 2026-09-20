@@ -1,6 +1,7 @@
 const db=require('./_db');
 const {statusForAiCode}=require('./_gateway-errors');
 const {embedMany,EMBEDDING_MODEL}=require('./_embedding');
+const {VIDEO_INTELLIGENCE_VERSION}=require('./_versions');
 
 function t(x,n=500){return String(x||'').replace(/\s+/g,' ').trim().slice(0,n)}
 function domainOf(raw){try{return new URL(raw).hostname.toLowerCase()}catch{return t(raw,255)}}
@@ -22,7 +23,22 @@ function signalsFromProfile(p){
   for(const x of p.contentPillars||[])push(out,'angle',(x.name||'')+': '+(x.insight||''),{weight:1.1,evidence:x.evidence});
   for(const x of p.hookPlaybook||[])push(out,'angle',(x.angle||'')+': '+(x.insight||''),{weight:1.08,evidence:x.examplePattern});
   const seen=new Set();
-  return out.filter(x=>{const k=x.type+'|'+x.text.toLowerCase();if(seen.has(k))return false;seen.add(k);return true}).slice(0,48);
+  const unique=out.filter(x=>{const k=x.type+'|'+x.text.toLowerCase();if(seen.has(k))return false;seen.add(k);return true});
+  const byType=new Map();
+  for(const x of unique){
+    if(!byType.has(x.type))byType.set(x.type,[]);
+    byType.get(x.type).push(x);
+  }
+  const balanced=[];
+  const types=[...byType.keys()];
+  for(let round=0;balanced.length<48&&round<8;round++){
+    for(const type of types){
+      const item=byType.get(type)[round];
+      if(item)balanced.push(item);
+      if(balanced.length>=48)break;
+    }
+  }
+  return balanced;
 }
 function reactionScore(type,reaction,compat){
   reaction=String(reaction||'').toLowerCase();compat=(compat||[]).map(x=>String(x).toLowerCase());
@@ -72,7 +88,7 @@ module.exports=async function handler(req,res){
     if(!signals.length)return res.status(422).json({error:'NO_BRAND_SIGNALS'});
     const embeddings=await embedMany(signals.map(x=>x.text));
     const profileText=[profile.brand,profile.category,profile.summary,profile.primaryOffer]
-      .concat(profile.pains||[],profile.desires||[],profile.objections||[],profile.differentiators||[])
+      .concat(profile.pains||[],profile.desires||[],profile.benefits||[],profile.objections||[],profile.differentiators||[])
       .filter(Boolean).join('\n');
     const profileEmbedding=(await embedMany([profileText]))[0];
     let profileId=null;
@@ -114,10 +130,10 @@ module.exports=async function handler(req,res){
       "greatest(0,least(1,1-(v.embedding <=> s.embedding))) semantic_similarity,",
       "row_number() over(partition by v.id order by (v.embedding <=> s.embedding) asc) rn",
       "from video_intelligence v cross join brand_signals s",
-      "where v.status='ready' and v.embedding is not null and s.brand_profile_id=$1",
+      "where v.status='ready' and v.analysis_version=$2 and v.embedding is not null and s.brand_profile_id=$1",
       ") select * from candidates where rn<=5 order by canonical_index,rn"
     ].join(' ');
-    const ranked=await db.query(sql,[profileId]);
+    const ranked=await db.query(sql,[profileId,VIDEO_INTELLIGENCE_VERSION]);
     const grouped=new Map();
     for(const row of ranked.rows){
       if(!grouped.has(row.video_id))grouped.set(row.video_id,[]);
@@ -135,7 +151,10 @@ module.exports=async function handler(req,res){
         if(!best||weighted>best.score)best={row,reaction,score:weighted};
       }
       if(!best)continue;
-      const r=best.row,compat=Math.round(Math.min(100,best.score*100));
+      const minMatch=Math.max(0,Math.min(100,Number(process.env.VIDEOMA_MATCH_MIN)||58));
+      const compat=Math.round(Math.min(100,best.score*100));
+      if(compat<minMatch)continue;
+      const r=best.row;
       const reasons=['semantic '+Math.round(Number(r.semantic_similarity)*100),'reaction '+Math.round(best.reaction*100),'versatility '+(Number(r.versatility_score)||0)];
       await db.query(
         "insert into video_brand_matches(brand_profile_id,video_id,brand_signal_id,semantic_similarity,emotion_match,reaction_match,versatility,compatibility_score,reasons) "+
