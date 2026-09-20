@@ -47,7 +47,10 @@ function boxesFromRegions(regions){
 }
 function faceBoxes(video){
   const explicit=(video&&video.faceBoxes||[]).map(normalizeBox).filter(Boolean);
-  return explicit.length?explicit:boxesFromRegions(video&&video.faceRegions);
+  if(explicit.length)return explicit;
+  const regions=Array.isArray(video&&video.faceRegions)?video.faceRegions:[];
+  const regionBoxes=regions.map(x=>typeof x==='object'?normalizeBox(x):null).filter(Boolean);
+  return regionBoxes.length?regionBoxes:boxesFromRegions(regions);
 }
 function intersect(a,b){
   const x1=Math.max(a.x,b.x),y1=Math.max(a.y,b.y),x2=Math.min(a.x+a.w,b.x+b.w),y2=Math.min(a.y+a.h,b.y+b.h);
