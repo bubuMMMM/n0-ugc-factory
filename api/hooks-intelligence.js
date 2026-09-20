@@ -111,6 +111,7 @@ function applySafeLayouts(videos,results){
     return {
       ...r,
       placement:layout.placement,
+      horizontalAlign:layout.horizontalAlign||'center',
       secondLine,
       faceOcclusionPenalty:layout.faceOcclusionPenalty,
       layoutScore:layout.layoutScore,
@@ -134,6 +135,7 @@ async function evaluateResults(profile,videos,results,avoid){
         visualAnchor:r.visualAnchor,
         brandAnchor:r.brandAnchor,
         placement:r.placement,
+        horizontalAlign:r.horizontalAlign,
         faceOcclusionPenalty:r.faceOcclusionPenalty,
         video:v.intelligence||{},
         signal:v.signal||{},
@@ -175,8 +177,8 @@ async function persist(brandProfileId,videos,results){
       'insert into hook_assignments(',
       'brand_profile_id,video_id,brand_signal_id,hook,second_line,mechanism,visual_anchor,brand_anchor,placement,',
       'visual_fit,brand_fit,hook_strength,specificity,naturalness,claim_safety,novelty,readability,emotion_match,quality_score,accepted,rationale,generator_version,',
-      'jev_accept_probability,jev_answers,evaluator_model,evaluation_version,face_occlusion_penalty,layout_score,second_line_suppressed,layout_version',
-      ') values($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24::jsonb,$25,$26,$27,$28,$29,$30)',
+      'jev_accept_probability,jev_answers,evaluator_model,evaluation_version,face_occlusion_penalty,layout_score,second_line_suppressed,layout_version,horizontal_align',
+      ') values($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24::jsonb,$25,$26,$27,$28,$29,$30,$31)',
       'on conflict(brand_profile_id,video_id) do update set ',
       'brand_signal_id=excluded.brand_signal_id,hook=excluded.hook,second_line=excluded.second_line,mechanism=excluded.mechanism,',
       'visual_anchor=excluded.visual_anchor,brand_anchor=excluded.brand_anchor,placement=excluded.placement,',
@@ -185,14 +187,14 @@ async function persist(brandProfileId,videos,results){
       'emotion_match=excluded.emotion_match,quality_score=excluded.quality_score,accepted=excluded.accepted,rationale=excluded.rationale,',
       'generator_version=excluded.generator_version,jev_accept_probability=excluded.jev_accept_probability,jev_answers=excluded.jev_answers,',
       'evaluator_model=excluded.evaluator_model,evaluation_version=excluded.evaluation_version,',
-      'face_occlusion_penalty=excluded.face_occlusion_penalty,layout_score=excluded.layout_score,second_line_suppressed=excluded.second_line_suppressed,layout_version=excluded.layout_version'
+      'face_occlusion_penalty=excluded.face_occlusion_penalty,layout_score=excluded.layout_score,second_line_suppressed=excluded.second_line_suppressed,layout_version=excluded.layout_version,horizontal_align=excluded.horizontal_align'
     ].join(' ');
     await db.query(sql,[
       brandProfileId,v.intelligence.id,v.signal&&v.signal.id||null,r.hook,r.secondLine||null,r.mechanism,r.visualAnchor,r.brandAnchor,r.placement,
       r.scores.visualFit,r.scores.brandFit,r.scores.hookStrength,r.scores.specificity,r.scores.naturalness,r.scores.claimSafety,
       r.scores.novelty,r.scores.readability,r.scores.emotionMatch,r.quality,Boolean(r.accepted),r.rationale,VERSION,
       Number(r.jevAcceptProbability)||0,JSON.stringify(r.jevAnswers||{}),r.evaluatorModel||JEV_MODEL,'evaluator-v2',
-      Number(r.faceOcclusionPenalty)||0,Number(r.layoutScore)||0,Boolean(r.secondLineSuppressed),'face-first-v1'
+      Number(r.faceOcclusionPenalty)||0,Number(r.layoutScore)||0,Boolean(r.secondLineSuppressed),'face-first-v1',r.horizontalAlign||'center'
     ]);
   }
 }
