@@ -3,9 +3,11 @@ const {gatewayError,isTimeout}=require('./_gateway-errors');
 
 const JEV_MODEL=process.env.VIDEOMA_EVALUATOR_MODEL||'typesafe-ai/jev';
 const ENDPOINT='https://ai-gateway.vercel.sh/v1/evaluate';
+let jevBlockedUntil=0;
 
 async function evaluateJev(state,questions){
   const token=credential();
+  if(Date.now()<jevBlockedUntil)throw new Error('JEV_GATEWAY_CIRCUIT_OPEN');
   if(!token){
     const e=new Error('AI_GATEWAY_NOT_CONFIGURED');
     e.code='AI_GATEWAY_NOT_CONFIGURED';
@@ -38,7 +40,11 @@ async function evaluateJev(state,questions){
     throw error;
   }
   const raw=await r.text();
-  if(!r.ok)throw gatewayError(raw,r.status,'JEV_EVALUATION_ERROR');
+  if(!r.ok){
+    const error=gatewayError(raw,r.status,'JEV_EVALUATION_ERROR');
+    if(String(error.message)==='AI_GATEWAY_INSUFFICIENT_FUNDS'||String(error.message)==='AI_GATEWAY_AUTH_ERROR')jevBlockedUntil=Date.now()+5*60*1000;
+    throw error;
+  }
   let data;
   try{data=JSON.parse(raw)}catch{throw new Error('JEV_INVALID_RESPONSE')}
   if(!data||!data.answers)throw new Error('JEV_EMPTY_RESPONSE');
