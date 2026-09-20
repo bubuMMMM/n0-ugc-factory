@@ -85,7 +85,7 @@ function resolveLayout(intelligence={},options={}){
     const preferred=requested===c.placement?14:0;
     const avoid=(zone.avoid||[]).map(norm);
     const avoided=avoid.some(x=>c.placement==='top'?/haut|top/.test(x):/bas|bottom|lower/.test(x));
-    c.score=Math.max(0,100-c.faceOcclusionPenalty+preferred-(avoided?35:0));
+    c.score=Math.max(0,Math.min(100,100-c.faceOcclusionPenalty+preferred-(avoided?35:0)));
   }
   candidates.sort((a,b)=>b.score-a.score);
   const best=candidates[0];
@@ -93,7 +93,7 @@ function resolveLayout(intelligence={},options={}){
   const configuredAllow=typeof zone.allowSecondLine==='boolean'?zone.allowSecondLine:null;
   const allowSecondLine=configuredAllow!==null
     ? configuredAllow&&best.faceOcclusionPenalty<=18
-    : best.faceOcclusionPenalty<=12&&people<=1&&faces.length<=2;
+    : false;
   const maxLines=Math.max(1,Math.min(3,Number(zone.maxLines)||(allowSecondLine?2:1)));
   return {
     placement:best.placement,
