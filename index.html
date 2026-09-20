@@ -1009,7 +1009,15 @@ let LOCAL_LAYOUT_ACTIVE=0;
 function demoHookFor(index){
   const layout=VIDEO_LAYOUTS[index]||CLIENT_SAFE_LAYOUTS[index];
   const item=DEMO_HOOK_LIBRARY[index%DEMO_HOOK_LIBRARY.length];
-  const hook=SAFE_DEMO_HOOKS[index%SAFE_DEMO_HOOKS.length]||item.hook;
+  const baseHook=SAFE_DEMO_HOOKS[index%SAFE_DEMO_HOOKS.length]||item.hook;
+  const cycle=Math.floor(index/SAFE_DEMO_HOOKS.length)%5;
+  const hook=[
+    baseHook,
+    "POV : "+baseHook.charAt(0).toLowerCase()+baseHook.slice(1),
+    "La vraie question : "+baseHook.charAt(0).toLowerCase()+baseHook.slice(1),
+    "Personne ne te montre ça : "+baseHook.charAt(0).toLowerCase()+baseHook.slice(1),
+    "Si tu crées du contenu, lis ça : "+baseHook.charAt(0).toLowerCase()+baseHook.slice(1)
+  ][cycle];
   const n=index+1;
   const dynamic=[
     "À partir d’une seule URL",
@@ -1033,7 +1041,7 @@ function demoHookFor(index){
     placement:layout?.placement||fallback.placement,
     horizontalAlign:layout?.horizontalAlign||fallback.horizontalAlign,
     textRect:layout?.textRect||fallback.textRect,
-    fontScale:Math.max(.80,Number(layout?.fontScale)||visual.scale),
+    fontScale:Math.max(.82,Number(layout?.fontScale)||1),
     visualStyle:visual,
     style:"short",
     demo:true,
@@ -1265,7 +1273,7 @@ function metaFor(index){
       textRect:decision.textRect,
       secondLine:base.secondLine||"",
       secondLineSuppressed:false,
-      fontScale:Math.max(.78,Math.min(1.18,(Number(base.fontScale||base.hookScale)||1)*visual.scale)),
+      fontScale:Math.max(.78,Math.min(1.18,Number(base.fontScale||base.hookScale)||1)),
       visualStyle:visual,
       compact:false,
       faceOcclusionPenalty:decision.faceOcclusionPenalty,
@@ -1290,7 +1298,7 @@ function metaFor(index){
     ...fallback,
     secondLine:base.secondLine||"",
     secondLineSuppressed:false,
-    fontScale:Math.max(.78,Math.min(1.18,(Number(base.fontScale||base.hookScale)||1)*visual.scale)),
+    fontScale:Math.max(.78,Math.min(1.18,Number(base.fontScale||base.hookScale)||1)),
     visualStyle:visual,
     compact:false,
     faceOcclusionPenalty:Number(base.faceOcclusionPenalty)||0,
