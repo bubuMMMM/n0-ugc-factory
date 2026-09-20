@@ -346,7 +346,6 @@ module.exports=async function handler(req,res){
       !r.visualCue||r.visualCue.length<5||
       !r.brandAnchor||r.brandAnchor.length<5||
       tooSimilar(r.hook,[...avoid,...currentHooks.filter(x=>x!==r.hook)])||
-      Number(r.faceOcclusionPenalty)>8||
       qaWeak(r)
     );
 
@@ -372,9 +371,6 @@ module.exports=async function handler(req,res){
       accepted:
         ['jev','openai-fallback'].includes(r.evaluationStatus)&&
         Number(r.jevAcceptProbability)>=.80&&
-        Number(r.faceOcclusionPenalty)<=8&&
-        r.safeForAutoApproval!==false&&
-        !r.noSafeZone&&
         !qaWeak(r)&&
         !genericHook(r.hook)&&
         !tooSimilar(r.hook,avoid)
