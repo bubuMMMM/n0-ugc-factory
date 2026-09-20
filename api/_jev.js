@@ -1,4 +1,5 @@
 const {credential}=require('./_ai');
+const {gatewayError,isTimeout}=require('./_gateway-errors');
 
 const JEV_MODEL=process.env.VIDEOMA_EVALUATOR_MODEL||'typesafe-ai/jev';
 const ENDPOINT='https://ai-gateway.vercel.sh/v1/evaluate';
@@ -10,7 +11,9 @@ async function evaluateJev(state,questions){
     e.code='AI_GATEWAY_NOT_CONFIGURED';
     throw e;
   }
-  const r=await fetch(ENDPOINT,{
+  let r;
+  try{
+    r=await fetch(ENDPOINT,{
     method:'POST',
     headers:{
       'Authorization':'Bearer '+token,
@@ -28,14 +31,14 @@ async function evaluateJev(state,questions){
         }
       }
     }),
-    signal:AbortSignal.timeout(30000)
-  });
-  const raw=await r.text();
-  if(!r.ok){
-    const e=new Error('JEV_EVALUATION_ERROR');
-    e.status=r.status;e.detail=raw.slice(0,1000);
-    throw e;
+      signal:AbortSignal.timeout(60000)
+    });
+  }catch(error){
+    if(isTimeout(error)){const e=new Error('JEV_TIMEOUT');e.code='JEV_TIMEOUT';throw e}
+    throw error;
   }
+  const raw=await r.text();
+  if(!r.ok)throw gatewayError(raw,r.status,'JEV_EVALUATION_ERROR');
   let data;
   try{data=JSON.parse(raw)}catch{throw new Error('JEV_INVALID_RESPONSE')}
   if(!data||!data.answers)throw new Error('JEV_EMPTY_RESPONSE');
