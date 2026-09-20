@@ -16,7 +16,8 @@ async function requestEmbeddings(url,token,model,input,errorPrefix){
     });
   }catch(error){
     if(isTimeout(error)){const e=new Error(errorPrefix+'_TIMEOUT');e.code=errorPrefix+'_TIMEOUT';throw e}
-    throw error;
+    const code=errorPrefix+'_NETWORK_ERROR';
+    const e=new Error(code);e.code=code;e.cause=error;throw e;
   }
   const raw=await r.text();
   if(!r.ok){
@@ -38,7 +39,7 @@ async function embedMany(values){
     }catch(error){
       const code=String(error&&error.message||'');
       if(code==='AI_GATEWAY_INSUFFICIENT_FUNDS'||code==='AI_GATEWAY_AUTH_ERROR')embeddingGatewayBlockedUntil=Date.now()+5*60*1000;
-      if(!directToken||(!code.startsWith('AI_GATEWAY_')&&code!=='EMBEDDING_ERROR'&&code!=='EMBEDDING_GATEWAY_TIMEOUT'))throw error;
+      if(!directToken||(!code.startsWith('AI_GATEWAY_')&&code!=='EMBEDDING_ERROR'&&!code.startsWith('EMBEDDING_GATEWAY_')))throw error;
       console.warn('Embedding Gateway fallback to direct OpenAI',code);
     }
   }
