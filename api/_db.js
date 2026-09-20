@@ -1,4 +1,5 @@
 const {Pool}=require('pg');
+const {attachDatabasePool}=require('@vercel/functions');
 const {SCHEMA_SQL}=require('./_schema');
 
 let pool=null;
@@ -31,6 +32,7 @@ function getPool(){
       connectionTimeoutMillis:8000,
       ssl:process.env.DATABASE_SSL==='false'?undefined:{rejectUnauthorized:false}
     });
+    try{attachDatabasePool(pool)}catch{}
   }
   return pool;
 }
