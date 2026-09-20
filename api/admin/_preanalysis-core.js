@@ -5,7 +5,7 @@ const {embedMany,EMBEDDING_MODEL}=require('../_embedding');
 const {extract}=require('../_video-frames');
 const db=require('../_db');
 
-const VERSION='video-intel-v5-face-first';
+const VERSION='video-intel-v6-face-boxes';
 const BATCH=2;
 
 function s(v,n=400){return String(v||'').replace(/\s+/g,' ').trim().slice(0,n)}
@@ -86,7 +86,33 @@ function schema(count){
         allowSecondLine:{type:'boolean'},
         faceOcclusionPenalty:{type:'integer',minimum:0,maximum:100}
       },required:['preferred','horizontal','alternatives','avoid','reason','maxLines','allowSecondLine','faceOcclusionPenalty'],additionalProperties:false},
-      faceRegions:{type:'array',items:{type:'string'}},objectRegions:{type:'array',items:{type:'string'}},
+      faceRegions:{type:'array',items:{
+        type:'object',
+        properties:{
+          frame:{type:'integer',minimum:1,maximum:4},
+          x:{type:'number',minimum:0,maximum:1},
+          y:{type:'number',minimum:0,maximum:1},
+          w:{type:'number',minimum:0,maximum:1},
+          h:{type:'number',minimum:0,maximum:1},
+          confidence:{type:'integer',minimum:0,maximum:100}
+        },
+        required:['frame','x','y','w','h','confidence'],
+        additionalProperties:false
+      }},
+      objectRegions:{type:'array',items:{
+        type:'object',
+        properties:{
+          frame:{type:'integer',minimum:1,maximum:4},
+          label:{type:'string'},
+          x:{type:'number',minimum:0,maximum:1},
+          y:{type:'number',minimum:0,maximum:1},
+          w:{type:'number',minimum:0,maximum:1},
+          h:{type:'number',minimum:0,maximum:1},
+          importance:{type:'integer',minimum:0,maximum:100}
+        },
+        required:['frame','label','x','y','w','h','importance'],
+        additionalProperties:false
+      }},
       hookCompatibility:{type:'array',items:{type:'string'}},tags:{type:'array',items:{type:'string'}},
       analysisConfidence:{type:'integer',minimum:0,maximum:100}
     },
@@ -109,7 +135,9 @@ function prompt(){
     'textSafeZone doit être calculée SUR LES 4 FRAMES. Ne choisis jamais middle si un visage est visible.',
     'Pour textSafeZone: preferred doit être top, upper ou lower; horizontal doit être left, center ou right selon l’espace réellement libre; alternatives liste les autres bandes sûres; maxLines indique combien de lignes tiennent sans toucher le visage; allowSecondLine=false dès qu’une seconde ligne risquerait de recouvrir le visage; faceOcclusionPenalty 0-100 estime le risque résiduel de couvrir un visage dans la zone choisie.',
     'Règle absolue: yeux, nez et bouche ne doivent jamais être couverts par le texte.',
-    'faceRegions/objectRegions: zones grossières de l’image, consolidées à partir des 4 frames.',
+    'faceRegions: retourne UNE bounding box pour chaque visage visible sur chaque frame. Coordonnées normalisées par frame: x=0 gauche, y=0 haut, w/h entre 0 et 1. La box doit entourer le visage entier, pas le corps. Si le même visage apparaît sur les 4 frames, retourne 4 boxes avec frame=1,2,3,4.',
+    'objectRegions: retourne les objets visuellement importants avec frame, label, x, y, w, h et importance 0-100, coordonnées normalisées par frame.',
+    'Ne fusionne pas les boxes entre frames. Le moteur de layout calculera lui-même les collisions texte/visage.',
     'hookCompatibility: plusieurs mécanismes naturels parmi drama, story, credential, insider, numbered, diagnostic, inversion, overheard, confession, pov, value, take, fourthwall, transformation, wall, proof, pattern_break, product_natural, objection, pain, benefit, comparison, mistake, discovery.',
     'tags descriptifs. versatilityScore 0-100 selon la capacité du clip à fonctionner pour beaucoup de marques sans forcer le sens.',
     'Sois factuel, compact et cohérent entre vidéos.'
