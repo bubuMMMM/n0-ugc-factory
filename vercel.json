@@ -27,5 +27,13 @@
         }
       ]
     }
-  ]
+  ],
+  "functions": {
+    "api/analyze.js": {
+      "maxDuration": 60
+    },
+    "api/hooks.js": {
+      "maxDuration": 60
+    }
+  }
 }
