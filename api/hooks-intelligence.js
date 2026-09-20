@@ -276,6 +276,29 @@ async function loadMatchedVideos(brandProfileId,requested){
   }).filter(Boolean);
 }
 
+async function loadPackContext(brandProfileId){
+  const r=await db.query(
+    "select hook,mechanism,accepted,updated_at from hook_assignments where brand_profile_id=$1 order by updated_at desc",
+    [brandProfileId]
+  );
+  const hooks=[];
+  const usage={};
+  for(const row of r.rows){
+    const hook=tx(row.hook,180);
+    if(hook&&!hooks.includes(hook)&&hooks.length<320)hooks.push(hook);
+    const mechanism=tx(row.mechanism,80);
+    if(mechanism)usage[mechanism]=(usage[mechanism]||0)+1;
+  }
+  return {hooks,usage};
+}
+function mergeUsage(serverUsage,clientUsage){
+  const out={...serverUsage};
+  for(const [key,value] of Object.entries(clientUsage||{})){
+    if(!(key in out))out[key]=Math.max(0,Number(value)||0);
+  }
+  return out;
+}
+
 module.exports=async function handler(req,res){
   res.setHeader('Cache-Control','no-store');
   if(req.method==='GET')return res.status(200).json({
@@ -289,11 +312,14 @@ module.exports=async function handler(req,res){
   if(!quota.allowed)return res.status(429).json({error:'PROJECT_RATE_LIMIT'});
   const profile=project.profile;
   const requestedVideos=Array.isArray(req.body&&req.body.videos)?req.body.videos.slice(0,MAX_ITEMS):[];
-  const avoid=Array.isArray(req.body&&req.body.avoid)?req.body.avoid.slice(-100).map(x=>tx(x,180)):[];
-  const mechanismUsage=req.body&&req.body.mechanismUsage&&typeof req.body.mechanismUsage==='object'?req.body.mechanismUsage:{};
+  const clientAvoid=Array.isArray(req.body&&req.body.avoid)?req.body.avoid.slice(-100).map(x=>tx(x,180)):[];
+  const clientMechanismUsage=req.body&&req.body.mechanismUsage&&typeof req.body.mechanismUsage==='object'?req.body.mechanismUsage:{};
   const brandProfileId=tx(project.brand_profile_id,80);
   if(!requestedVideos.length)return res.status(400).json({error:'VIDEOS_REQUIRED'});
   try{
+    const packContext=await loadPackContext(brandProfileId);
+    const avoid=[...new Set([...packContext.hooks,...clientAvoid])].slice(0,320);
+    const mechanismUsage=mergeUsage(packContext.usage,clientMechanismUsage);
     const videos=await loadMatchedVideos(brandProfileId,requestedVideos);
     if(videos.length!==requestedVideos.length)return res.status(409).json({error:'VIDEO_MATCH_NOT_READY',ready:videos.length,requested:requestedVideos.length});
     let results=await generate(profile,videos,avoid,mechanismUsage,'');
