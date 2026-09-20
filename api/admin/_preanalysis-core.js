@@ -213,8 +213,16 @@ async function analyze(rows){
   }
   return saved;
 }
+async function prepareCurrentVersion(){
+  await db.query(
+    "update video_intelligence set status='pending',error_message=null "+
+    "where status='error' or (status='ready' and analysis_version is distinct from $1)",
+    [VERSION]
+  );
+}
 async function createJob(){
   await ensureJobTable();
+  await prepareCurrentVersion();
   await db.query("update preanalysis_jobs set active=false,updated_at=now() where active=true");
   const c=await counts();
   const r=await db.query(
@@ -226,6 +234,11 @@ async function createJob(){
 async function latestActiveJob(){
   await ensureJobTable();
   const r=await db.query("select * from preanalysis_jobs where active=true order by started_at desc limit 1");
+  return r.rows[0]||null;
+}
+async function latestJob(){
+  await ensureJobTable();
+  const r=await db.query("select * from preanalysis_jobs order by started_at desc limit 1");
   return r.rows[0]||null;
 }
 async function getJob(id){
@@ -323,5 +336,5 @@ async function runBatch(jobId){
 }
 module.exports={
   VERSION,BATCH,MODEL,EMBEDDING_MODEL,
-  seed,recoverStale,counts,createJob,getJob,latestActiveJob,updateJob,finishJob,pauseJob,resetErrors,runBatch
+  seed,recoverStale,counts,prepareCurrentVersion,createJob,getJob,latestActiveJob,latestJob,updateJob,finishJob,pauseJob,resetErrors,runBatch
 };
