@@ -227,6 +227,48 @@ async function persist(brandProfileId,videos,results){
   }
 }
 
+async function loadMatchedVideos(brandProfileId,requested){
+  const indices=[...new Set((requested||[]).map(v=>Number(v&&v.index)).filter(x=>Number.isInteger(x)&&x>0))].slice(0,MAX_ITEMS);
+  if(!indices.length)return [];
+  const r=await db.query(
+    "select v.id video_id,v.canonical_index,v.duration_ms,v.scene,v.action,v.primary_emotion,v.emotions,v.objects,v.gestures,"+
+    "v.person_count,v.has_phone,v.has_computer,v.has_product,v.gaze_direction,v.reaction_intensity,v.energy_score,v.versatility_score,"+
+    "v.reaction_type,v.visual_focus,v.peak_moment_ms,v.peak_reason,v.text_safe_zone,v.face_regions,v.object_regions,v.hook_compatibility,v.tags,"+
+    "m.compatibility_score,s.id signal_id,s.signal_type,s.text signal_text,s.evidence signal_evidence,s.source_url signal_source "+
+    "from video_brand_matches m "+
+    "join video_intelligence v on v.id=m.video_id "+
+    "left join brand_signals s on s.id=m.brand_signal_id "+
+    "where m.brand_profile_id=$1 and v.status='ready' and v.analysis_version=$2 and v.canonical_index=any($3::int[])",
+    [brandProfileId,VIDEO_INTELLIGENCE_VERSION,indices]
+  );
+  const byIndex=new Map(r.rows.map(row=>[Number(row.canonical_index),row]));
+  return indices.map(index=>{
+    const row=byIndex.get(index);
+    if(!row)return null;
+    return {
+      index,
+      compatibilityScore:Number(row.compatibility_score)||0,
+      signal:{
+        id:row.signal_id||null,
+        type:row.signal_type||'angle',
+        text:row.signal_text||'',
+        evidence:row.signal_evidence||'',
+        sourceUrl:row.signal_source||''
+      },
+      intelligence:{
+        id:row.video_id,durationMs:row.duration_ms,scene:row.scene,action:row.action,
+        primaryEmotion:row.primary_emotion,emotions:row.emotions||[],objects:row.objects||[],gestures:row.gestures||[],
+        personCount:row.person_count,hasPhone:row.has_phone,hasComputer:row.has_computer,hasProduct:row.has_product,
+        gazeDirection:row.gaze_direction,reactionIntensity:row.reaction_intensity,energyScore:row.energy_score,
+        versatilityScore:row.versatility_score,reactionType:row.reaction_type,visualFocus:row.visual_focus,
+        peakMomentMs:row.peak_moment_ms,peakReason:row.peak_reason,textSafeZone:row.text_safe_zone||{},
+        faceRegions:row.face_regions||[],objectRegions:row.object_regions||[],hookCompatibility:row.hook_compatibility||[],
+        tags:row.tags||[]
+      }
+    };
+  }).filter(Boolean);
+}
+
 module.exports=async function handler(req,res){
   res.setHeader('Cache-Control','no-store');
   if(req.method==='GET')return res.status(200).json({
@@ -239,12 +281,14 @@ module.exports=async function handler(req,res){
   const quota=await limitProject(project,'intelligence-hooks',120,3600).catch(()=>({allowed:true}));
   if(!quota.allowed)return res.status(429).json({error:'PROJECT_RATE_LIMIT'});
   const profile=project.profile;
-  const videos=Array.isArray(req.body&&req.body.videos)?req.body.videos.slice(0,MAX_ITEMS):[];
+  const requestedVideos=Array.isArray(req.body&&req.body.videos)?req.body.videos.slice(0,MAX_ITEMS):[];
   const avoid=Array.isArray(req.body&&req.body.avoid)?req.body.avoid.slice(-100).map(x=>tx(x,180)):[];
   const mechanismUsage=req.body&&req.body.mechanismUsage&&typeof req.body.mechanismUsage==='object'?req.body.mechanismUsage:{};
   const brandProfileId=tx(project.brand_profile_id,80);
-  if(!videos.length)return res.status(400).json({error:'VIDEOS_REQUIRED'});
+  if(!requestedVideos.length)return res.status(400).json({error:'VIDEOS_REQUIRED'});
   try{
+    const videos=await loadMatchedVideos(brandProfileId,requestedVideos);
+    if(videos.length!==requestedVideos.length)return res.status(409).json({error:'VIDEO_MATCH_NOT_READY',ready:videos.length,requested:requestedVideos.length});
     let results=await generate(profile,videos,avoid,mechanismUsage,'');
     results=applySafeLayouts(videos,results);
     results=await evaluateResults(profile,videos,results,avoid);
