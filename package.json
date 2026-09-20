@@ -7,6 +7,8 @@
     "node": ">=20"
   },
   "dependencies": {
-    "pg": "^8.16.3"
+    "pg": "^8.16.3",
+    "ffmpeg-static": "^5.2.0",
+    "ffprobe-static": "^3.1.0"
   }
 }
