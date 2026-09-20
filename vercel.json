@@ -49,6 +49,9 @@
     },
     "api/hooks-intelligence.js": {
       "maxDuration": 60
+    },
+    "api/admin/run-preanalysis.js": {
+      "maxDuration": 60
     }
   }
 }
