@@ -1421,6 +1421,65 @@ async function generateVisualBatch(indices){
   updateProgress("Analyse visuelle + hooks GPT‑5.6…");
   saveProject();
 }
+function shortWords(value,maxWords=7,maxChars=58){
+  const words=String(value||'').replace(/\s+/g,' ').trim().split(' ').filter(Boolean).slice(0,maxWords);
+  return words.join(' ').slice(0,maxChars).replace(/[,:;.!?]+$/,'').trim();
+}
+function localHookPieces(profile){
+  const values=[profile&&profile.primaryOffer]
+    .concat(profile&&profile.benefits||[],profile&&profile.pains||[],profile&&profile.objections||[],profile&&profile.differentiators||[],profile&&profile.customerLanguage||[])
+    .concat((profile&&profile.contentPillars||[]).map(x=>x&&x.insight),(profile&&profile.hookPlaybook||[]).map(x=>x&&x.insight))
+    .map(x=>shortWords(x)).filter(x=>x&&x.length>=4);
+  const seen=new Set();
+  return values.filter(x=>{const k=x.toLowerCase();if(seen.has(k))return false;seen.add(k);return true}).slice(0,40);
+}
+function localPersonalizedHook(index,profile){
+  const brand=shortWords(profile&&profile.brand||'Cette marque',5,36);
+  const offer=shortWords(profile&&profile.primaryOffer||profile&&profile.summary||brand,6,46);
+  const pieces=localHookPieces(profile);
+  const insight=pieces.length?pieces[(index*7)%pieces.length]:offer;
+  const obs=profile&&profile.objections||[];
+  const bens=profile&&profile.benefits||[];
+  const objection=shortWords(obs.length?obs[index%obs.length]:'',7,50);
+  const benefit=shortWords(bens.length?bens[index%bens.length]:insight,7,50);
+  const templates=[
+    ()=>brand+' en une phrase : '+insight,
+    ()=>'POV : tu viens de découvrir '+brand,
+    ()=>'Le point à vérifier : '+insight,
+    ()=>'Tu cherches '+offer+' ? Regarde ça',
+    ()=>'Avant de choisir '+offer+', lis ça',
+    ()=>objection?(objection+' ? Bonne question'):('La vraie question sur '+offer),
+    ()=>'Ce que '+brand+' met vraiment en avant',
+    ()=>'Le bénéfice mis en avant : '+benefit,
+    ()=>'Tu hésites encore sur '+offer+' ?',
+    ()=>'Le vrai sujet ici : '+insight,
+    ()=>'Ce détail mérite 5 secondes : '+insight,
+    ()=>'Pourquoi '+brand+' parle de '+insight+' ?',
+    ()=>'Si tu compares '+offer+', regarde ça',
+    ()=>'Un détail du site : '+insight,
+    ()=>'Ce qu’il faut savoir sur '+offer,
+    ()=>'La question à poser avant '+offer,
+    ()=>brand+' : commence par '+insight,
+    ()=>'Tu connaissais déjà '+brand+' ?',
+    ()=>'Ce que le site dit sur '+insight,
+    ()=>benefit+' : voilà l’idée'
+  ];
+  let hook=templates[index%templates.length]().replace(/\s+/g,' ').trim();
+  if(hook.length>82)hook=hook.slice(0,79).replace(/\s+\S*$/,'')+'…';
+  return hook;
+}
+function generateLocalProjectHooks(reason='Mode local'){
+  const angleNames=['question','pov','value','diagnostic','comparison','objection','benefit','observation'];
+  for(let i=0;i<ALL.length;i++){
+    HOOKS[i]=localPersonalizedHook(i,PROFILE);
+    HOOK_META[i]={placement:'lower',style:'short',secondLine:'',quality:68,grounded:true,source:'local-html-fallback',accepted:true,mechanism:angleNames[i%angleNames.length],angle:angleNames[i%angleNames.length],brandAnchor:shortWords(PROFILE&&PROFILE.primaryOffer||PROFILE&&PROFILE.summary||'',8,70),visualCue:'',scores:null,confidence:60,faceOcclusionPenalty:0,layoutScore:70,hookScale:.9,maxLines:2,rationale:'Hook local construit à partir du contenu réel du site; placement recalculé côté navigateur pour protéger le visage.'};
+  }
+  refreshVisibleHooks();
+  updateProgress('1 017 hooks prêts · '+reason);
+  studioStatus.textContent='1 017 hooks générés · mode local sans dépendance IA';
+  saveProject();
+}
+
 async function prepareIntelligenceMatches(){
   VIDEO_MATCHES=new Array(ALL.length).fill(null);
   studioStatus.textContent="Matching marque × bibliothèque vidéo…";
@@ -1595,18 +1654,27 @@ siteForm.addEventListener("submit",async e=>{
   BRAND_PROFILE_ID=data.brandProfileId||"";
   studioTitle.textContent=PROFILE?.brand||"Projet videoma";
   studioMeta.textContent=(PROFILE?.summary||PROJECT_WEBSITE).slice(0,180);
-  studioStatus.textContent=data.cached?"Profil marque chargé depuis le cache":"Site analysé avec succès";
+  studioStatus.textContent=data.fallback?"Site analysé · mode local activé":data.cached?"Profil marque chargé depuis le cache":"Site analysé avec succès";
   saveProject();
   studio.scrollIntoView({behavior:"smooth",block:"start"});
 
   btn.textContent="Préparation des vidéos…";
   try{
-    await prepareIntelligenceMatches();
-    await generateMissing();
+    if(data.fallback){
+      generateLocalProjectHooks("profil construit depuis le site");
+    }else{
+      await prepareIntelligenceMatches();
+      await generateMissing();
+    }
   }catch(err){
     console.error("video generation",err);
-    siteError.textContent=generationErrorMessage(err.message);
-    studioStatus.textContent="Site analysé · génération interrompue";
+    if(/^(AI_|OPENAI_|EMBEDDING_|JEV_)/.test(err.message||"")){
+      generateLocalProjectHooks("secours automatique");
+      siteError.textContent="";
+    }else{
+      siteError.textContent=generationErrorMessage(err.message);
+      studioStatus.textContent="Site analysé · génération interrompue";
+    }
   }finally{
     btn.disabled=false;
     btn.innerHTML=label;
