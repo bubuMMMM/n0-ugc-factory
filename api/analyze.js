@@ -1,8 +1,7 @@
-const dns=require('node:dns').promises;
-const net=require('node:net');
 const {gatewayJson,MODEL,DIRECT_MODEL,credential,canDirect}=require('./_ai');
 const db=require('./_db');
 const {issueProject,limitAnonymous}=require('./_project-auth');
+const {fetchPublicText,validateUrl}=require('./_public-fetch');
 
 const MAX_PAGE_CHARS=12000;
 const MAX_TOTAL_CHARS=52000;
@@ -49,55 +48,19 @@ async function persistBrandProfile(website,profile){
   }
 }
 
-function isPrivateIP(ip){
-  if(net.isIP(ip)===4){
-    const p=ip.split('.').map(Number);
-    return p[0]===10||p[0]===127||p[0]===0||
-      (p[0]===169&&p[1]===254)||
-      (p[0]===172&&p[1]>=16&&p[1]<=31)||
-      (p[0]===192&&p[1]===168)||
-      (p[0]>=224);
-  }
-  const s=String(ip).toLowerCase();
-  return s==='::1'||s==='::'||s.startsWith('fc')||s.startsWith('fd')||s.startsWith('fe8')||s.startsWith('fe9')||s.startsWith('fea')||s.startsWith('feb')||s.startsWith('::ffff:127.')||s.startsWith('::ffff:10.')||s.startsWith('::ffff:192.168.');
-}
-
 async function assertPublicUrl(raw){
-  let url;
-  try{url=new URL(raw)}catch{throw new Error('INVALID_URL')}
-  if(!['http:','https:'].includes(url.protocol)) throw new Error('INVALID_PROTOCOL');
-  const host=url.hostname.toLowerCase().replace(/\.$/,'');
-  if(!host||host==='localhost'||host.endsWith('.local')||host.endsWith('.internal')) throw new Error('PRIVATE_HOST');
-  if(net.isIP(host)){
-    if(isPrivateIP(host)) throw new Error('PRIVATE_HOST');
-  }else{
-    let addresses;
-    try{addresses=await dns.lookup(host,{all:true,verbatim:true})}catch{throw new Error('DNS_FAILED')}
-    if(!addresses.length||addresses.some(x=>isPrivateIP(x.address))) throw new Error('PRIVATE_HOST');
-  }
-  return url;
+  const result=await validateUrl(raw);
+  return result.url;
 }
-
-async function safeFetch(raw,depth=0){
-  if(depth>4) throw new Error('TOO_MANY_REDIRECTS');
-  const url=await assertPublicUrl(raw);
-  const r=await fetch(url,{
-    redirect:'manual',
-    headers:{
-      'User-Agent':'Mozilla/5.0 (compatible; videoma-site-analyzer/1.0)',
-      'Accept':'text/html,application/xhtml+xml'
-    },
-    signal:AbortSignal.timeout(PAGE_TIMEOUT_MS)
+async function safeFetch(raw){
+  const result=await fetchPublicText(raw,{
+    accept:'text/html,application/xhtml+xml',
+    maxBytes:450000,
+    timeoutMs:PAGE_TIMEOUT_MS
   });
-  if(r.status>=300&&r.status<400){
-    const loc=r.headers.get('location');
-    if(!loc) throw new Error('BAD_REDIRECT');
-    return safeFetch(new URL(loc,url).href,depth+1);
-  }
-  if(!r.ok) throw new Error('SITE_HTTP_'+r.status);
-  const type=(r.headers.get('content-type')||'').toLowerCase();
-  if(!type.includes('text/html')&&!type.includes('application/xhtml+xml')) throw new Error('SITE_NOT_HTML');
-  return {url:r.url||url.href,html:(await r.text()).slice(0,450000)};
+  const type=String(result.headers&&result.headers['content-type']||'').toLowerCase();
+  if(!type.includes('text/html')&&!type.includes('application/xhtml+xml'))throw new Error('SITE_NOT_HTML');
+  return {url:result.url,html:result.body};
 }
 
 function decodeEntities(s){
@@ -221,17 +184,15 @@ function rankPath(pathname){
   if(p.split('/').filter(Boolean).length<=2)score+=1;
   return score;
 }
-async function fetchTextPublic(raw,depth=0){
-  if(depth>4)throw new Error('TOO_MANY_REDIRECTS');
-  const url=await assertPublicUrl(raw);
-  const r=await fetch(url,{redirect:'manual',headers:{'User-Agent':'Mozilla/5.0 (compatible; videoma-site-analyzer/1.0)','Accept':'application/xml,text/xml,text/plain,*/*'},signal:AbortSignal.timeout(SITEMAP_TIMEOUT_MS)});
-  if(r.status>=300&&r.status<400){
-    const loc=r.headers.get('location');if(!loc)throw new Error('BAD_REDIRECT');
-    return fetchTextPublic(new URL(loc,url).href,depth+1);
-  }
-  if(!r.ok)throw new Error('HTTP_'+r.status);
-  return {url:r.url||url.href,text:(await r.text()).slice(0,800000)};
+async function fetchTextPublic(raw){
+  const result=await fetchPublicText(raw,{
+    accept:'application/xml,text/xml,text/plain,*/*',
+    maxBytes:800000,
+    timeoutMs:SITEMAP_TIMEOUT_MS
+  });
+  return {url:result.url,text:result.body};
 }
+
 function locsFromXml(xml,base){
   const out=[];
   for(const m of xml.matchAll(/<loc[^>]*>([\s\S]*?)<\/loc>/gi)){
