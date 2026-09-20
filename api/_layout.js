@@ -10,7 +10,7 @@ const COLUMNS={
   left:{x:.06,w:.52},
   right:{x:.42,w:.52}
 };
-const PLACEMENTS=['top','lower','bottom','upper','middle'];
+const PLACEMENTS=['top','lower','bottom','upper'];
 const ALIGNMENTS=['center','left','right'];
 
 function clamp(n,min=0,max=100){return Math.max(min,Math.min(max,Number(n)||0))}
