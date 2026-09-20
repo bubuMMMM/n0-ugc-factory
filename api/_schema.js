@@ -26,6 +26,10 @@ const MIGRATIONS=[
   {
     "id": "006_text_rect_layout.sql",
     "sql": "alter table if exists hook_assignments\n  add column if not exists text_rect jsonb,\n  add column if not exists font_scale real;\n"
+  },
+  {
+    "id": "007_manifest_and_leases.sql",
+    "sql": "alter table if exists video_intelligence\n  add column if not exists media_id text,\n  add column if not exists manifest_version text;\n\ncreate unique index if not exists video_intelligence_media_id_idx\n  on video_intelligence(media_id)\n  where media_id is not null;\n\nalter table if exists video_intelligence\n  add column if not exists analysis_attempt_count integer not null default 0,\n  add column if not exists next_retry_at timestamptz,\n  add column if not exists lease_owner text,\n  add column if not exists lease_expires_at timestamptz;\n"
   }
 ];
 module.exports={MIGRATIONS};
