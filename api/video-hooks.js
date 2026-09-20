@@ -1,4 +1,5 @@
 const {gatewayJson,MODEL,credential}=require('./_ai');
+const {evaluateHook,mapLimit,JEV_MODEL}=require('./_jev');
 
 const MAX_ITEMS=8;
 const QUALITY_MIN=78;
@@ -187,9 +188,76 @@ async function generate(videos,profile,avoid,angleUsage={},revision=''){
   return normalize(videos,data);
 }
 
+
+function jevOverall(scores){
+  const keys=['visualFit','brandFit','hookStrength','specificity','naturalness','claimSafety','novelty','readability','emotionMatch'];
+  const weights={visualFit:.16,brandFit:.16,hookStrength:.16,specificity:.12,naturalness:.10,claimSafety:.12,novelty:.07,readability:.06,emotionMatch:.05};
+  return Math.round(keys.reduce((sum,k)=>sum+(Number(scores&&scores[k])||0)*weights[k],0));
+}
+function jevWeak(r){
+  const q=r.jevScores||{};
+  return r.evaluationStatus==='jev'&&(
+    Number(r.jevAcceptProbability)<.80||
+    jevOverall(q)<84||
+    Number(q.visualFit)<82||
+    Number(q.brandFit)<82||
+    Number(q.claimSafety)<95||
+    Number(q.readability)<82||
+    Number(q.novelty)<76
+  );
+}
+async function evaluateVisualResults(profile,results,avoid){
+  const hooks=results.map(r=>r.hook);
+  return mapLimit(results,4,async r=>{
+    try{
+      const ev=await evaluateHook({
+        hook:r.hook,
+        secondLine:'',
+        mechanism:r.mechanism||r.angle||'observation',
+        visualAnchor:r.visualCue,
+        brandAnchor:r.brandAnchor,
+        video:{
+          scene:r.scene,
+          action:r.action,
+          reactionType:r.emotion,
+          primaryEmotion:r.emotion,
+          energyScore:r.confidence,
+          reactionIntensity:r.confidence,
+          visualFocus:r.visualCue,
+          hookCompatibility:[r.mechanism||r.angle||'observation']
+        },
+        signal:{type:r.mechanism||'angle',text:r.brandAnchor},
+        brand:profile,
+        previousHooks:[...(avoid||[]),...hooks.filter(x=>x!==r.hook)]
+      });
+      return {
+        ...r,
+        jevScores:ev.scores,
+        jevAcceptProbability:ev.acceptProbability,
+        jevAnswers:ev.answers,
+        evaluatorModel:ev.model||JEV_MODEL,
+        evaluationStatus:'jev',
+        quality:jevOverall(ev.scores)
+      };
+    }catch(error){
+      console.warn('Jev visual fallback',r.index,error&&error.message);
+      return {
+        ...r,
+        evaluatorModel:JEV_MODEL,
+        evaluationStatus:'fallback',
+        jevAcceptProbability:0,
+        jevAnswers:{},
+        quality:score(r)
+      };
+    }
+  });
+}
+
 module.exports=async function handler(req,res){
   res.setHeader('Cache-Control','no-store');
-  if(req.method==='GET')return res.status(200).json({configured:Boolean(credential()),model:MODEL,maxItems:MAX_ITEMS,vision:true,qualityMin:QUALITY_MIN});
+  if(req.method==='GET')return res.status(200).json({
+    configured:Boolean(credential()),model:MODEL,evaluator:JEV_MODEL,maxItems:MAX_ITEMS,vision:true,qualityMin:QUALITY_MIN
+  });
   if(req.method!=='POST')return res.status(405).json({error:'METHOD_NOT_ALLOWED'});
   const profile=req.body?.profile;
   const videos=Array.isArray(req.body?.videos)?req.body.videos.slice(0,MAX_ITEMS):[];
@@ -200,18 +268,50 @@ module.exports=async function handler(req,res){
 
   try{
     let results=await generate(videos,profile,avoid,angleUsage);
+    results=await evaluateVisualResults(profile,results,avoid);
+
     const currentHooks=results.map(r=>r.hook);
-    const weak=results.filter(r=>r.confidence<76||score(r)<82||Math.min(...Object.values(r.scores))<QUALITY_MIN||genericHook(r.hook)||!r.visualCue||r.visualCue.length<5||!r.brandAnchor||r.brandAnchor.length<5||tooSimilar(r.hook,[...avoid,...currentHooks.filter(x=>x!==r.hook)]));
+    const weak=results.filter(r=>
+      r.confidence<76||
+      score(r)<82||
+      Math.min(...Object.values(r.scores))<QUALITY_MIN||
+      genericHook(r.hook)||
+      !r.visualCue||r.visualCue.length<5||
+      !r.brandAnchor||r.brandAnchor.length<5||
+      tooSimilar(r.hook,[...avoid,...currentHooks.filter(x=>x!==r.hook)])||
+      jevWeak(r)
+    );
+
     if(weak.length){
       const weakVideos=videos.filter(v=>weak.some(w=>w.index===v.index));
-      const critique=weak.map(r=>`#${r.index} REJETÉ — hook: "${r.hook}" — scores: ${JSON.stringify(r.scores)} — raison: ${r.rationale}. Réécris avec une accroche plus spécifique au visualCue "${r.visualCue}" et à l'ancre marque "${r.brandAnchor}".`).join('\\n');
-      const revised=await generate(weakVideos,profile,[...avoid,...results.map(r=>r.hook)],angleUsage,critique);
+      const critique=weak.map(r=>
+        '#'+r.index+' REJETÉ. hook="'+r.hook+
+        '" Jev='+Math.round((Number(r.jevAcceptProbability)||0)*100)+'%'+
+        ' scores='+JSON.stringify(r.jevScores||r.scores)+
+        ' visual="'+r.visualCue+'" brand="'+r.brandAnchor+'".'+
+        ' Réécris le hook pour corriger la congruence visuelle, la naturalité, la sécurité des claims et la force de rétention.'
+      ).join('\n');
+
+      let revised=await generate(weakVideos,profile,[...avoid,...results.map(r=>r.hook)],angleUsage,critique);
+      revised=await evaluateVisualResults(profile,revised,[...avoid,...results.map(r=>r.hook)]);
       const revisedMap=new Map(revised.map(r=>[r.index,r]));
       results=results.map(r=>revisedMap.get(r.index)||r);
     }
+
+    results=results.map(r=>({
+      ...r,
+      quality:r.evaluationStatus==='jev'?jevOverall(r.jevScores):score(r),
+      accepted:
+        r.evaluationStatus==='jev'&&
+        Number(r.jevAcceptProbability)>=.80&&
+        !jevWeak(r)&&
+        !genericHook(r.hook)&&
+        !tooSimilar(r.hook,avoid)
+    }));
+
     return res.status(200).json({
-      results:results.map(r=>({...r,quality:score(r)})),
-      model:MODEL,grounded:true,revised:weak.length
+      results,model:MODEL,evaluator:JEV_MODEL,grounded:true,revised:weak.length,
+      jevEvaluated:results.filter(x=>x.evaluationStatus==='jev').length
     });
   }catch(err){
     console.error('video hooks error',err?.message,err?.status||'',err?.detail||'');
@@ -219,3 +319,4 @@ module.exports=async function handler(req,res){
     return res.status(code==='AI_GATEWAY_NOT_CONFIGURED'?503:500).json({error:code});
   }
 };
+
