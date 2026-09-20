@@ -636,6 +636,27 @@ header{background:transparent}
   letter-spacing:.02em;text-transform:none
 }
 
+
+/* Face-first safe mode */
+.card[data-compact="true"] .hook-overlay,
+.modal-hook[data-compact="true"]{
+  left:13%!important;
+  right:13%!important;
+  font-size:5.65cqi!important;
+  line-height:1.16!important;
+}
+.card[data-demo="true"] .hook-overlay{max-width:74%;margin-inline:auto}
+.card[data-face-risk^="2"] .hook-overlay,
+.card[data-face-risk^="3"] .hook-overlay,
+.card[data-face-risk^="4"] .hook-overlay,
+.card[data-face-risk^="5"] .hook-overlay,
+.card[data-face-risk^="6"] .hook-overlay,
+.card[data-face-risk^="7"] .hook-overlay,
+.card[data-face-risk^="8"] .hook-overlay,
+.card[data-face-risk^="9"] .hook-overlay{
+  font-size:5.35cqi!important;
+}
+
 </style>
 </head>
 <body>
@@ -781,6 +802,7 @@ const DEMO_HOOK_LIBRARY=[
 ];
 
 function demoHookFor(index){
+  const layout=VIDEO_LAYOUTS[index];
   const item=DEMO_HOOK_LIBRARY[index%DEMO_HOOK_LIBRARY.length];
   const n=index+1;
   const remaining=Math.max(0,ALL.length-n);
@@ -790,20 +812,39 @@ function demoHookFor(index){
     remaining+" vidéos derrière celle-ci",
     n%2?"1000 vidéos en moins de 5 min":"à partir d’une seule URL"
   ][Math.floor(index/DEMO_HOOK_LIBRARY.length)%4];
+
+  if(!layout){
+    return {
+      hook:item.hook,
+      secondLine:"",
+      placement:index%4===0?"lower":"top",
+      style:"short",
+      demo:true,
+      compact:true,
+      faceOcclusionPenalty:25,
+      layoutScore:65,
+      accepted:true,
+      rationale:"Safe mode: une seule ligne, haut/bas uniquement, en attendant l’analyse permanente du visage."
+    };
+  }
+
   return {
     hook:item.hook,
-    secondLine:dynamic||item.second||"",
-    placement:index%5===0?"top":index%7===0?"lower":"upper",
+    secondLine:layout.allowSecondLine?(dynamic||item.second||""):"",
+    placement:layout.placement||"top",
     style:"short",
     demo:true,
+    compact:Boolean(layout.compact),
+    faceOcclusionPenalty:Number(layout.faceOcclusionPenalty)||0,
+    layoutScore:Number(layout.layoutScore)||0,
     accepted:true,
-    rationale:"Hook de démonstration Videoma affiché jusqu’à ce qu’un hook personnalisé le remplace."
+    rationale:"Hook de démonstration Videoma placé selon la zone sûre de la vidéo."
   };
 }
 
 let HOOKS=new Array(ALL.length).fill("");
 let HOOK_META=new Array(ALL.length).fill(null);
-let VIDEO_MATCHES=new Array(ALL.length).fill(null), BRAND_PROFILE_ID="";
+let VIDEO_MATCHES=new Array(ALL.length).fill(null), VIDEO_LAYOUTS=new Array(ALL.length).fill(null), BRAND_PROFILE_ID="";
 let PROFILE=null, PROJECT_WEBSITE="", generating=false;
 
 const BATCH=56;
@@ -820,7 +861,47 @@ const io=new IntersectionObserver(es=>es.forEach(e=>{
 }),{rootMargin:"600px 0px"});
 
 function hookFor(index){return HOOKS[index]||demoHookFor(index).hook}
-function metaFor(index){return HOOK_META[index]||demoHookFor(index)}
+function metaFor(index){
+  const custom=HOOK_META[index];
+  const base=custom||demoHookFor(index);
+  const layout=VIDEO_LAYOUTS[index];
+
+  if(layout){
+    const allowSecond=layout.allowSecondLine!==false;
+    return {
+      ...base,
+      placement:layout.placement||(["top","lower"].includes(base.placement)?base.placement:"top"),
+      secondLine:allowSecond?(base.secondLine||""):"",
+      compact:Boolean(layout.compact)||Boolean(base.compact),
+      faceOcclusionPenalty:Number(layout.faceOcclusionPenalty)||Number(base.faceOcclusionPenalty)||0,
+      layoutScore:Number(layout.layoutScore)||Number(base.layoutScore)||0
+    };
+  }
+
+  return {
+    ...base,
+    placement:["top","lower"].includes(base.placement)?base.placement:(index%4===0?"lower":"top"),
+    secondLine:"",
+    compact:true,
+    faceOcclusionPenalty:Number(base.faceOcclusionPenalty)||25,
+    layoutScore:Number(base.layoutScore)||65
+  };
+}
+async function loadVideoLayouts(){
+  try{
+    const r=await fetch("/api/video-layouts",{cache:"no-store"});
+    const data=await r.json();
+    if(!r.ok||!Array.isArray(data.items))return;
+    VIDEO_LAYOUTS=new Array(ALL.length).fill(null);
+    for(const item of data.items){
+      const idx=Number(item.index)-1;
+      if(idx>=0&&idx<ALL.length)VIDEO_LAYOUTS[idx]=item;
+    }
+    refreshVisibleHooks();
+  }catch(error){
+    console.warn("video layouts unavailable",error);
+  }
+}
 function applyHookToCard(card,index){
   const text=hookFor(index),meta=metaFor(index);
   const primary=card.querySelector(".hook-primary"),secondary=card.querySelector(".hook-secondary");
@@ -831,6 +912,9 @@ function applyHookToCard(card,index){
   card.dataset.hookStyle=meta.style||"short";
   card.dataset.quality=meta.quality||"";
   card.dataset.accepted=meta.accepted===false?"false":"true";
+  card.dataset.compact=meta.compact?"true":"false";
+  card.dataset.demo=meta.demo?"true":"false";
+  card.dataset.faceRisk=String(Math.round(Number(meta.faceOcclusionPenalty)||0));
 }
 function render(reset=false){
   if(reset){grid.innerHTML="";cursor=0}
@@ -898,7 +982,7 @@ function openVideo(u,index){
   modalHook.innerHTML="";
   const primary=document.createElement("span");primary.className="hook-primary";primary.textContent=hookFor(index);modalHook.appendChild(primary);
   if(meta.secondLine){const second=document.createElement("small");second.className="hook-secondary";second.textContent=meta.secondLine;modalHook.appendChild(second)}
-  modalHook.dataset.placement=meta.placement||"upper";modalHook.dataset.hookStyle=meta.style||"short";modalHook.title=meta.rationale||"";
+  modalHook.dataset.placement=meta.placement||"top";modalHook.dataset.hookStyle=meta.style||"short";modalHook.dataset.compact=meta.compact?"true":"false";modalHook.title=meta.rationale||"";
   modal.classList.add("open");big.play().catch(()=>{});
 }
 document.querySelector("#close").onclick=()=>{modal.classList.remove("open");big.pause();big.removeAttribute("src");big.load();modalHook.innerHTML=""};
@@ -1280,6 +1364,7 @@ if(paymentState==="success")setTimeout(()=>flashPay("Paiement confirmé. Merci !
 
 restoreProject();
 apply();
+loadVideoLayouts();
 </script>
 <!-- env-redeploy-2026-09-20 -->
 <!-- db-env-redeploy-2026-09-20 -->
