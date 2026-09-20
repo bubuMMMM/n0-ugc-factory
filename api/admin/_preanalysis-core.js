@@ -223,8 +223,13 @@ async function finishJob(id,c,lastError){
 async function pauseJob(id,c,lastError){
   await ensureJobTable();
   await db.query(
+    "update video_intelligence set status='pending',error_message=$1 where status='processing'",
+    [lastError||'JOB_PAUSED']
+  );
+  const fresh=await counts();
+  await db.query(
     "update preanalysis_jobs set active=false,total=$2,ready=$3,pending=$4,errors=$5,processing=$6,last_error=$7,updated_at=now(),completed_at=null where id=$1",
-    [id,c.total,c.ready,c.pending,c.errors,c.processing,lastError||null]
+    [id,fresh.total,fresh.ready,fresh.pending,fresh.errors,fresh.processing,lastError||null]
   );
 }
 function transientError(code){
