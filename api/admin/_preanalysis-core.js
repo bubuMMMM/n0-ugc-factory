@@ -45,7 +45,7 @@ async function seed(){
 }
 async function recoverStale(){
   await db.query(
-    "update video_intelligence set status='pending',lease_owner=null,lease_expires_at=null,next_retry_at=now(),error_message='Recovered stale worker' "+
+    "update video_intelligence set status=case when analysis_attempt_count>=6 then 'error' else 'pending' end,lease_owner=null,lease_expires_at=null,next_retry_at=now(),error_message='Recovered stale worker' "+
     "where status='processing' and (lease_expires_at is null or lease_expires_at < now())"
   );
 }
@@ -250,7 +250,7 @@ async function analyze(rows){
 }
 async function prepareCurrentVersion(){
   await db.query(
-    "update video_intelligence set status='pending',error_message=null,next_retry_at=null,lease_owner=null,lease_expires_at=null "+
+    "update video_intelligence set status='pending',error_message=null,analysis_attempt_count=0,next_retry_at=null,lease_owner=null,lease_expires_at=null "+
     "where status in ('ready','error') and analysis_version is distinct from $1",
     [VERSION]
   );
@@ -324,10 +324,7 @@ async function finishJob(id,c,lastError){
 }
 async function pauseJob(id,c,lastError){
   await ensureJobTable();
-  await db.query(
-    "update video_intelligence set status='pending',error_message=$1 where status='processing'",
-    [lastError||'JOB_PAUSED']
-  );
+  // Claimed rows are released by runBatch; do not invalidate another worker's lease.
   const fresh=await counts();
   await db.query(
     "update preanalysis_jobs set active=false,total=$2,ready=$3,pending=$4,errors=$5,processing=$6,last_error=$7,updated_at=now(),completed_at=null where id=$1",
@@ -336,7 +333,7 @@ async function pauseJob(id,c,lastError){
 }
 function transientError(code){
   return [
-    'AI_GATEWAY_RATE_LIMIT','AI_GATEWAY_TIMEOUT','AI_GATEWAY_UNAVAILABLE','EMBEDDING_TIMEOUT',
+    'AI_GATEWAY_NETWORK_ERROR','OPENAI_API_NETWORK_ERROR','OPENAI_EMBEDDING_NETWORK_ERROR','EMBEDDING_GATEWAY_NETWORK_ERROR','EMBEDDING_GATEWAY_TIMEOUT','AI_GATEWAY_RATE_LIMIT','AI_GATEWAY_TIMEOUT','AI_GATEWAY_UNAVAILABLE','EMBEDDING_TIMEOUT',
     'OPENAI_API_RATE_LIMIT','OPENAI_API_TIMEOUT','OPENAI_API_UNAVAILABLE',
     'OPENAI_EMBEDDING_RATE_LIMIT','OPENAI_EMBEDDING_TIMEOUT','OPENAI_EMBEDDING_UNAVAILABLE'
   ].includes(code);
@@ -349,7 +346,7 @@ function blockingGatewayError(code){
   ].includes(code);
 }
 async function resetErrors(){
-  await db.query("update video_intelligence set status='pending',error_message=null where status='error'");
+  await db.query("update video_intelligence set status='pending',error_message=null,analysis_attempt_count=0,next_retry_at=null,lease_owner=null,lease_expires_at=null where status='error'");
 }
 async function runBatch(jobId){
   const job=await getJob(jobId);
@@ -367,7 +364,7 @@ async function runBatch(jobId){
       lastError=code;
       if(blockingGatewayError(code)){
         await Promise.allSettled(rows.map(row=>db.query(
-          "update video_intelligence set status='pending',error_message=$2,lease_owner=null,lease_expires_at=null,next_retry_at=now()+interval '15 minutes' where id=$1 and lease_owner=$3",
+          "update video_intelligence set status='pending',error_message=$2,analysis_attempt_count=greatest(0,analysis_attempt_count-1),lease_owner=null,lease_expires_at=null,next_retry_at=now()+interval '15 minutes' where id=$1 and lease_owner=$3",
           [row.id,code,row.lease_owner]
         )));
         const c=await counts();

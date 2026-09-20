@@ -64,6 +64,7 @@ async function openaiJson({messages,name,schema,timeoutMs=90000}){
   });
 }
 async function gatewayJson({messages,name,schema,timeoutMs=55000}){
+  const deadline=Date.now()+timeoutMs;
   const gatewayToken=credential();
   const directToken=openaiCredential();
   if(!gatewayToken&&!directToken){
@@ -73,7 +74,7 @@ async function gatewayJson({messages,name,schema,timeoutMs=55000}){
   if(gatewayToken&&Date.now()>=gatewayBlockedUntil){
     try{
       return await structuredRequest({
-        url:GATEWAY_URL,token:gatewayToken,model:MODEL,messages,name,schema,timeoutMs,errorPrefix:'AI_GATEWAY'
+        url:GATEWAY_URL,token:gatewayToken,model:MODEL,messages,name,schema,timeoutMs:directToken?Math.max(1,Math.floor(timeoutMs*.55)):timeoutMs,errorPrefix:'AI_GATEWAY'
       });
     }catch(error){
       const code=String(error&&error.message||error);
@@ -83,7 +84,9 @@ async function gatewayJson({messages,name,schema,timeoutMs=55000}){
     }
   }
 
-  return openaiJson({messages,name,schema,timeoutMs:Math.max(timeoutMs,90000)});
+  const remaining=deadline-Date.now();
+  if(remaining<1)throw new Error('AI_GATEWAY_TIMEOUT');
+  return openaiJson({messages,name,schema,timeoutMs:remaining});
 }
 
 module.exports={gatewayJson,openaiJson,MODEL,DIRECT_MODEL,credential,openaiCredential,canDirect};

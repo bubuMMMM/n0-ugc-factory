@@ -33,15 +33,16 @@ function siteIdentity(raw){
   let u;
   try{u=new URL(String(raw||'').trim())}catch{return null}
   if(!['http:','https:'].includes(u.protocol)||!u.hostname)return null;
-  return {origin:u.origin,domain:u.hostname.toLowerCase().replace(/\.$/,'')};
+  u.hash='';
+  return {origin:u.origin,url:u.href,domain:u.hostname.toLowerCase().replace(/\.$/,'')};
 }
 async function cachedBrandProfile(website){
   if(!db.configured())return null;
   const id=siteIdentity(website);if(!id)return null;
   try{
     const r=await db.query(
-      "select id,website,profile from brand_profiles where domain=$1 and updated_at > now() - interval '24 hours' order by updated_at desc limit 1",
-      [id.domain]
+      "select id,website,profile from brand_profiles where website=$1 and analysis_version='brand-intel-v5-source' and updated_at > now() - interval '24 hours' order by updated_at desc limit 1",
+      [id.url]
     );
     if(!r.rows[0])return null;
     const profile=r.rows[0].profile&&typeof r.rows[0].profile==='object'?r.rows[0].profile:null;
@@ -53,13 +54,13 @@ async function cachedBrandProfile(website){
     return null;
   }
 }
-async function persistBrandProfile(website,profile){
+async function persistBrandProfile(website,profile,version='brand-intel-v5-project'){
   if(!db.configured())return null;
   const id=siteIdentity(website);if(!id)return null;
   try{
     const r=await db.query(
-      "insert into brand_profiles(website,domain,analysis_version,profile) values($1,$2,'brand-intel-v3',$3::jsonb) returning id",
-      [id.origin,id.domain,JSON.stringify(profile)]
+      "insert into brand_profiles(website,domain,analysis_version,profile) values($1,$2,$4,$3::jsonb) returning id",
+      [id.url,id.domain,JSON.stringify(profile),version]
     );
     return r.rows[0]&&r.rows[0].id||null;
   }catch(error){
@@ -404,11 +405,12 @@ module.exports=async function handler(req,res){
     if(req.body?.force!==true){
       const cached=await cachedBrandProfile(inputOrigin);
       if(cached){
-        const projectToken=await issueProject({brandProfileId:cached.id,website:cached.website});
+        const privateProfileId=await persistBrandProfile(cached.website,cached.profile);
+        const projectToken=await issueProject({brandProfileId:privateProfileId,website:cached.website});
         return res.status(200).json({
           website:cached.website,
           profile:cached.profile,
-          brandProfileId:cached.id,
+          brandProfileId:privateProfileId,
           projectToken,
           pages:[],
           model:MODEL,
@@ -536,7 +538,8 @@ ${source}`
         }
       ]
     });
-    const origin=new URL(pages[0].url).origin;
+    const origin=new URL(pages[0].url).href;
+    await persistBrandProfile(origin,profile,'brand-intel-v5-source');
     const brandProfileId=await persistBrandProfile(origin,profile);
     const projectToken=await issueProject({brandProfileId,website:origin});
     return res.status(200).json({
@@ -550,7 +553,7 @@ ${source}`
     const code=/timeout|aborted/i.test(raw)&&!raw.startsWith('AI_')&&!raw.startsWith('OPENAI_')?'ANALYZE_TIMEOUT':raw;
     if(pages.length&&aiFailure(code)){
       const profile=buildFallbackProfile(pages);
-      const origin=new URL(pages[0].url).origin;
+      const origin=new URL(pages[0].url).href;
       const brandProfileId=await persistBrandProfile(origin,profile);
       const projectToken=await issueProject({brandProfileId,website:origin});
       return res.status(200).json({website:origin,profile,brandProfileId,projectToken,pages:pages.map(p=>({url:p.url,title:p.title})),model:'local-input-fallback',cached:false,fallback:true,inputMode:manualMode?'description':'website',fallbackReason:code,elapsedMs:Date.now()-startedAt});

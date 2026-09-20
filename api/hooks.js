@@ -1,3 +1,4 @@
+const {normalizeHook}=require('./_hook-text');
 const {gatewayJson,MODEL,credential,canDirect,DIRECT_MODEL}=require('./_ai');
 const {statusForAiCode}=require('./_gateway-errors');
 const {requireProject,limitProject}=require('./_project-auth');
@@ -50,7 +51,7 @@ module.exports=async function handler(req,res){
     additionalProperties:false
   };
   const indexList=indices.join(', ');
-  const prompt=`Crée exactement ${count} hooks uniques pour les vidéos ayant précisément ces index: [${indexList}] sur un catalogue de ${total}. Chaque hook doit être en français, immédiat, naturel, très lisible en surimpression vidéo, 4 à 14 mots et idéalement moins de 90 caractères. Varie fortement les mécanismes: curiosité, erreur fréquente, bénéfice, contraste, question, observation, démonstration, objection, conseil, avant/après sans inventer de résultats, appel à l'identité, mini-liste, surprise. N'utilise ni hashtag ni emoji. N'invente aucune preuve ou promesse absente du profil. Ne répète pas une structure dans le même lot. Retourne une entrée pour CHAQUE index demandé, une seule fois, sans renuméroter ni combler les trous.\n\nPROFIL DE MARQUE:\n${compact}\n\nÀ ÉVITER CAR DÉJÀ UTILISÉ:\n${avoid.join('\n')}`;
+  const prompt=`Crée exactement ${count} hooks uniques pour les vidéos ayant précisément ces index: [${indexList}] sur un catalogue de ${total}. Chaque hook doit être en français, immédiat, naturel, très lisible en surimpression vidéo, 6 à 18 mots et idéalement moins de 90 caractères. Varie fortement les mécanismes: curiosité, erreur fréquente, bénéfice, contraste, question, observation, démonstration, objection, conseil, avant/après sans inventer de résultats, appel à l'identité, mini-liste, surprise. N'utilise ni hashtag ni emoji. N'invente aucune preuve ou promesse absente du profil. Ne répète pas une structure dans le même lot. Retourne une entrée pour CHAQUE index demandé, une seule fois, sans renuméroter ni combler les trous.\n\nPROFIL DE MARQUE:\n${compact}\n\nÀ ÉVITER CAR DÉJÀ UTILISÉ:\n${avoid.join('\n')}`;
   try{
     let data=await gatewayJson({
       name:'videoma_hooks',
@@ -68,7 +69,7 @@ module.exports=async function handler(req,res){
       if(!h)throw new Error('HOOK_INDEX_MISMATCH');
       return {
         index,
-        text:String(h.text||'').replace(/\s+/g,' ').trim().slice(0,120),
+        text:normalizeHook(h.text),
         angle:String(h.angle||'').replace(/\s+/g,' ').trim().slice(0,60)
       };
     });

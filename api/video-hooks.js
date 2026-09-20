@@ -1,3 +1,4 @@
+const {normalizeHook}=require('./_hook-text');
 const {gatewayJson,MODEL,credential,canDirect}=require('./_ai');
 const {statusForAiCode}=require('./_gateway-errors');
 const {evaluateHook,mapLimit,JEV_MODEL}=require('./_jev');
@@ -99,7 +100,7 @@ function normalize(videos,data){
       emotion:trim(r.emotion,80),
       visualCue:trim(r.visualCue,120),
       brandAnchor:trim(r.brandAnchor,180),
-      hook:trim(r.hook,120),
+      hook:normalizeHook(r.hook),
       angle:trim(r.angle,90),
       mechanism:['question','objection','pain','benefit','contrast','demonstration','list','opinion','curiosity','identity','proof','mistake','observation'].includes(r.mechanism)?r.mechanism:'observation',
       placement:['top','lower'].includes(r.placement)?r.placement:'top',
@@ -167,7 +168,7 @@ BARÈME — note sévèrement:
 Un résultat < ${QUALITY_MIN}/100 sur un de ces critères est FAIBLE. Réécris avant de répondre.
 
 RÈGLES DE COPY:
-- 4 à 12 mots, cible 25–78 caractères.
+- 6 à 18 mots, une situation concrète qui explique la réaction.
 - Une seule idée.
 - Français oral mais propre.
 - Pas de hashtag, emoji, guillemets, point d'exclamation forcé.
@@ -380,7 +381,7 @@ module.exports=async function handler(req,res){
         !r.noSafeZone&&
         r.safeForAutoApproval!==false&&
         !genericHook(r.hook)&&
-        !tooSimilar(r.hook,avoid)
+        !tooSimilar(r.hook,[...avoid,...results.filter(x=>x.index!==r.index).map(x=>x.hook)])
     }));
 
     return res.status(200).json({

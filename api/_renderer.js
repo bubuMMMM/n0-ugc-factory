@@ -110,7 +110,7 @@ function wrap(text,maxWidth,fontSize,maxLines){
     }else line=next;
   }
   if(line)lines.push(line);
-  if(lines.length>maxLines)return null;
+  if(lines.length>maxLines||lines.some(line=>approxWidth(line,fontSize)>maxWidth))return null;
   return lines;
 }
 function fitText({hook,secondLine,rect,width,height,fontScale=1,style='short',maxLines=2}){
@@ -126,7 +126,7 @@ function fitText({hook,secondLine,rect,width,height,fontScale=1,style='short',ma
       let second=[],secondSize=width*.05*Math.min(fontScale,.92);
       if(secondLine){
         second=wrap(secondLine,boxW,secondSize,1);
-        if(!second){second=[]}
+        if(!second){mainSize*=.91;continue}
       }
       const gap=second.length?secondSize*.3:0;
       const total=mainHeight+(second.length?secondSize*1.2+gap:0);
@@ -153,6 +153,7 @@ function drawFilter({file,rect,width,height,fontSize,align,lineSpacing,borderWid
     'drawtext='+font,
     "textfile='"+escapeFilterPath(file)+"'",
     'reload=0',
+    'expansion=none',
     'fontcolor=white',
     'fontsize='+Math.max(18,Math.round(fontSize)),
     'borderw='+Math.max(2,Math.round(borderWidth)),

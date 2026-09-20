@@ -27,6 +27,7 @@ async function requestEmbeddings(url,token,model,input,errorPrefix){
   let data;try{data=JSON.parse(raw)}catch{throw new Error(errorPrefix+'_INVALID_RESPONSE')}
   const rows=(data.data||[]).sort((a,b)=>a.index-b.index);
   if(rows.length!==input.length)throw new Error('EMBEDDING_COUNT_MISMATCH');
+  if(rows.some((x,i)=>x.index!==i||!Array.isArray(x.embedding)||x.embedding.length!==DIMENSIONS||x.embedding.some(n=>typeof n!=='number'||!Number.isFinite(n))))throw new Error('EMBEDDING_INVALID_VECTOR');
   return rows.map(x=>x.embedding);
 }
 async function embedMany(values){

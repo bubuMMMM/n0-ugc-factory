@@ -1,3 +1,4 @@
+const {normalizeHook}=require('./_hook-text');
 const fs=require('node:fs');
 const {statusForAiCode}=require('./_gateway-errors');
 const path=require('node:path');
@@ -78,7 +79,7 @@ async function generate(profile,videos,avoid,mechanismUsage,revision){
     'Write exactly one hook for every supplied video. Respect the matched signal unless the permanent video intelligence shows a clear mismatch; if so, use the closest supported brand insight from the profile.',
     'The line is setup, the face is answer. Use reactionType, action, visualFocus, peakReason, textSafeZone, faceRegions and hookCompatibility.',
     'FACE-FIRST LAYOUT: never place text over eyes, nose or mouth. Prefer top or lower. Do not choose middle when a face is visible. If the safe zone is small, shorten the hook and leave secondLine empty.',
-    'Short hooks: 4–12 words. Wall hooks: 30–50 words only when the permanent Video Intelligence explicitly leaves enough free space.',
+    'Short hooks: 6–18 words. Wall hooks: 30–50 words only when the permanent Video Intelligence explicitly leaves enough free space.',
     'secondLine is optional and must be an empty string when it adds no new retention reason.',
     'Never copy any supplied example line. Reuse mechanisms, not wording.',
     'Never invent numbers, credentials, customers, guarantees, transformations, deadlines or proof.',
@@ -97,7 +98,7 @@ async function generate(profile,videos,avoid,mechanismUsage,revision){
   return videos.map(v=>{
     const r=byIndex.get(Number(v.index));if(!r)throw new Error('HOOK_RESULT_MISSING');
     const scores={};for(const k of SCORE_KEYS)scores[k]=Math.max(0,Math.min(100,Number(r.scores&&r.scores[k])||0));
-    const hook=tx(r.hook,500);
+    const hook=normalizeHook(r.hook);
     const secondLine=tx(r.secondLine,260);
     const style=r.style==='wall'?'wall':'short';
     const requested=['top','upper','middle','lower','bottom'].includes(r.placement)?r.placement:'lower';
@@ -307,7 +308,7 @@ module.exports=async function handler(req,res){
   res.setHeader('Cache-Control','no-store');
   if(req.method==='GET')return res.status(200).json({
     model:MODEL,evaluator:JEV_MODEL,maxItems:MAX_ITEMS,version:VERSION,
-    thresholds:{overall:84,visualFit:82,brandFit:82,claimSafety:95,readability:82,novelty:76,jevAcceptProbability:.80,faceOcclusionPenaltyMax:25,layoutScoreMin:60}
+    thresholds:{overall:84,visualFit:82,brandFit:82,claimSafety:95,readability:82,novelty:76,jevAcceptProbability:.80,faceOcclusionPenaltyMax:8,layoutScoreMin:60}
   });
   if(req.method!=='POST')return res.status(405).json({error:'METHOD_NOT_ALLOWED'});
   let project;
@@ -364,7 +365,7 @@ module.exports=async function handler(req,res){
         Number(r.layoutScore)>=60&&
         !r.noSafeZone&&
         r.safeForAutoApproval!==false&&
-        !tooSimilar(r.hook,avoid)
+        !tooSimilar(r.hook,[...avoid,...results.filter(x=>x.index!==r.index).map(x=>x.hook)])
     }));
 
     await persist(brandProfileId,videos,results);
