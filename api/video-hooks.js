@@ -12,6 +12,27 @@ function genericHook(text){
   const s=trim(text,140).toLowerCase();
   return /vous ne devinerez|voici pourquoi|le secret|game changer|incroyable|révolutionnaire|saviez-vous|ça va changer votre vie|vous devez voir|personne ne parle/.test(s);
 }
+function normWords(text){
+  return trim(text,160).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9 ]/g,' ').split(/\s+/).filter(w=>w.length>2);
+}
+function similarity(a,b){
+  const A=normWords(a),B=normWords(b);
+  if(!A.length||!B.length)return 0;
+  const sa=new Set(A),sb=new Set(B),inter=[...sa].filter(x=>sb.has(x)).length;
+  const union=new Set([...sa,...sb]).size;
+  const j=union?inter/union:0;
+  const openA=A.slice(0,3).join(' '),openB=B.slice(0,3).join(' ');
+  return Math.max(j,openA&&openA===openB?.length?1:0);
+}
+function tooSimilar(hook,avoid){
+  const words=normWords(hook),open=words.slice(0,3).join(' ');
+  return avoid.some(x=>{
+    const other=normWords(x),otherOpen=other.slice(0,3).join(' ');
+    if(open&&open===otherOpen)return true;
+    const A=new Set(words),B=new Set(other),inter=[...A].filter(w=>B.has(w)).length,union=new Set([...A,...B]).size;
+    return union&&inter/union>=0.68;
+  });
+}
 function schemaFor(count){
   return {
     type:'object',
@@ -97,15 +118,17 @@ A. VISION
 5. Détermine les zones occupées par visage/mains/objet pour choisir placement.
 
 B. MARQUE
-6. Choisis UNE douleur, objection, envie, preuve, différenciateur, FAQ ou formulation client du profil.
-7. Vérifie que cet insight est compatible avec la scène. Si le lien est forcé, choisis un autre insight.
-8. N'utilise jamais un claim hors de claimsAllowed et respecte claimsForbidden.
+6. Consulte d'abord hookPlaybook. Si un angle a un visualMatch compatible avec la scène, privilégie cet angle et adapte-le précisément.
+7. Choisis UNE douleur, objection, envie, preuve, différenciateur, FAQ, formulation client ou insight du hookPlaybook.
+8. Vérifie que cet insight est compatible avec la scène. Si le lien est forcé, choisis un autre insight.
+9. N'utilise jamais un claim hors de claimsAllowed et respecte claimsForbidden.
 
 C. COPY
-9. Génère mentalement au moins 5 candidats de mécanismes différents.
-10. Élimine les hooks génériques, clickbait, interchangeables ou trop publicitaires.
-11. Garde celui qui crée la meilleure tension entre ce qu'on LIT et ce qu'on VOIT.
-12. Le hook doit pouvoir être compris en environ 1 seconde.
+10. Génère mentalement au moins 5 candidats de mécanismes différents.
+11. Compare-les au hookPlaybook, aux formulations client et aux hooks déjà utilisés.
+12. Élimine les hooks génériques, clickbait, interchangeables, trop publicitaires ou trop proches d'un hook précédent.
+13. Garde celui qui crée la meilleure tension entre ce qu'on LIT et ce qu'on VOIT.
+14. Le hook doit pouvoir être compris en environ 1 seconde.
 
 BARÈME — note sévèrement:
 - visualFit: le texte semble-t-il écrit pour CETTE scène précise?
@@ -173,7 +196,7 @@ module.exports=async function handler(req,res){
 
   try{
     let results=await generate(videos,profile,avoid);
-    const weak=results.filter(r=>r.confidence<76||score(r)<82||Math.min(...Object.values(r.scores))<QUALITY_MIN||genericHook(r.hook));
+    const weak=results.filter(r=>r.confidence<76||score(r)<82||Math.min(...Object.values(r.scores))<QUALITY_MIN||genericHook(r.hook)||tooSimilar(r.hook,avoid));
     if(weak.length){
       const weakVideos=videos.filter(v=>weak.some(w=>w.index===v.index));
       const critique=weak.map(r=>\`#\${r.index} REJETÉ — hook: "\${r.hook}" — scores: \${JSON.stringify(r.scores)} — raison: \${r.rationale}. Réécris avec une accroche plus spécifique au visualCue "\${r.visualCue}" et à un insight précis de la marque.\`).join('\\n');
