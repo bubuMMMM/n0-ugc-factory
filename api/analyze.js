@@ -290,6 +290,28 @@ module.exports=async function handler(req,res){
         claimsAllowed:{type:'array',items:{type:'string'}},
         claimsForbidden:{type:'array',items:{type:'string'}},
         tone:{type:'array',items:{type:'string'}},
+        contentPillars:{type:'array',minItems:5,maxItems:15,items:{
+          type:'object',
+          properties:{
+            name:{type:'string'},
+            insight:{type:'string'},
+            evidence:{type:'string'},
+            suitableVisuals:{type:'array',items:{type:'string'}}
+          },
+          required:['name','insight','evidence','suitableVisuals'],
+          additionalProperties:false
+        }},
+        awarenessMap:{type:'array',minItems:3,maxItems:5,items:{
+          type:'object',
+          properties:{
+            stage:{type:'string',enum:['problem_aware','solution_aware','product_aware','most_aware','unaware']},
+            currentBelief:{type:'string'},
+            friction:{type:'string'},
+            hookDirections:{type:'array',items:{type:'string'}}
+          },
+          required:['stage','currentBelief','friction','hookDirections'],
+          additionalProperties:false
+        }},
         hookPlaybook:{type:'array',minItems:12,maxItems:30,items:{
           type:'object',
           properties:{
@@ -303,7 +325,7 @@ module.exports=async function handler(req,res){
           additionalProperties:false
         }}
       },
-      required:['brand','category','summary','primaryOffer','audiences','jobsToBeDone','pains','desires','objections','offers','differentiators','proofPoints','customerLanguage','faqInsights','claimsAllowed','claimsForbidden','tone','hookPlaybook'],
+      required:['brand','category','summary','primaryOffer','audiences','jobsToBeDone','pains','desires','objections','offers','differentiators','proofPoints','customerLanguage','faqInsights','claimsAllowed','claimsForbidden','tone','contentPillars','awarenessMap','hookPlaybook'],
       additionalProperties:false
     };
     const profile=await gatewayJson({
@@ -330,9 +352,11 @@ MÉTHODE:
 5. Sépare les preuves fortes des simples slogans et rattache chaque preuve à son URL source.
 6. Repère les mots et formulations que la marque utilise réellement: vocabulaire métier, verbes, expressions clients, CTA, questions fréquentes.
 7. Définis ce que les futurs hooks PEUVENT affirmer et ce qu'ils NE DOIVENT PAS affirmer.
-8. Construis 12 à 30 familles de hooks très différentes. Pour chacune, précise les types de scènes vidéo qui lui correspondent.
-9. Cherche des tensions créatives concrètes: erreur vs bonne pratique, attente vs réalité, friction vs simplicité, avant vs après (sans résultat inventé), objection vs réponse, détail négligé, coût de l'inaction, identité du client, démonstration, comparaison, question, opinion contrariante factuellement défendable.
-10. Donne priorité aux insights spécifiques au business plutôt qu'aux vérités génériques qui pourraient convenir à n'importe quelle PME.
+8. Construis 5 à 15 piliers de contenu: chaque pilier doit reposer sur un insight spécifique du site, une preuve/raison crédible et des types de scènes compatibles.
+9. Construis une awarenessMap: comment parler différemment à quelqu'un qui ne perçoit pas encore le problème, qui cherche une solution, qui compare des offres ou qui est déjà presque convaincu.
+10. Construis 12 à 30 familles de hooks très différentes. Pour chacune, précise les types de scènes vidéo qui lui correspondent.
+11. Cherche des tensions créatives concrètes: erreur vs bonne pratique, attente vs réalité, friction vs simplicité, avant vs après (sans résultat inventé), objection vs réponse, détail négligé, coût de l'inaction, identité du client, démonstration, comparaison, question, opinion contrariante factuellement défendable.
+12. Donne priorité aux insights spécifiques au business plutôt qu'aux vérités génériques qui pourraient convenir à n'importe quelle PME.
 
 Écris en français. Sois concret. Évite le jargon marketing.`
         },
