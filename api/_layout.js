@@ -1,160 +1,179 @@
-const PLACEMENTS={
-  top:{x:.10,y:.075,w:.80},
-  upper:{x:.10,y:.145,w:.80},
-  lower:{x:.10,y:.585,w:.80},
-  bottom:{x:.10,y:.715,w:.80}
+const BANDS={
+  top:{x:.10,y:.055,w:.80,h:.115},
+  upper:{x:.10,y:.155,w:.80,h:.12},
+  middle:{x:.10,y:.40,w:.80,h:.14},
+  lower:{x:.10,y:.645,w:.80,h:.105},
+  bottom:{x:.10,y:.815,w:.80,h:.085}
 };
-
-const REGION_BOXES={
-  'haut-gauche':{x:.00,y:.00,w:.34,h:.34},
-  'haut-centre':{x:.33,y:.00,w:.34,h:.34},
-  'haut-droite':{x:.66,y:.00,w:.34,h:.34},
-  'centre-gauche':{x:.00,y:.33,w:.34,h:.34},
-  'centre':{x:.33,y:.33,w:.34,h:.34},
-  'centre-droite':{x:.66,y:.33,w:.34,h:.34},
-  'bas-gauche':{x:.00,y:.66,w:.34,h:.34},
-  'bas-centre':{x:.33,y:.66,w:.34,h:.34},
-  'bas-droite':{x:.66,y:.66,w:.34,h:.34},
-  'top-left':{x:.00,y:.00,w:.34,h:.34},
-  'top-center':{x:.33,y:.00,w:.34,h:.34},
-  'top-right':{x:.66,y:.00,w:.34,h:.34},
-  'middle-left':{x:.00,y:.33,w:.34,h:.34},
-  'middle':{x:.33,y:.33,w:.34,h:.34},
-  'middle-right':{x:.66,y:.33,w:.34,h:.34},
-  'bottom-left':{x:.00,y:.66,w:.34,h:.34},
-  'bottom-center':{x:.33,y:.66,w:.34,h:.34},
-  'bottom-right':{x:.66,y:.66,w:.34,h:.34}
+const COLUMNS={
+  center:{x:.10,w:.80},
+  left:{x:.06,w:.52},
+  right:{x:.42,w:.52}
 };
+const PLACEMENTS=['top','lower','bottom','upper','middle'];
+const ALIGNMENTS=['center','left','right'];
 
-function clamp(n,min=0,max=1){return Math.max(min,Math.min(max,Number(n)||0))}
-function normalizeBox(box){
-  if(!box||typeof box!=='object')return null;
-  let x=Number(box.x),y=Number(box.y),w=Number(box.w),h=Number(box.h);
-  if([x,y,w,h].some(v=>!Number.isFinite(v)))return null;
-  if(Math.max(Math.abs(x),Math.abs(y),Math.abs(w),Math.abs(h))>1.5){
-    x/=100;y/=100;w/=100;h/=100;
+function clamp(n,min=0,max=100){return Math.max(min,Math.min(max,Number(n)||0))}
+function clamp01(n){return Math.max(0,Math.min(1,Number(n)||0))}
+function overlap(a,b){
+  const x=Math.max(a.x,b.x),y=Math.max(a.y,b.y);
+  const r=Math.min(a.x+a.w,b.x+b.w),bot=Math.min(a.y+a.h,b.y+b.h);
+  if(r<=x||bot<=y)return 0;
+  return (r-x)*(bot-y);
+}
+function boxArea(b){return Math.max(.0001,(Number(b.w)||0)*(Number(b.h)||0))}
+function normalizedBox(raw){
+  if(!raw||typeof raw!=='object')return null;
+  const x=clamp01(raw.x),y=clamp01(raw.y),w=clamp01(raw.w),h=clamp01(raw.h);
+  if(w<=0||h<=0)return null;
+  return {x,y,w,h,confidence:clamp01(raw.confidence==null?1:raw.confidence)};
+}
+function boxesFrom(regions){
+  const out=[];
+  for(const item of Array.isArray(regions)?regions:[]){
+    if(!item||typeof item!=='object')continue;
+    if(Array.isArray(item.boxes)){
+      for(const b of item.boxes){const n=normalizedBox(b);if(n)out.push(n)}
+    }else{
+      const n=normalizedBox(item);if(n)out.push(n);
+    }
   }
-  x=clamp(x);y=clamp(y);w=clamp(w,0,1-x);h=clamp(h,0,1-y);
-  if(w<=.01||h<=.01)return null;
-  return {x,y,w,h,frame:Math.max(1,Math.min(4,Math.round(Number(box.frame)||1))),confidence:clamp((Number(box.confidence)||100)/100)};
+  return out;
 }
-function boxesFromRegions(regions){
-  return (regions||[]).map(x=>{
-    const key=String(x||'').trim().toLowerCase();
-    const b=REGION_BOXES[key];
-    return b?{...b,frame:1,confidence:.6}:null;
-  }).filter(Boolean);
-}
-function faceBoxes(video){
-  const explicit=(video&&video.faceBoxes||[]).map(normalizeBox).filter(Boolean);
-  if(explicit.length)return explicit;
-  const regions=Array.isArray(video&&video.faceRegions)?video.faceRegions:[];
-  const regionBoxes=regions.map(x=>typeof x==='object'?normalizeBox(x):null).filter(Boolean);
-  return regionBoxes.length?regionBoxes:boxesFromRegions(regions);
-}
-function intersect(a,b){
-  const x1=Math.max(a.x,b.x),y1=Math.max(a.y,b.y),x2=Math.min(a.x+a.w,b.x+b.w),y2=Math.min(a.y+a.h,b.y+b.h);
-  if(x2<=x1||y2<=y1)return 0;
-  return (x2-x1)*(y2-y1);
-}
-function estimateLines(text,charsPerLine=21){
-  const s=String(text||'').trim();
+function stringRegionPenalty(region,placement,alignment='center'){
+  const s=String(region||'').toLowerCase();
   if(!s)return 0;
-  const words=s.split(/\s+/);let lines=1,count=0;
-  for(const word of words){
-    const n=word.length+(count?1:0);
-    if(count&&count+n>charsPerLine){lines++;count=word.length}
-    else count+=n;
+  let p=0;
+  if(placement==='top'&&/(haut|top)/.test(s))p=92;
+  if(placement==='upper'&&/(haut|top|centre|center)/.test(s))p=Math.max(p,82);
+  if(placement==='middle'&&/(centre|center|milieu|middle)/.test(s))p=Math.max(p,98);
+  if(placement==='lower'&&/(bas|bottom|centre|center)/.test(s))p=Math.max(p,72);
+  if(placement==='bottom'&&/(bas|bottom)/.test(s))p=Math.max(p,84);
+  if(alignment==='left'&&/(gauche|left)/.test(s))p=Math.max(p,85);
+  if(alignment==='right'&&/(droite|right)/.test(s))p=Math.max(p,85);
+  return p;
+}
+function penaltyForRegions(regions,rect,placement,alignment,base=55,span=45){
+  let penalty=0;
+  const boxes=boxesFrom(regions);
+  for(const b of boxes){
+    const ov=overlap(b,rect);
+    if(ov<=0)continue;
+    const ratio=Math.min(1,ov/boxArea(b));
+    penalty=Math.max(penalty,Math.round((base+span*ratio)*(b.confidence||1)));
   }
-  return Math.max(1,Math.min(5,lines));
-}
-function textRect(placement,hook,secondLine,style='short'){
-  const base=PLACEMENTS[placement]||PLACEMENTS.top;
-  const primaryLines=estimateLines(hook,style==='wall'?28:20);
-  const secondaryLines=secondLine?estimateLines(secondLine,24):0;
-  // Font geometry converted from width-relative size into 9:16 height-relative size.
-  const primaryLineH=(style==='wall'?.054:.066)*1.2/1.7778;
-  const secondaryLineH=.05*1.2/1.7778;
-  const gap=secondaryLines?.015:0;
-  const h=Math.min(.32,primaryLines*primaryLineH+secondaryLines*secondaryLineH+gap+.018);
-  let y=base.y;
-  if(placement==='lower'||placement==='bottom')y=Math.max(.05,base.y-h*.15);
-  return {x:base.x,y,w:base.w,h};
-}
-function occlusionPenalty(rect,boxes){
-  if(!boxes.length)return 0;
-  let worst=0,total=0;
-  for(const face of boxes){
-    const overlap=intersect(rect,face);
-    if(!overlap)continue;
-    const faceArea=Math.max(.001,face.w*face.h);
-    const textArea=Math.max(.001,rect.w*rect.h);
-    const faceCovered=overlap/faceArea;
-    const textCovered=overlap/textArea;
-    // Covering even a modest fraction of a face is expensive.
-    const score=Math.min(100,faceCovered*180+textCovered*85)*(.75+.25*(face.confidence||1));
-    worst=Math.max(worst,score);
-    total+=score*.35;
+  for(const item of Array.isArray(regions)?regions:[]){
+    if(typeof item==='string')penalty=Math.max(penalty,stringRegionPenalty(item,placement,alignment));
   }
-  return Math.min(100,worst+total);
+  return clamp(penalty);
 }
-function preferredBonus(placement,video){
-  const preferred=String(video&&video.textSafeZone&&video.textSafeZone.preferred||'').toLowerCase();
-  if(preferred===placement)return 12;
-  if(preferred==='middle'&&(placement==='top'||placement==='bottom'))return 2;
-  return 0;
+function hasUsableGeometry(intelligence){
+  if(!intelligence||typeof intelligence!=='object')return false;
+  const safe=intelligence.textSafeZone;
+  if(!safe||typeof safe!=='object')return false;
+  if(!['top','upper','lower','bottom'].includes(String(safe.preferred||'')))return false;
+  if(!['left','center','right'].includes(String(safe.horizontal||'')))return false;
+  const faces=intelligence.faceRegions;
+  if(!Array.isArray(faces))return false;
+  for(const face of faces){
+    if(!face||typeof face!=='object'||Array.isArray(face))return false;
+    const values=[face.x,face.y,face.w,face.h].map(Number);
+    if(!values.every(Number.isFinite))return false;
+    const [x,y,w,h]=values;
+    if(x<0||y<0||w<=0||h<=0||x+w>1.01||y+h>1.01)return false;
+    if(face.frame!=null&&!Number.isInteger(Number(face.frame)))return false;
+  }
+  return true;
 }
-function chooseLayout({video,hook,secondLine='',style='short',requestedPlacement=''}){
-  const boxes=faceBoxes(video);
-  const dense=boxes.some(b=>b.w*b.h>.18)||Number(video&&video.personCount||0)>1;
-  const candidates=['top','bottom','upper','lower'].map(placement=>{
-    const rect=textRect(placement,hook,secondLine,style);
-    const penalty=occlusionPenalty(rect,boxes);
-    let score=100-penalty+preferredBonus(placement,video);
-    if(placement==='upper'||placement==='lower')score-=6;
-    if(requestedPlacement===placement)score+=3;
-    return {placement,rect,faceOcclusionPenalty:Math.round(penalty),score:Math.round(score)};
-  }).sort((a,b)=>b.score-a.score);
+function facePenalty(intelligence,placement='lower',alignment='center',rect=null){
+  const band=BANDS[placement]||BANDS.lower;
+  const col=COLUMNS[alignment]||COLUMNS.center;
+  const target=rect||{x:col.x,y:band.y,w:col.w,h:band.h};
+  return penaltyForRegions(intelligence&&intelligence.faceRegions,target,placement,alignment,60,40);
+}
+function objectPenalty(intelligence,placement='lower',alignment='center',rect=null){
+  const band=BANDS[placement]||BANDS.lower;
+  const col=COLUMNS[alignment]||COLUMNS.center;
+  const target=rect||{x:col.x,y:band.y,w:col.w,h:band.h};
+  return penaltyForRegions(intelligence&&intelligence.objectRegions,target,placement,alignment,28,38);
+}
+function zoneScore(intelligence,placement){
+  const safe=intelligence&&intelligence.textSafeZone||{};
+  const scores=safe.zoneScores||safe.zones||{};
+  if(Number.isFinite(Number(scores[placement])))return clamp(scores[placement]);
+  const avoid=Array.isArray(safe.avoid)?safe.avoid.map(x=>String(x).toLowerCase()):[];
+  if(avoid.some(x=>x===placement||x.includes(placement)))return 8;
+  if(String(safe.preferred||'')===placement)return 94;
+  const defaults={top:78,upper:60,middle:20,lower:84,bottom:80};
+  return defaults[placement]||50;
+}
+function secondLineAllowed(safe,hasSecondLine,best){
+  if(!hasSecondLine)return false;
+  const explicit=
+    typeof safe.allowSecondLine==='boolean'?safe.allowSecondLine:
+    typeof safe.secondLineSafe==='boolean'?safe.secondLineSafe:null;
+  const maxLines=Math.max(1,Math.min(4,Number(safe.maxLines)||2));
+  if(explicit===false||maxLines<2)return false;
+  return best.faceOcclusionPenalty<=8&&best.objectOcclusionPenalty<=20&&best.safety>=86;
+}
+function resolveLayout(intelligence={},options={}){
+  const requested=PLACEMENTS.includes(options.requested)?options.requested:'lower';
+  const style=options.style==='wall'?'wall':'short';
+  const hasSecondLine=Boolean(options.secondLine);
+  const candidates=[];
 
-  let chosen=candidates[0];
-  let finalSecond=secondLine;
-  let compact=false;
-
-  if(chosen.faceOcclusionPenalty>12&&secondLine){
-    const withoutSecond=['top','bottom','upper','lower'].map(placement=>{
-      const rect=textRect(placement,hook,'',style);
-      const penalty=occlusionPenalty(rect,boxes);
-      let score=100-penalty+preferredBonus(placement,video);
-      if(placement==='upper'||placement==='lower')score-=6;
-      return {placement,rect,faceOcclusionPenalty:Math.round(penalty),score:Math.round(score)};
-    }).sort((a,b)=>b.score-a.score)[0];
-    if(withoutSecond.score>chosen.score+2){
-      chosen=withoutSecond;finalSecond='';compact=true;
+  for(const placement of PLACEMENTS){
+    const band=BANDS[placement];
+    for(const horizontalAlign of ALIGNMENTS){
+      const col=COLUMNS[horizontalAlign];
+      const textRect={x:col.x,y:band.y,w:col.w,h:band.h};
+      const faceOcclusionPenalty=facePenalty(intelligence,placement,horizontalAlign,textRect);
+      const objectOcclusionPenalty=objectPenalty(intelligence,placement,horizontalAlign,textRect);
+      const safety=zoneScore(intelligence,placement);
+      const middlePenalty=placement==='middle'?24:0;
+      const requestedBonus=placement===requested?4:0;
+      const sidePenalty=horizontalAlign==='center'?0:3;
+      const score=safety-faceOcclusionPenalty-(objectOcclusionPenalty*.35)-middlePenalty-sidePenalty+requestedBonus;
+      candidates.push({placement,horizontalAlign,textRect,faceOcclusionPenalty,objectOcclusionPenalty,safety,score});
     }
   }
 
-  // Unknown face data uses conservative rendering: no center, no walls, no second line on long hooks.
-  if(!boxes.length){
-    const safe=String(video&&video.textSafeZone&&video.textSafeZone.preferred||'');
-    const placement=['top','bottom','upper','lower'].includes(safe)?safe:'top';
-    chosen={placement,rect:textRect(placement,hook,'','short'),faceOcclusionPenalty:0,score:72};
-    if(String(hook||'').length>54||dense){finalSecond='';compact=true}
-    style='short';
-  }
+  candidates.sort((a,b)=>b.score-a.score);
+  const best=candidates[0]||{
+    placement:'bottom',horizontalAlign:'center',
+    textRect:{x:.10,y:.835,w:.80,h:.07},
+    faceOcclusionPenalty:100,objectOcclusionPenalty:0,safety:0,score:-100
+  };
 
-  const reject=chosen.faceOcclusionPenalty>=28;
-  const fontScale=reject?.84:chosen.faceOcclusionPenalty>=12?.90:dense?.94:1;
+  const safe=intelligence&&intelligence.textSafeZone||{};
+  const maxLines=Math.max(1,Math.min(4,Number(safe.maxLines)||2));
+  const allowSecondLine=secondLineAllowed(safe,hasSecondLine,best);
+  const noSafeZone=best.faceOcclusionPenalty>25||best.score<35;
+  const compact=noSafeZone||best.faceOcclusionPenalty>8||best.safety<80||best.horizontalAlign!=='center';
+  const fontScale=style==='wall'
+    ? (compact?.72:.86)
+    : (noSafeZone?.68:best.horizontalAlign!=='center'?.76:compact?.84:1);
+
   return {
-    placement:chosen.placement,
-    secondLine:finalSecond,
-    style:style==='wall'&&!dense&&!reject?'wall':'short',
-    faceOcclusionPenalty:chosen.faceOcclusionPenalty,
-    layoutScore:chosen.score,
-    fontScale,
+    placement:best.placement,
+    horizontalAlign:best.horizontalAlign,
+    textRect:best.textRect,
+    faceOcclusionPenalty:best.faceOcclusionPenalty,
+    objectOcclusionPenalty:best.objectOcclusionPenalty,
+    layoutScore:clamp(best.safety-best.faceOcclusionPenalty-(best.objectOcclusionPenalty*.35)),
+    allowSecondLine,
+    secondLineSuppressed:hasSecondLine&&!allowSecondLine,
+    maxLines:allowSecondLine?Math.min(3,maxLines):Math.min(2,maxLines),
+    fontScale:Number(fontScale.toFixed(2)),
+    scale:Number(fontScale.toFixed(2)),
     compact,
-    reject,
-    candidates
+    noSafeZone,
+    safeForAutoApproval:!noSafeZone&&best.faceOcclusionPenalty<=8&&best.score>=55,
+    candidates:candidates.slice(0,5)
   };
 }
+function layoutDecision(intelligence,requested='lower',hasSecondLine=false,style='short'){
+  return resolveLayout(intelligence,{requested,secondLine:hasSecondLine?'1':'',style});
+}
 
-module.exports={chooseLayout,faceBoxes,textRect,occlusionPenalty};
+module.exports={BANDS,COLUMNS,PLACEMENTS,resolveLayout,layoutDecision,facePenalty,objectPenalty,zoneScore,hasUsableGeometry};
