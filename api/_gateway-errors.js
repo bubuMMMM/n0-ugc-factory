@@ -29,8 +29,17 @@ function openaiError(raw,status,prefix='OPENAI_API'){
   e.code=code;e.status=status;e.detail=String(raw||'').slice(0,1200);
   return e;
 }
+function statusForAiCode(code){
+  code=String(code||'');
+  if(/INSUFFICIENT_FUNDS$/.test(code))return 402;
+  if(/RATE_LIMIT$/.test(code))return 429;
+  if(/TIMEOUT$/.test(code))return 504;
+  if(/AUTH_ERROR$/.test(code))return 502;
+  if(/NOT_CONFIGURED$|UNAVAILABLE$/.test(code))return 503;
+  return 500;
+}
 function isTimeout(error){
   const s=String(error&&error.message||error||'');
   return error&&error.name==='AbortError'||/aborted|timeout/i.test(s);
 }
-module.exports={gatewayError,openaiError,isTimeout};
+module.exports={gatewayError,openaiError,statusForAiCode,isTimeout};
