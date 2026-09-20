@@ -2,9 +2,11 @@ const dns=require('node:dns').promises;
 const net=require('node:net');
 const {gatewayJson,MODEL,credential}=require('./_ai');
 
-const MAX_PAGE_CHARS=16000;
-const MAX_TOTAL_CHARS=90000;
-const MAX_PAGES=8;
+const MAX_PAGE_CHARS=12000;
+const MAX_TOTAL_CHARS=52000;
+const MAX_PAGES=6;
+const PAGE_TIMEOUT_MS=5500;
+const SITEMAP_TIMEOUT_MS=3500;
 
 function isPrivateIP(ip){
   if(net.isIP(ip)===4){
@@ -44,7 +46,7 @@ async function safeFetch(raw,depth=0){
       'User-Agent':'Mozilla/5.0 (compatible; videoma-site-analyzer/1.0)',
       'Accept':'text/html,application/xhtml+xml'
     },
-    signal:AbortSignal.timeout(9000)
+    signal:AbortSignal.timeout(PAGE_TIMEOUT_MS)
   });
   if(r.status>=300&&r.status<400){
     const loc=r.headers.get('location');
@@ -181,7 +183,7 @@ function rankPath(pathname){
 async function fetchTextPublic(raw,depth=0){
   if(depth>4)throw new Error('TOO_MANY_REDIRECTS');
   const url=await assertPublicUrl(raw);
-  const r=await fetch(url,{redirect:'manual',headers:{'User-Agent':'Mozilla/5.0 (compatible; videoma-site-analyzer/1.0)','Accept':'application/xml,text/xml,text/plain,*/*'},signal:AbortSignal.timeout(7000)});
+  const r=await fetch(url,{redirect:'manual',headers:{'User-Agent':'Mozilla/5.0 (compatible; videoma-site-analyzer/1.0)','Accept':'application/xml,text/xml,text/plain,*/*'},signal:AbortSignal.timeout(SITEMAP_TIMEOUT_MS)});
   if(r.status>=300&&r.status<400){
     const loc=r.headers.get('location');if(!loc)throw new Error('BAD_REDIRECT');
     return fetchTextPublic(new URL(loc,url).href,depth+1);
@@ -222,28 +224,54 @@ async function discoverSitemap(base){
 
 async function crawl(website){
   const first=await safeFetch(website);
-  const sitemap=await discoverSitemap(first.url).catch(()=>[]);
-  const queue=[first.url,...new Set([...internalLinks(first.html,first.url),...sitemap])];
   const origin=new URL(first.url).origin;
-  const pages=[];const seen=new Set();let total=0;
-  for(const target of queue){
-    if(pages.length>=MAX_PAGES||total>=MAX_TOTAL_CHARS) break;
-    let u;try{u=new URL(target)}catch{continue}
-    if(u.origin!==origin||seen.has(u.href)) continue;
-    seen.add(u.href);
-    let page;
-    try{page=u.href===first.url?first:await safeFetch(u.href)}catch{continue}
-    const text=textOnly(page.html).slice(0,MAX_PAGE_CHARS);
-    if(text.length<80) continue;
-    const item={
-      url:page.url,
-      title:titleOf(page.html),
-      description:descriptionOf(page.html),
-      signals:pageSignals(page.html),
-      text
-    };
-    total+=JSON.stringify(item).length;
-    pages.push(item);
+
+  const firstText=textOnly(first.html).slice(0,MAX_PAGE_CHARS);
+  const pages=[{
+    url:first.url,
+    title:titleOf(first.html),
+    description:descriptionOf(first.html),
+    signals:pageSignals(first.html),
+    text:firstText
+  }];
+
+  const internal=internalLinks(first.html,first.url).slice(0,18);
+  let sitemap=[];
+  try{
+    sitemap=await Promise.race([
+      discoverSitemap(first.url),
+      new Promise(resolve=>setTimeout(()=>resolve([]),4500))
+    ]);
+  }catch{}
+
+  const candidates=[...new Set([...internal,...sitemap])]
+    .filter(u=>{try{return new URL(u).origin===origin&&u!==first.url}catch{return false}})
+    .slice(0,24);
+
+  const wanted=Math.max(0,MAX_PAGES-1);
+  const results=await Promise.allSettled(
+    candidates.slice(0,Math.max(wanted*2,8)).map(async target=>{
+      const page=await safeFetch(target);
+      const text=textOnly(page.html).slice(0,MAX_PAGE_CHARS);
+      if(text.length<80)throw new Error('PAGE_TOO_SHORT');
+      return {
+        url:page.url,
+        title:titleOf(page.html),
+        description:descriptionOf(page.html),
+        signals:pageSignals(page.html),
+        text
+      };
+    })
+  );
+
+  let total=JSON.stringify(pages[0]).length;
+  for(const r of results){
+    if(r.status!=='fulfilled')continue;
+    const item=r.value;
+    const size=JSON.stringify(item).length;
+    if(total+size>MAX_TOTAL_CHARS)continue;
+    pages.push(item);total+=size;
+    if(pages.length>=MAX_PAGES)break;
   }
   return pages;
 }
@@ -254,6 +282,7 @@ module.exports=async function handler(req,res){
   if(req.method!=='POST') return res.status(405).json({error:'METHOD_NOT_ALLOWED'});
   const website=String(req.body?.website||'').trim();
   if(!website) return res.status(400).json({error:'WEBSITE_REQUIRED'});
+  const startedAt=Date.now();
   try{
     const pages=await crawl(website);
     if(!pages.length) return res.status(422).json({error:'SITE_UNREADABLE'});
@@ -330,6 +359,7 @@ module.exports=async function handler(req,res){
     };
     const profile=await gatewayJson({
       name:'videoma_brand_intelligence',
+      timeoutMs:135000,
       schema,
       messages:[
         {
@@ -371,11 +401,12 @@ ${source}`
         }
       ]
     });
-    return res.status(200).json({website:new URL(pages[0].url).origin,profile,pages:pages.map(p=>({url:p.url,title:p.title})),model:MODEL});
+    return res.status(200).json({website:new URL(pages[0].url).origin,profile,pages:pages.map(p=>({url:p.url,title:p.title})),model:MODEL,elapsedMs:Date.now()-startedAt});
   }catch(err){
     console.error('analyze error',err?.message,err?.status||'',err?.detail||'');
-    const code=String(err?.message||'ANALYZE_FAILED');
-    const status=code==='AI_GATEWAY_NOT_CONFIGURED'?503:code.startsWith('SITE_')||code==='SITE_UNREADABLE'?422:code==='INVALID_URL'||code==='INVALID_PROTOCOL'||code==='PRIVATE_HOST'?400:500;
+    const raw=String(err?.message||'ANALYZE_FAILED');
+    const code=/timeout|aborted/i.test(raw)?'ANALYZE_TIMEOUT':raw;
+    const status=code==='AI_GATEWAY_NOT_CONFIGURED'?503:code==='ANALYZE_TIMEOUT'?504:code.startsWith('SITE_')||code==='SITE_UNREADABLE'?422:code==='INVALID_URL'||code==='INVALID_PROTOCOL'||code==='PRIVATE_HOST'?400:500;
     return res.status(status).json({error:code});
   }
 };
