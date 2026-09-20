@@ -705,6 +705,20 @@ header{background:transparent}
 
 
 .video-only{padding-bottom:72px}
+
+/* Hard clipping inside the measured safe text rectangle */
+.hook-overlay,.modal-hook{
+  max-height:var(--hook-max-height,15%)!important;
+  overflow:hidden!important;
+}
+.hook-overlay .hook-primary,.modal-hook .hook-primary{
+  display:-webkit-box!important;
+  -webkit-box-orient:vertical;
+  -webkit-line-clamp:var(--hook-max-lines,2);
+  overflow:hidden;
+}
+.hook-overlay .hook-secondary[hidden],.modal-hook .hook-secondary[hidden]{display:none!important}
+
 </style>
 </head>
 <body>
@@ -1088,6 +1102,7 @@ function setHookGeometry(node,meta){
   node.style.setProperty("--hook-font-size",size.toFixed(2)+"cqi");
   node.style.setProperty("--hook-secondary-font-size",secondary.toFixed(2)+"cqi");
   node.style.setProperty("--hook-max-height",(rect.h*100).toFixed(2)+"%");
+  node.style.setProperty("--hook-max-lines",String(meta?.maxLines||2));
   node.dataset.align=meta?.horizontalAlign||"center";
   node.dataset.maxLines=String(meta?.maxLines||2);
 }
@@ -1258,6 +1273,15 @@ function errorMessage(code){
     OPENAI_EMBEDDING_TIMEOUT:"Le matching OpenAI a mis trop de temps.",
     AI_MODEL_UNAVAILABLE:"Le modèle IA configuré est indisponible.",
     AI_GATEWAY_TIMEOUT:"Le modèle IA a mis trop de temps à répondre.",
+    AI_NOT_CONFIGURED:"Aucun fournisseur IA n’est configuré.",
+    OPENAI_API_NOT_CONFIGURED:"La clé OpenAI de secours n’est pas configurée.",
+    OPENAI_API_AUTH_ERROR:"La clé OpenAI de secours est refusée.",
+    OPENAI_API_BILLING_ERROR:"Le compte OpenAI de secours doit être crédité.",
+    OPENAI_API_RATE_LIMIT:"OpenAI reçoit trop de requêtes. Réessayez dans un instant.",
+    OPENAI_API_UNAVAILABLE:"OpenAI est temporairement indisponible.",
+    OPENAI_MODEL_UNAVAILABLE:"Le modèle OpenAI de secours est indisponible.",
+    OPENAI_API_TIMEOUT:"OpenAI a mis trop de temps à répondre.",
+    OPENAI_EMBEDDING_ERROR:"Le calcul des embeddings OpenAI a échoué.",
     EMBEDDING_TIMEOUT:"Le matching sémantique a mis trop de temps.",
     JEV_TIMEOUT:"La validation Jev a mis trop de temps.",
     ANALYZE_TIMEOUT:"L’analyse du site a pris trop de temps.",
