@@ -838,10 +838,27 @@ function normalizeSite(value){
 async function postJSON(url,body,timeout=70000){
   const ctrl=new AbortController(),timer=setTimeout(()=>ctrl.abort(),timeout);
   try{
-    const r=await fetch(url,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body),signal:ctrl.signal});
+    const r=await fetch(url,{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify(body),
+      signal:ctrl.signal
+    });
     const data=await r.json().catch(()=>({}));
-    if(!r.ok){const e=new Error(data.error||("HTTP_"+r.status));e.status=r.status;throw e}
+    if(!r.ok){
+      const e=new Error(data.error||("HTTP_"+r.status));
+      e.status=r.status;
+      e.data=data;
+      throw e;
+    }
     return data;
+  }catch(error){
+    if(error?.name==="AbortError"){
+      const e=new Error("REQUEST_TIMEOUT");
+      e.status=504;
+      throw e;
+    }
+    throw error;
   }finally{clearTimeout(timer)}
 }
 function errorMessage(code){
@@ -851,10 +868,24 @@ function errorMessage(code){
     PRIVATE_HOST:"Cette adresse n’est pas accessible.",
     DNS_FAILED:"Le domaine est introuvable.",
     SITE_UNREADABLE:"Le site ne contient pas assez de contenu lisible.",
-    AI_GATEWAY_NOT_CONFIGURED:"AI Gateway n’est pas encore configuré sur ce projet.",
-    ANALYZE_TIMEOUT:"L’analyse a pris trop de temps. Réessayez : le site sera analysé en mode accéléré."
+    AI_GATEWAY_NOT_CONFIGURED:"Le service IA n’est pas configuré.",
+    AI_GATEWAY_INSUFFICIENT_FUNDS:"Le crédit AI Gateway est épuisé. Rechargez le solde Vercel AI Gateway puis réessayez.",
+    AI_GATEWAY_AUTH_ERROR:"La connexion à AI Gateway est refusée. Vérifiez la clé configurée sur Vercel.",
+    AI_GATEWAY_RATE_LIMIT:"Le service IA reçoit trop de requêtes. Réessayez dans un instant.",
+    AI_GATEWAY_UNAVAILABLE:"AI Gateway est temporairement indisponible.",
+    AI_MODEL_UNAVAILABLE:"Le modèle IA configuré est indisponible.",
+    AI_GATEWAY_TIMEOUT:"Le modèle IA a mis trop de temps à répondre.",
+    EMBEDDING_TIMEOUT:"Le matching sémantique a mis trop de temps.",
+    JEV_TIMEOUT:"La validation Jev a mis trop de temps.",
+    ANALYZE_TIMEOUT:"L’analyse du site a pris trop de temps.",
+    REQUEST_TIMEOUT:"La requête a dépassé le délai prévu.",
+    DATABASE_NOT_CONFIGURED:"La base Video Intelligence n’est pas configurée."
   };
-  return map[code]||"Impossible d’analyser ce site pour le moment.";
+  return map[code]||"Une erreur technique a interrompu cette étape.";
+}
+function generationErrorMessage(code){
+  const detail=errorMessage(code);
+  return "Site analysé. Génération des vidéos interrompue : "+detail;
 }
 
 function once(target,event,timeout=12000){
@@ -945,7 +976,7 @@ async function generateVisualBatch(indices){
   if(valid.length){
     const angleUsage={};
     for(const m of HOOK_META){if(m?.angle)angleUsage[m.angle]=(angleUsage[m.angle]||0)+1}
-    const data=await postJSON("/api/video-hooks",{profile:PROFILE,videos:valid,avoid:HOOKS.filter(Boolean).slice(-60),angleUsage},90000);
+    const data=await postJSON("/api/video-hooks",{profile:PROFILE,videos:valid,avoid:HOOKS.filter(Boolean).slice(-60),angleUsage},230000);
     for(const r of data.results||[]){
       const idx=Number(r.index)-1;
       if(idx<0||idx>=ALL.length)continue;
@@ -979,20 +1010,24 @@ async function generateVisualBatch(indices){
   saveProject();
 }
 async function prepareIntelligenceMatches(){
-  VIDEO_MATCHES=new Array(ALL.length).fill(null);BRAND_PROFILE_ID="";
-  try{
-    studioStatus.textContent="Matching marque × 1 017 vidéos…";
-    const data=await postJSON("/api/match-videos",{profile:PROFILE,website:PROJECT_WEBSITE},90000);
-    BRAND_PROFILE_ID=data.brandProfileId||"";
-    for(const m of data.matches||[]){const idx=Number(m.index)-1;if(idx>=0&&idx<ALL.length)VIDEO_MATCHES[idx]=m}
-    const ready=VIDEO_MATCHES.filter(Boolean).length;
-    studioStatus.textContent=ready+" vidéos matchées depuis la base permanente";
-    saveProject();return ready;
-  }catch(e){
-    console.warn("permanent intelligence unavailable",e);
-    studioStatus.textContent="Base permanente indisponible, analyse visuelle de secours…";
-    return 0;
+  VIDEO_MATCHES=new Array(ALL.length).fill(null);
+  studioStatus.textContent="Matching marque × bibliothèque vidéo…";
+  const data=await postJSON("/api/match-videos",{
+    profile:PROFILE,
+    website:PROJECT_WEBSITE,
+    brandProfileId:BRAND_PROFILE_ID
+  },180000);
+  if(data.brandProfileId)BRAND_PROFILE_ID=data.brandProfileId;
+  for(const m of data.matches||[]){
+    const idx=Number(m.index)-1;
+    if(idx>=0&&idx<ALL.length)VIDEO_MATCHES[idx]=m;
   }
+  const ready=VIDEO_MATCHES.filter(Boolean).length;
+  studioStatus.textContent=ready
+    ? ready+" vidéos déjà matchées depuis la Video Intelligence Database"
+    : "Bibliothèque vidéo en préparation — génération d’un aperçu";
+  saveProject();
+  return ready;
 }
 async function generateIntelligenceBatch(indices){
   const videos=indices.map(i=>VIDEO_MATCHES[i]).filter(Boolean);
@@ -1002,7 +1037,7 @@ async function generateIntelligenceBatch(indices){
   const data=await postJSON("/api/hooks-intelligence",{
     profile:PROFILE,brandProfileId:BRAND_PROFILE_ID,videos,
     avoid:HOOKS.filter(Boolean).slice(-100),mechanismUsage
-  },90000);
+  },230000);
   for(const r of data.results||[]){
     const idx=Number(r.index)-1;if(idx<0||idx>=ALL.length)continue;
     HOOKS[idx]=String(r.hook||"").trim();
@@ -1019,46 +1054,73 @@ async function generateIntelligenceBatch(indices){
 async function generateMissing(){
   if(generating||!PROFILE)return;
   generating=true;continueHooks.disabled=true;
-  const missing=[];
-  for(let i=0;i<ALL.length;i++)if(!HOOKS[i]||HOOK_META[i]?.grounded!==true||HOOK_META[i]?.accepted===false)missing.push(i);
-  if(!missing.length){
-    generating=false;continueHooks.disabled=false;updateProgress("1 017 hooks validés");return;
-  }
+  try{
+    const missing=[];
+    for(let i=0;i<ALL.length;i++){
+      if(!HOOKS[i]||HOOK_META[i]?.grounded!==true||HOOK_META[i]?.accepted===false)missing.push(i);
+    }
+    if(!missing.length){
+      updateProgress("1 017 hooks validés");
+      return;
+    }
 
-  const intelligence=missing.filter(i=>VIDEO_MATCHES[i]?.intelligence);
-  const fallback=missing.filter(i=>!VIDEO_MATCHES[i]?.intelligence);
-  let failed=0;
+    const intelligence=missing.filter(i=>VIDEO_MATCHES[i]?.intelligence);
+    const fallbackAll=missing.filter(i=>!VIDEO_MATCHES[i]?.intelligence);
+    const fallback=fallbackAll.slice(0,8);
+    let failed=0;
 
-  if(intelligence.length){
-    studioStatus.textContent="Génération depuis les analyses vidéo permanentes…";
-    const batches=[];for(let i=0;i<intelligence.length;i+=24)batches.push(intelligence.slice(i,i+24));
-    let next=0;
-    async function worker(){
-      while(next<batches.length){
-        const batch=batches[next++];
-        try{await generateIntelligenceBatch(batch)}catch(e){failed+=batch.length;console.error("intelligence batch failed",batch,e)}
+    if(intelligence.length){
+      studioStatus.textContent="Génération depuis la Video Intelligence Database…";
+      const batches=[];
+      for(let i=0;i<intelligence.length;i+=24)batches.push(intelligence.slice(i,i+24));
+      let next=0;
+      async function worker(){
+        while(next<batches.length){
+          const batch=batches[next++];
+          try{await generateIntelligenceBatch(batch)}
+          catch(e){
+            failed+=batch.length;
+            console.error("intelligence batch failed",batch,e);
+            if(/^AI_|^EMBEDDING_|^JEV_/.test(e.message||""))throw e;
+          }
+        }
+      }
+      await Promise.all([worker(),worker()]);
+    }
+
+    if(fallback.length){
+      studioStatus.textContent="Création de "+fallback.length+" aperçus vidéo pendant la pré-analyse permanente…";
+      const batches=[];
+      for(let i=0;i<fallback.length;i+=4)batches.push(fallback.slice(i,i+4));
+      for(const batch of batches){
+        try{await generateVisualBatch(batch)}
+        catch(e){
+          failed+=batch.length;
+          console.error("visual preview failed",batch,e);
+          if(/^AI_|^JEV_/.test(e.message||""))throw e;
+        }
       }
     }
-    await Promise.all([worker(),worker(),worker()]);
-  }
 
-  if(fallback.length){
-    studioStatus.textContent="Analyse visuelle de secours pour "+fallback.length+" vidéos…";
-    const batches=[];for(let i=0;i<fallback.length;i+=8)batches.push(fallback.slice(i,i+8));
-    let next=0;
-    async function worker(){
-      while(next<batches.length){
-        const batch=batches[next++];
-        try{await generateVisualBatch(batch)}catch(e){failed+=batch.length;console.error("visual fallback failed",batch,e)}
-      }
+    const done=HOOKS.filter(Boolean).length;
+    const accepted=HOOK_META.filter(x=>x?.accepted!==false&&x?.grounded).length;
+    const waiting=Math.max(0,ALL.length-done);
+    if(accepted===ALL.length){
+      updateProgress("1 017 hooks adaptés et validés sont prêts");
+      studioStatus.textContent="Génération terminée";
+    }else if(waiting>0){
+      updateProgress(done+" hooks prêts");
+      studioStatus.textContent=failed
+        ? done+" hooks prêts · certains lots sont à reprendre"
+        : done+" hooks prêts · "+waiting+" seront disponibles à mesure que la base vidéo est pré-analysée";
+    }else{
+      updateProgress(done+" hooks prêts");
     }
-    await Promise.all([worker(),worker()]);
+    saveProject();
+  }finally{
+    generating=false;
+    continueHooks.disabled=false;
   }
-
-  generating=false;continueHooks.disabled=false;
-  const done=HOOKS.filter(Boolean).length,accepted=HOOK_META.filter(x=>x?.accepted!==false&&x?.grounded).length;
-  updateProgress(accepted===ALL.length?"1 017 hooks adaptés et validés sont prêts":failed?done+" hooks prêts — certains lots sont à reprendre":done+" hooks prêts");
-  saveProject();
 }
 
 continueHooks.addEventListener("click",generateMissing);
@@ -1066,26 +1128,61 @@ continueHooks.addEventListener("click",generateMissing);
 siteForm.addEventListener("submit",async e=>{
   e.preventDefault();
   const website=normalizeSite(siteUrlInput.value);
-  if(!website){siteError.textContent="Entrez une adresse de site valide.";siteUrlInput.focus();return}
+  if(!website){
+    siteError.textContent="Entrez une adresse de site valide.";
+    siteUrlInput.focus();
+    return;
+  }
   if(generating)return;
+
   siteError.textContent="";
   const btn=siteForm.querySelector(".site-submit"),label=btn.innerHTML;
-  btn.disabled=true;btn.textContent="Analyse du site…";
-  studio.hidden=false;studioTitle.textContent="Analyse du site…";studioMeta.textContent=website;studioStatus.textContent="Lecture du site puis analyse GPT‑5.6…";
-  HOOKS=new Array(ALL.length).fill("");HOOK_META=new Array(ALL.length).fill(null);refreshVisibleHooks();updateProgress("Analyse du site…");
+  btn.disabled=true;
+  btn.textContent="Analyse du site…";
+  studio.hidden=false;
+  studioTitle.textContent="Analyse du site…";
+  studioMeta.textContent=website;
+  studioStatus.textContent="Lecture du site puis analyse GPT‑5.6…";
+  HOOKS=new Array(ALL.length).fill("");
+  HOOK_META=new Array(ALL.length).fill(null);
+  VIDEO_MATCHES=new Array(ALL.length).fill(null);
+  BRAND_PROFILE_ID="";
+  refreshVisibleHooks();
+  updateProgress("Analyse du site…");
+
+  let data;
   try{
-    const data=await postJSON("/api/analyze",{website},170000);
-    PROFILE=data.profile;PROJECT_WEBSITE=data.website||website;
-    studioTitle.textContent=PROFILE?.brand||"Projet videoma";
-    studioMeta.textContent=(PROFILE?.summary||PROJECT_WEBSITE).slice(0,180);
-    saveProject();
-    studio.scrollIntoView({behavior:"smooth",block:"start"});
+    data=await postJSON("/api/analyze",{website},170000);
+  }catch(err){
+    console.error("site analysis",err);
+    siteError.textContent=errorMessage(err.message);
+    studioStatus.textContent="Analyse du site interrompue";
+    btn.disabled=false;
+    btn.innerHTML=label;
+    return;
+  }
+
+  PROFILE=data.profile;
+  PROJECT_WEBSITE=data.website||website;
+  BRAND_PROFILE_ID=data.brandProfileId||"";
+  studioTitle.textContent=PROFILE?.brand||"Projet videoma";
+  studioMeta.textContent=(PROFILE?.summary||PROJECT_WEBSITE).slice(0,180);
+  studioStatus.textContent=data.cached?"Profil marque chargé depuis le cache":"Site analysé avec succès";
+  saveProject();
+  studio.scrollIntoView({behavior:"smooth",block:"start"});
+
+  btn.textContent="Préparation des vidéos…";
+  try{
     await prepareIntelligenceMatches();
     await generateMissing();
   }catch(err){
-    console.error(err);siteError.textContent=errorMessage(err.message);
-    studioStatus.textContent="Analyse interrompue";
-  }finally{btn.disabled=false;btn.innerHTML=label}
+    console.error("video generation",err);
+    siteError.textContent=generationErrorMessage(err.message);
+    studioStatus.textContent="Site analysé · génération interrompue";
+  }finally{
+    btn.disabled=false;
+    btn.innerHTML=label;
+  }
 });
 
 const payMsg=document.querySelector("#payMsg");
