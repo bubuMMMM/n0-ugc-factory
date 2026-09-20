@@ -4,7 +4,18 @@ const {SCHEMA_SQL}=require('./_schema');
 let pool=null;
 let schemaPromise=null;
 
-function configured(){return Boolean(process.env.DATABASE_URL)}
+function parseDatabaseUrl(){
+  const raw=String(process.env.DATABASE_URL||'').trim();
+  if(!raw)return {ok:false,error:'DATABASE_URL_MISSING'};
+  try{
+    const u=new URL(raw);
+    if(!['postgres:','postgresql:'].includes(u.protocol))return {ok:false,error:'DATABASE_URL_INVALID_PROTOCOL'};
+    if(!u.hostname||u.hostname==='base')return {ok:false,error:'DATABASE_URL_INVALID_HOST'};
+    if(!u.username)return {ok:false,error:'DATABASE_URL_MISSING_USER'};
+    return {ok:true,hostname:u.hostname,database:u.pathname.replace(/^\//,'')||'',sslmode:u.searchParams.get('sslmode')||''};
+  }catch{return {ok:false,error:'DATABASE_URL_INVALID_FORMAT'}}
+}
+function configured(){return parseDatabaseUrl().ok}
 
 function getPool(){
   if(!configured()){
@@ -54,4 +65,4 @@ function vectorLiteral(values){
   return '['+values.map(v=>Number.isFinite(Number(v))?Number(v):0).join(',')+']';
 }
 
-module.exports={configured,getPool,ensureSchema,query,vectorLiteral};
+module.exports={configured,parseDatabaseUrl,getPool,ensureSchema,query,vectorLiteral};
