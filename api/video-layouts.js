@@ -19,7 +19,12 @@ module.exports=async function handler(req,res){
         objectRegions:row.object_regions||[],
         visualFocus:row.visual_focus||''
       };
-      return {index:row.canonical_index,...resolveLayout(intelligence),textSafeZone:intelligence.textSafeZone,faceRegions:intelligence.faceRegions};
+      return {
+        index:row.canonical_index,
+        ...resolveLayout(intelligence,{hook:'1000 vidéos en moins de 5 min.',secondLine:'',style:'short'}),
+        textSafeZone:intelligence.textSafeZone,
+        faceRegions:intelligence.faceRegions
+      };
     });
     return res.status(200).json({configured:true,ready:items.length,items});
   }catch(error){
