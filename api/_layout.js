@@ -67,6 +67,24 @@ function penaltyForRegions(regions,rect,placement,alignment,base=55,span=45){
   }
   return clamp(penalty);
 }
+function hasUsableGeometry(intelligence){
+  if(!intelligence||typeof intelligence!=='object')return false;
+  const safe=intelligence.textSafeZone;
+  if(!safe||typeof safe!=='object')return false;
+  if(!['top','upper','lower'].includes(String(safe.preferred||'')))return false;
+  if(!['left','center','right'].includes(String(safe.horizontal||'')))return false;
+  const faces=intelligence.faceRegions;
+  if(!Array.isArray(faces))return false;
+  for(const face of faces){
+    if(!face||typeof face!=='object'||Array.isArray(face))return false;
+    const values=[face.x,face.y,face.w,face.h].map(Number);
+    if(!values.every(Number.isFinite))return false;
+    const [x,y,w,h]=values;
+    if(x<0||y<0||w<=0||h<=0||x+w>1.01||y+h>1.01)return false;
+    if(face.frame!=null&&!Number.isInteger(Number(face.frame)))return false;
+  }
+  return true;
+}
 function facePenalty(intelligence,placement='lower',alignment='center',rect=null){
   const band=BANDS[placement]||BANDS.lower;
   const col=COLUMNS[alignment]||COLUMNS.center;
@@ -158,4 +176,4 @@ function layoutDecision(intelligence,requested='lower',hasSecondLine=false,style
   return resolveLayout(intelligence,{requested,secondLine:hasSecondLine?'1':'',style});
 }
 
-module.exports={BANDS,COLUMNS,PLACEMENTS,resolveLayout,layoutDecision,facePenalty,objectPenalty,zoneScore};
+module.exports={BANDS,COLUMNS,PLACEMENTS,resolveLayout,layoutDecision,facePenalty,objectPenalty,zoneScore,hasUsableGeometry};
