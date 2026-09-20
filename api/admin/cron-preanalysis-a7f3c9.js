@@ -6,7 +6,7 @@ module.exports=async function handler(req,res){
   if(req.method!=='GET')return res.status(405).json({error:'METHOD_NOT_ALLOWED'});
   if(!isCron(req))return res.status(401).json({error:'UNAUTHORIZED'});
   try{
-    const job=await core.latestActiveJob();
+    const job=await core.ensureActiveJob();
     if(!job)return res.status(200).json({done:true,active:false});
     const result=await core.runBatch(job.id);
     return res.status(200).json({
