@@ -76,9 +76,25 @@ function reactionScore(type,reaction,compat){
 module.exports=async function handler(req,res){
   res.setHeader('Cache-Control','no-store');
   if(req.method==='GET'){
-    if(!db.configured())return res.status(200).json({configured:false,ready:0,database:db.parseDatabaseUrl()});
-    const r=await db.query("select count(*)::int ready from video_intelligence where status='ready' and embedding is not null");
-    return res.status(200).json({configured:true,ready:r.rows[0]&&r.rows[0].ready||0,embeddingModel:EMBEDDING_MODEL});
+    if(!db.configured())return res.status(200).json({configured:false,legacyReady:0,currentVersionReady:0,geometryReady:0,database:db.parseDatabaseUrl()});
+    const r=await db.query(
+      "select analysis_version,text_safe_zone,face_regions,object_regions from video_intelligence where status='ready' and embedding is not null"
+    );
+    const legacyReady=r.rows.length;
+    const currentRows=r.rows.filter(x=>x.analysis_version===VIDEO_INTELLIGENCE_VERSION);
+    const geometryReady=currentRows.filter(x=>hasUsableGeometry({
+      textSafeZone:x.text_safe_zone||{},
+      faceRegions:x.face_regions||[],
+      objectRegions:x.object_regions||[]
+    })).length;
+    return res.status(200).json({
+      configured:true,
+      legacyReady,
+      currentVersionReady:currentRows.length,
+      geometryReady,
+      embeddingModel:EMBEDDING_MODEL,
+      videoIntelligenceVersion:VIDEO_INTELLIGENCE_VERSION
+    });
   }
   if(req.method!=='POST')return res.status(405).json({error:'METHOD_NOT_ALLOWED'});
   if(!db.configured())return res.status(503).json({error:'DATABASE_NOT_CONFIGURED'});
