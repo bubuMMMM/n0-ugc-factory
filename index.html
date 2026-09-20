@@ -1074,7 +1074,7 @@ siteForm.addEventListener("submit",async e=>{
   studio.hidden=false;studioTitle.textContent="Analyse du site…";studioMeta.textContent=website;studioStatus.textContent="Lecture du site puis analyse GPT‑5.6…";
   HOOKS=new Array(ALL.length).fill("");HOOK_META=new Array(ALL.length).fill(null);refreshVisibleHooks();updateProgress("Analyse du site…");
   try{
-    const data=await postJSON("/api/analyze",{website});
+    const data=await postJSON("/api/analyze",{website},170000);
     PROFILE=data.profile;PROJECT_WEBSITE=data.website||website;
     studioTitle.textContent=PROFILE?.brand||"Projet videoma";
     studioMeta.textContent=(PROFILE?.summary||PROJECT_WEBSITE).slice(0,180);
