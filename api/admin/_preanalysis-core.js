@@ -8,7 +8,7 @@ const {extract}=require('../_video-frames');
 const db=require('../_db');
 
 const VERSION='video-intel-v3-job';
-const BATCH=2;
+const BATCH=4;
 
 function s(v,n=400){return String(v||'').replace(/\s+/g,' ').trim().slice(0,n)}
 function readUrls(){
@@ -146,15 +146,11 @@ async function analyze(rows){
     ]
   });
   const byIndex=new Map((data.videos||[]).map(x=>[Number(x.index),x]));
-  const transcripts=await Promise.all(extracted.map(async v=>{
-    if(!v.hasAudio)return {status:'none',text:''};
-    try{return await transcribeVideoUrl(v.source_url)}
-    catch(e){return {status:'error',text:'',reason:String(e.message||e)}}
-  }));
+  const transcripts=extracted.map(v=>v.hasAudio?{status:'detected',text:''}:{status:'none',text:''});
   const embeddingTexts=extracted.map((v,i)=>{
     const r=byIndex.get(v.canonical_index);
     if(!r)throw new Error('MISSING_ANALYSIS_'+v.canonical_index);
-    return embeddingText(r,transcripts[i]?.text||'');
+    return embeddingText(r,'');
   });
   const embeddings=await embedMany(embeddingTexts);
   const saved=[];
