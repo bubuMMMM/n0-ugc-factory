@@ -19,13 +19,13 @@ function tx(v,n=500){return String(v||'').replace(/\s+/g,' ').trim().slice(0,n)}
 function overall(scores){return Math.round(SCORE_KEYS.reduce((sum,k)=>sum+(Number(scores&&scores[k])||0)*WEIGHTS[k],0))}
 function weakQuality(r){
   const q=r.scores||{},score=overall(q);
-  return score<84||Number(q.visualFit)<82||Number(q.brandFit)<82||Number(q.claimSafety)<95||Number(q.readability)<82||Number(q.novelty)<76||Number(r.faceOcclusionPenalty)>25||Number(r.layoutScore)<60||!r.visualAnchor||!r.brandAnchor;
+  return score<84||Number(q.visualFit)<82||Number(q.brandFit)<82||Number(q.claimSafety)<95||Number(q.readability)<82||Number(q.novelty)<76||!r.visualAnchor||!r.brandAnchor;
 }
 function evaluatorRejected(r){
   return ['jev','openai-fallback'].includes(r.evaluationStatus)&&Number(r.jevAcceptProbability)<0.80;
 }
 function weak(r){
-  return weakQuality(r)||evaluatorRejected(r)||Number(r.faceOcclusionPenalty)>8;
+  return weakQuality(r)||evaluatorRejected(r);
 }
 function normalizedWords(s){return tx(s,180).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9 ]/g,' ').split(/\s+/).filter(x=>x.length>2)}
 function similar(a,b){
@@ -355,9 +355,6 @@ module.exports=async function handler(req,res){
       accepted:
         ['jev','openai-fallback'].includes(r.evaluationStatus)&&
         Number(r.jevAcceptProbability)>=.80&&
-        Number(r.faceOcclusionPenalty)<=8&&
-        r.safeForAutoApproval!==false&&
-        !r.noSafeZone&&
         !weakQuality(r)&&
         !tooSimilar(r.hook,avoid)
     }));
