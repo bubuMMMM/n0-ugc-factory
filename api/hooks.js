@@ -1,5 +1,6 @@
 const {gatewayJson,MODEL,credential,canDirect,DIRECT_MODEL}=require('./_ai');
 const {statusForAiCode}=require('./_gateway-errors');
+const {requireProject,limitProject}=require('./_project-auth');
 
 module.exports=async function handler(req,res){
   res.setHeader('Cache-Control','no-store');
@@ -19,9 +20,12 @@ module.exports=async function handler(req,res){
   const count=requestedIndices.length||Math.min(80,Math.max(1,Number(req.body?.count)||40));
   const indices=requestedIndices.length?requestedIndices:Array.from({length:count},(_,i)=>start+i+1);
   const total=Math.max(Math.max(...indices),Number(req.body?.total)||1017);
-  const profile=req.body?.profile;
+  let project;
+  try{project=await requireProject(req)}catch{return res.status(401).json({error:'PROJECT_UNAUTHORIZED'})}
+  const quota=await limitProject(project,'text-hooks',24,3600).catch(()=>({allowed:true}));
+  if(!quota.allowed)return res.status(429).json({error:'PROJECT_RATE_LIMIT'});
+  const profile=project.profile;
   const avoid=Array.isArray(req.body?.avoid)?req.body.avoid.slice(-30).map(String):[];
-  if(!profile||typeof profile!=='object') return res.status(400).json({error:'PROFILE_REQUIRED'});
   const compact=JSON.stringify(profile).slice(0,22000);
   const schema={
     type:'object',
