@@ -3,6 +3,7 @@ const {statusForAiCode}=require('./_gateway-errors');
 const {evaluateHook,mapLimit,JEV_MODEL}=require('./_jev');
 const {resolveLayout}=require('./_layout');
 const {LAYOUT_VERSION}=require('./_versions');
+const {requireProject,limitProject}=require('./_project-auth');
 
 const MAX_ITEMS=8;
 const QUALITY_MIN=78;
@@ -322,11 +323,14 @@ module.exports=async function handler(req,res){
     configured:Boolean(credential()||canDirect()),gatewayConfigured:Boolean(credential()),directOpenAIConfigured:Boolean(canDirect()),model:MODEL,evaluator:JEV_MODEL,maxItems:MAX_ITEMS,vision:true,qualityMin:QUALITY_MIN
   });
   if(req.method!=='POST')return res.status(405).json({error:'METHOD_NOT_ALLOWED'});
-  const profile=req.body?.profile;
+  let project;
+  try{project=await requireProject(req)}catch{return res.status(401).json({error:'PROJECT_UNAUTHORIZED'})}
+  const quota=await limitProject(project,'visual-hooks',40,3600).catch(()=>({allowed:true}));
+  if(!quota.allowed)return res.status(429).json({error:'PROJECT_RATE_LIMIT'});
+  const profile=project.profile;
   const videos=Array.isArray(req.body?.videos)?req.body.videos.slice(0,MAX_ITEMS):[];
   const avoid=Array.isArray(req.body?.avoid)?req.body.avoid.slice(-60).map(x=>trim(x,120)):[];
   const angleUsage=req.body?.angleUsage&&typeof req.body.angleUsage==='object'?req.body.angleUsage:{};
-  if(!profile||typeof profile!=='object')return res.status(400).json({error:'PROFILE_REQUIRED'});
   if(!videos.length||videos.some(v=>!Number.isInteger(v.index)||typeof v.contactSheet!=='string'||!v.contactSheet.startsWith('data:image/')))return res.status(400).json({error:'VIDEO_FRAMES_REQUIRED'});
 
   try{
