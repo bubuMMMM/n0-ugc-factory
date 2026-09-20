@@ -1933,8 +1933,25 @@ document.querySelectorAll("[data-buy]").forEach(btn=>btn.addEventListener("click
     const data=await r.json();if(!r.ok||!data.url)throw new Error(data.error||"Paiement indisponible");location.href=data.url;
   }catch(err){flashPay(err.message==="STRIPE_NOT_CONFIGURED"?"Paiement Stripe à connecter.":"Paiement momentanément indisponible.");btn.disabled=false;btn.innerHTML=label}
 }));
-const paymentState=new URLSearchParams(location.search).get("payment");
-if(paymentState==="success")setTimeout(()=>flashPay("Paiement confirmé. Merci !"),300);
+const paymentParams=new URLSearchParams(location.search);
+const paymentState=paymentParams.get("payment");
+const paymentSession=paymentParams.get("session_id");
+if(paymentState==="success"){
+  if(!paymentSession){
+    setTimeout(()=>flashPay("Paiement non vérifié."),300);
+  }else{
+    fetch("/api/payment-status?session_id="+encodeURIComponent(paymentSession),{cache:"no-store"})
+      .then(async r=>({ok:r.ok,data:await r.json().catch(()=>({}))}))
+      .then(({ok,data})=>{
+        if(ok&&data.paid===true)flashPay("Paiement vérifié. Merci !");
+        else flashPay("Paiement non confirmé par Stripe.");
+      })
+      .catch(()=>flashPay("Vérification du paiement indisponible."));
+  }
+  paymentParams.delete("payment");paymentParams.delete("session_id");
+  const clean=location.pathname+(paymentParams.toString()?"?"+paymentParams.toString():"")+location.hash;
+  history.replaceState(null,"",clean);
+}
 
 restoreProject();
 apply();
