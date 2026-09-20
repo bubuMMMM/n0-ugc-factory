@@ -1,32 +1,27 @@
 const db=require('./_db');
-const {resolveLayout}=require('./_layout');
 
 module.exports=async function handler(req,res){
-  res.setHeader('Cache-Control','public, s-maxage=60, stale-while-revalidate=300');
   if(req.method!=='GET')return res.status(405).json({error:'METHOD_NOT_ALLOWED'});
-  if(!db.configured())return res.status(200).json({configured:false,ready:0,items:[]});
+  res.setHeader('Cache-Control','public, s-maxage=300, stale-while-revalidate=1800');
+  if(!db.configured())return res.status(200).json({configured:false,ready:0,layouts:[]});
   try{
     const r=await db.query(
-      "select canonical_index,person_count,reaction_intensity,text_safe_zone,face_regions,object_regions,visual_focus "+
+      "select canonical_index,text_safe_zone,face_regions,object_regions,visual_focus,reaction_type,energy_score "+
       "from video_intelligence where status='ready' order by canonical_index"
     );
-    const items=r.rows.map(row=>{
-      const intelligence={
-        personCount:row.person_count,
-        reactionIntensity:row.reaction_intensity,
-        textSafeZone:row.text_safe_zone||{},
-        faceRegions:row.face_regions||[],
-        objectRegions:row.object_regions||[],
-        visualFocus:row.visual_focus||''
-      };
-      return {
-        index:row.canonical_index,
-        ...resolveLayout(intelligence,{hook:'1000 vidéos en moins de 5 min.',secondLine:'',style:'short'}),
-        textSafeZone:intelligence.textSafeZone,
-        faceRegions:intelligence.faceRegions
-      };
+    return res.status(200).json({
+      configured:true,
+      ready:r.rows.length,
+      layouts:r.rows.map(x=>({
+        index:x.canonical_index,
+        textSafeZone:x.text_safe_zone||{},
+        faceRegions:x.face_regions||[],
+        objectRegions:x.object_regions||[],
+        visualFocus:x.visual_focus||'',
+        reactionType:x.reaction_type||'',
+        energyScore:Number(x.energy_score)||0
+      }))
     });
-    return res.status(200).json({configured:true,ready:items.length,items});
   }catch(error){
     console.error('video-layouts',error&&error.message);
     return res.status(500).json({error:'VIDEO_LAYOUTS_FAILED'});
