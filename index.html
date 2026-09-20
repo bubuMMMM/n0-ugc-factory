@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#070707">
+<title>UGC Reaction Library</title>
+<meta name="description" content="Bibliothèque de vidéos UGC et réactions verticales.">
+<style>
+:root{--bg:#070707;--fg:#f5f5ef;--muted:#8c8c84;--line:#222;--acid:#eaff63}
+*{box-sizing:border-box}html{background:var(--bg);color:var(--fg);font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}body{margin:0;background:var(--bg)}
+button,input{font:inherit}.wrap{width:min(1520px,calc(100% - 32px));margin:auto}
+header{position:sticky;top:0;z-index:30;background:rgba(7,7,7,.86);backdrop-filter:blur(18px);border-bottom:1px solid var(--line)}
+.nav{height:64px;display:flex;align-items:center;gap:14px}.logo{font-weight:800;letter-spacing:-.04em;white-space:nowrap}.dot{display:inline-block;width:9px;height:9px;border-radius:99px;background:var(--acid);margin-right:8px;box-shadow:0 0 18px #eaff6388}
+.search{margin-left:auto;width:min(420px,50vw);height:40px;border:1px solid #2a2a2a;background:#101010;color:white;border-radius:12px;padding:0 14px;outline:0}.counter{font:12px ui-monospace,SFMono-Regular,Menlo,monospace;color:#aaa;white-space:nowrap}
+.hero{padding:72px 0 40px;border-bottom:1px solid var(--line)}.eyebrow{color:var(--acid);font:600 12px ui-monospace,SFMono-Regular,Menlo,monospace;text-transform:uppercase;letter-spacing:.12em}
+h1{font-size:clamp(48px,8.5vw,130px);line-height:.86;letter-spacing:-.075em;margin:18px 0 28px;max-width:1100px}.lead{color:#aaa;font-size:clamp(15px,1.7vw,19px);line-height:1.5;max-width:680px;margin:0}
+.toolbar{padding:17px 0;display:flex;justify-content:space-between;gap:12px;align-items:center}.chips{display:flex;gap:7px;flex-wrap:wrap}.chip{border:1px solid #292929;background:#101010;color:#aaa;border-radius:999px;padding:8px 12px;cursor:pointer}.chip.active{background:var(--acid);color:#080808;border-color:var(--acid)}
+.status{font:12px ui-monospace,SFMono-Regular,Menlo,monospace;color:#777}
+.grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:8px;padding-bottom:90px}.card{position:relative;aspect-ratio:9/16;border-radius:15px;overflow:hidden;background:#111;border:1px solid #202020;cursor:pointer;content-visibility:auto;contain-intrinsic-size:180px 320px}.card video{width:100%;height:100%;display:block;object-fit:cover;background:radial-gradient(circle at 50% 25%,#202020,#0e0e0e 70%)}.num{position:absolute;left:9px;bottom:8px;font:600 10px ui-monospace,SFMono-Regular,Menlo,monospace;padding:5px 7px;border-radius:7px;background:#0009;backdrop-filter:blur(8px)}.play{position:absolute;right:9px;bottom:8px;width:27px;height:27px;border-radius:50%;display:grid;place-items:center;background:#f5f5ef;color:#111;font-size:10px}
+.skeleton{position:absolute;inset:0;background:linear-gradient(110deg,#111 8%,#1b1b1b 18%,#111 33%);background-size:200% 100%;animation:sh 1.3s linear infinite}@keyframes sh{to{background-position-x:-200%}}
+.modal{position:fixed;inset:0;z-index:100;display:none;align-items:center;justify-content:center;background:#000d;backdrop-filter:blur(18px);padding:18px}.modal.open{display:flex}.player{height:min(94vh,920px);aspect-ratio:9/16;background:#000;border-radius:20px;overflow:hidden;position:relative;border:1px solid #333}.player video{width:100%;height:100%;object-fit:contain}.close{position:absolute;top:10px;right:10px;z-index:2;width:40px;height:40px;border:0;border-radius:50%;background:#000a;color:#fff;font-size:22px;cursor:pointer}.copy{position:absolute;left:12px;right:12px;bottom:12px;height:42px;border:1px solid #ffffff22;border-radius:12px;background:#000b;color:#fff;font-weight:700;cursor:pointer}
+.empty{padding:100px 0;text-align:center;color:#777;display:none}.empty.show{display:block}
+@media(max-width:1180px){.grid{grid-template-columns:repeat(6,1fr)}}@media(max-width:900px){.grid{grid-template-columns:repeat(5,1fr)}}@media(max-width:680px){.wrap{width:min(100% - 20px,1520px)}.nav{height:58px}.logo{font-size:14px}.counter{display:none}.search{width:55vw}.hero{padding:42px 0 26px}.grid{grid-template-columns:repeat(3,1fr);gap:5px}.card{border-radius:10px}.player{height:100dvh;width:100%;aspect-ratio:auto;border:0;border-radius:0}.modal{padding:0}}@media(max-width:390px){.grid{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+<header><div class="wrap nav"><div class="logo"><span class="dot"></span>Reaction Library</div><input id="q" class="search" placeholder="Rechercher…"><div class="counter"><span id="count">0</span> vidéos</div></div></header>
+<section class="hero"><div class="wrap"><div class="eyebrow">UGC reaction archive</div><h1>Des réactions.<br>Toutes ici.</h1><p class="lead">Une bibliothèque massive de vidéos verticales. Les vidéos se chargent uniquement lorsqu'elles approchent de l'écran pour rester rapide même avec des centaines de fichiers.</p></div></section>
+<main class="wrap"><div class="toolbar"><div class="chips"><button class="chip active" data-filter="all">Toutes</button><button class="chip" data-filter="generated">Generated</button><button class="chip" data-filter="videos">Videos</button><button class="chip" data-filter="motion">Motion</button></div><div id="status" class="status">chargement…</div></div><div id="grid" class="grid"></div><div id="empty" class="empty">Aucune vidéo.</div><div id="sentinel"></div></main>
+<div id="modal" class="modal"><div class="player"><button id="close" class="close">×</button><video id="big" controls playsinline></video><button id="copy" class="copy">Copier le lien direct</button></div></div>
+<script>
+const FALLBACK = [
+"https://doublespeed2.blob.core.windows.net/media/media/e3e45b32-d29e-4d2f-a821-c06c4f101bc8/generated/64810d44-8da4-47b6-b392-c28d8a5e35a6-019d4fed-a614-7690-945c-90007fa3799a.mp4",
+"https://doublespeed2.blob.core.windows.net/media/media/2dca701e-9e20-48a8-b642-3fb04aed5ea6/generated/8c1f6534-8585-46b6-968f-33b3d50694b1-019e41f7-375b-7b10-b49c-78de5c896c8a.mp4",
+"https://doublespeed2.blob.core.windows.net/media/media/e3e45b32-d29e-4d2f-a821-c06c4f101bc8/generated/74f92628-dbbd-4c35-b81d-47f76090294e-019e59e5-4360-77e2-a238-c471c4d20932.mp4",
+"https://doublespeed2.blob.core.windows.net/media/media/e3e45b32-d29e-4d2f-a821-c06c4f101bc8/generated/69debb65-342e-4171-b3ba-2402505740ca-019eae2c-a688-7c03-ab0e-94d9e927b37b.mp4",
+"https://doublespeed2.blob.core.windows.net/media/media/e3e45b32-d29e-4d2f-a821-c06c4f101bc8/generated/a6398cc3-3c0f-4948-b81d-4f709aab7b38-019e5a1e-0e1c-7742-a503-fb8594126e0e.mp4",
+"https://doublespeed2.blob.core.windows.net/media/media/6e0873cd-1eb0-430d-9d35-d9210f87c904/generated/373e9786-445e-4cab-ace6-20699db17725-019e4787-f472-7b23-b94d-d3f7121870e8.mp4",
+"https://doublespeed2.blob.core.windows.net/media/media/48156df6-5847-48d2-b66d-3c7a8d4c4bbd/generated/a5c4db94-ce15-48c2-97d4-9ddc8644c797-019f9166-b764-7ed0-9491-c8618b810112.mp4",
+"https://doublespeed2.blob.core.windows.net/media/media/a8f3d76e-d5c3-47e0-8434-be53cbbab810/generated/ab67c89b-bb22-4a5a-a72d-a2758a2e11d5-019f5211-f03e-7553-b555-f809d5152897.mp4",
+"https://doublespeed2.blob.core.windows.net/media/media/a8f3d76e-d5c3-47e0-8434-be53cbbab810/generated/27bc7c2d-5cf2-4674-88c8-acc213397bc4-019f62e2-a50e-73d1-b378-3cfdcc15bf49.mp4",
+"https://doublespeed2.blob.core.windows.net/media/media/a8f3d76e-d5c3-47e0-8434-be53cbbab810/generated/c97fddf9-e325-4d9d-b9e4-9b7dcf76ab04-019f4e0f-83fd-7151-8d23-9642207b997c.mp4"
+];
+let ALL=[], shown=[], cursor=0, filter="all", active="";
+const BATCH=56, grid=document.querySelector("#grid"), q=document.querySelector("#q"), status=document.querySelector("#status"), count=document.querySelector("#count"), empty=document.querySelector("#empty");
+const cat=u=>u.includes("/video-gen-motion-videos/")?"motion":u.includes("/videos/")?"videos":"generated";
+const io=new IntersectionObserver(es=>es.forEach(e=>{const v=e.target.querySelector("video");if(e.isIntersecting){if(!v.src){v.src=e.target.dataset.url;v.load()}v.play().catch(()=>{})}else v.pause()}),{rootMargin:"600px 0px"});
+function render(reset=false){if(reset){grid.innerHTML="";cursor=0}const frag=document.createDocumentFragment();shown.slice(cursor,cursor+BATCH).forEach((u,i)=>{const n=ALL.indexOf(u)+1,c=document.createElement("article");c.className="card";c.dataset.url=u;c.innerHTML='<div class="skeleton"></div><video muted loop playsinline preload="metadata"></video><span class="num">'+String(n).padStart(4,"0")+'</span><span class="play">▶</span>';const v=c.querySelector("video");v.addEventListener("loadeddata",()=>c.querySelector(".skeleton")?.remove(),{once:true});v.addEventListener("error",()=>{const s=c.querySelector(".skeleton");if(s){s.style.animation="none";s.style.background="#151515";s.textContent="";}});c.onclick=()=>open(u);io.observe(c);frag.appendChild(c)});grid.appendChild(frag);cursor+=BATCH;empty.classList.toggle("show",!shown.length)}
+function apply(){const s=q.value.toLowerCase().trim();shown=ALL.filter(u=>(filter==="all"||cat(u)===filter)&&(!s||u.toLowerCase().includes(s)));count.textContent=shown.length.toLocaleString("fr-FR");render(true)}
+async function boot(){let data=null;try{const r=await fetch("/api/videos",{cache:"no-store"});if(r.ok)data=await r.json()}catch(e){}ALL=[...new Set(data?.videos?.length?data.videos:FALLBACK)];status.textContent=(data?.source||"fallback")+" · "+ALL.length.toLocaleString("fr-FR")+" vidéos";apply()}
+document.querySelectorAll(".chip").forEach(b=>b.onclick=()=>{document.querySelectorAll(".chip").forEach(x=>x.classList.remove("active"));b.classList.add("active");filter=b.dataset.filter;apply()});q.oninput=apply;
+new IntersectionObserver(es=>{if(es.some(e=>e.isIntersecting)&&cursor<shown.length)render(false)},{rootMargin:"900px"}).observe(document.querySelector("#sentinel"));
+const modal=document.querySelector("#modal"),big=document.querySelector("#big");function open(u){active=u;big.src=u;modal.classList.add("open");big.play().catch(()=>{})}document.querySelector("#close").onclick=()=>{modal.classList.remove("open");big.pause();big.removeAttribute("src");big.load()};modal.onclick=e=>{if(e.target===modal)document.querySelector("#close").click()};document.querySelector("#copy").onclick=async()=>{await navigator.clipboard.writeText(active);document.querySelector("#copy").textContent="Lien copié ✓";setTimeout(()=>document.querySelector("#copy").textContent="Copier le lien direct",1200)};
+boot();
+</script>
+</body></html>
