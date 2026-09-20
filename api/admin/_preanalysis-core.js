@@ -5,7 +5,7 @@ const {embedMany,EMBEDDING_MODEL}=require('../_embedding');
 const {extract}=require('../_video-frames');
 const db=require('../_db');
 
-const VERSION='video-intel-v4-visual-only';
+const VERSION='video-intel-v5-face-first';
 const BATCH=2;
 
 function s(v,n=400){return String(v||'').replace(/\s+/g,' ').trim().slice(0,n)}
@@ -27,6 +27,10 @@ async function seed(){
       [indexes,urls,VERSION]
     );
   }
+  await db.query(
+    "update video_intelligence set status='pending',error_message=null where status='ready' and analysis_version is distinct from $1",
+    [VERSION]
+  );
   return urls.length;
 }
 async function recoverStale(){
