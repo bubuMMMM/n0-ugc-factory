@@ -1012,6 +1012,7 @@ function schedulePlayback(){
         return ac-bc;
       });
     const allowed=new Set((document.hidden||modal?.classList.contains("open"))?[]:cards.slice(0,4).map(x=>x[0]));
+    allowed.forEach(card=>queueLocalLayoutScan(Number(card.dataset.index)));
     document.querySelectorAll(".card video").forEach(video=>{
       const card=video.closest(".card");
       if(allowed.has(card)){
@@ -1307,6 +1308,148 @@ async function loadVideoLayouts(){
     console.warn("video layouts unavailable",error);
   }
 }
+
+function localRectCandidates(){
+  return [
+    {placement:"top",horizontalAlign:"left",textRect:{x:.04,y:.025,w:.46,h:.068}},
+    {placement:"top",horizontalAlign:"right",textRect:{x:.50,y:.025,w:.46,h:.068}},
+    {placement:"bottom",horizontalAlign:"left",textRect:{x:.04,y:.892,w:.46,h:.060}},
+    {placement:"bottom",horizontalAlign:"right",textRect:{x:.50,y:.892,w:.46,h:.060}}
+  ];
+}
+function pixelClutter(data,width,height,rect,frameOffsetX){
+  const x0=Math.max(0,Math.floor(frameOffsetX+rect.x*160));
+  const x1=Math.min(width-2,Math.ceil(frameOffsetX+(rect.x+rect.w)*160));
+  const y0=Math.max(0,Math.floor(rect.y*height));
+  const y1=Math.min(height-2,Math.ceil((rect.y+rect.h)*height));
+  let n=0,sum=0,sum2=0,edge=0;
+  for(let y=y0;y<=y1;y+=2){
+    for(let x=x0;x<=x1;x+=2){
+      const i=(y*width+x)*4;
+      const j=(y*width+Math.min(width-1,x+2))*4;
+      const k=(Math.min(height-1,y+2)*width+x)*4;
+      const lum=.2126*data[i]+.7152*data[i+1]+.0722*data[i+2];
+      const lumR=.2126*data[j]+.7152*data[j+1]+.0722*data[j+2];
+      const lumD=.2126*data[k]+.7152*data[k+1]+.0722*data[k+2];
+      sum+=lum;sum2+=lum*lum;edge+=Math.abs(lum-lumR)+Math.abs(lum-lumD);n++;
+    }
+  }
+  if(!n)return 100;
+  const mean=sum/n,variance=Math.max(0,sum2/n-mean*mean),sd=Math.sqrt(variance);
+  return Math.min(100,(sd/64)*38+(edge/n/70)*62);
+}
+function overlapRatio(a,b){
+  const x=Math.max(a.x,b.x),y=Math.max(a.y,b.y);
+  const r=Math.min(a.x+a.w,b.x+b.w),bot=Math.min(a.y+a.h,b.y+b.h);
+  if(r<=x||bot<=y)return 0;
+  const area=(r-x)*(bot-y),base=Math.max(.0001,a.w*a.h);
+  return Math.min(1,area/base);
+}
+async function detectFacesOnSheet(canvas){
+  if(typeof window.FaceDetector!=="function")return [];
+  const detector=new window.FaceDetector({fastMode:true,maxDetectedFaces:4});
+  const faces=[];
+  for(let frame=0;frame<4;frame++){
+    const frameCanvas=document.createElement("canvas");
+    frameCanvas.width=160;frameCanvas.height=284;
+    const ctx=frameCanvas.getContext("2d",{alpha:false});
+    ctx.drawImage(canvas,frame*160,0,160,284,0,0,160,284);
+    try{
+      const found=await detector.detect(frameCanvas);
+      for(const face of found||[]){
+        const b=face.boundingBox;
+        if(!b)continue;
+        faces.push({
+          frame:frame+1,
+          x:Math.max(0,Math.min(1,b.x/160)),
+          y:Math.max(0,Math.min(1,b.y/284)),
+          w:Math.max(.01,Math.min(1,b.width/160)),
+          h:Math.max(.01,Math.min(1,b.height/284))
+        });
+      }
+    }catch{}
+  }
+  return faces;
+}
+async function deriveLocalSafeLayout(contactSheet,index){
+  const img=new Image();
+  await new Promise((resolve,reject)=>{
+    img.onload=resolve;img.onerror=()=>reject(new Error("LOCAL_LAYOUT_IMAGE_FAILED"));img.src=contactSheet;
+  });
+  const canvas=document.createElement("canvas");
+  canvas.width=640;canvas.height=284;
+  const ctx=canvas.getContext("2d",{alpha:false,willReadFrequently:true});
+  ctx.drawImage(img,0,0,640,284);
+  const pixels=ctx.getImageData(0,0,640,284).data;
+  const faces=await detectFacesOnSheet(canvas).catch(()=>[]);
+  const candidates=localRectCandidates().map(candidate=>{
+    let clutter=0,facePenalty=0;
+    for(let frame=0;frame<4;frame++){
+      clutter=Math.max(clutter,pixelClutter(pixels,640,284,candidate.textRect,frame*160));
+      for(const face of faces){
+        if(face.frame!==frame+1)continue;
+        const ratio=overlapRatio(face,candidate.textRect);
+        if(ratio>0)facePenalty=Math.max(facePenalty,Math.round(65+35*ratio));
+      }
+    }
+    const score=(facePenalty*2.2)+clutter;
+    return {...candidate,clutter,facePenalty,score};
+  }).sort((a,b)=>a.score-b.score);
+  const best=candidates[0];
+  if(!best)return null;
+  return {
+    placement:best.placement,
+    horizontalAlign:best.horizontalAlign,
+    textRect:best.textRect,
+    fontScale:.52,
+    compact:true,
+    maxLines:1,
+    allowSecondLine:false,
+    secondLineSuppressed:true,
+    faceOcclusionPenalty:faces.length?best.facePenalty:14,
+    objectOcclusionPenalty:Math.round(Math.min(35,best.clutter*.28)),
+    layoutScore:Math.max(35,Math.round(96-best.clutter-best.facePenalty)),
+    noSafeZone:true,
+    safeForAutoApproval:false,
+    localHeuristic:true,
+    layoutVersion:"local-visual-v1"
+  };
+}
+async function runLocalLayoutScan(index){
+  if(index<0||index>=ALL.length||VIDEO_LAYOUTS[index]||CLIENT_SAFE_LAYOUTS[index])return;
+  try{
+    const sheet=await createContactSheet(ALL[index]);
+    const layout=await deriveLocalSafeLayout(sheet,index);
+    if(layout){
+      CLIENT_SAFE_LAYOUTS[index]=layout;
+      document.querySelectorAll('.card[data-index="'+index+'"]').forEach(card=>applyHookToCard(card,index));
+      if(modal.classList.contains("open")&&activeIndex===index){
+        const meta=metaFor(index);setHookGeometry(modalHook,meta);fitHookNode(modalHook,meta);
+      }
+    }
+  }catch(error){
+    console.warn("local safe layout failed",index,error&&error.message);
+  }finally{
+    LOCAL_LAYOUT_PENDING.delete(index);
+    LOCAL_LAYOUT_ACTIVE=Math.max(0,LOCAL_LAYOUT_ACTIVE-1);
+    pumpLocalLayoutQueue();
+  }
+}
+function pumpLocalLayoutQueue(){
+  while(LOCAL_LAYOUT_ACTIVE<1&&LOCAL_LAYOUT_QUEUE.length){
+    const index=LOCAL_LAYOUT_QUEUE.shift();
+    if(VIDEO_LAYOUTS[index]||CLIENT_SAFE_LAYOUTS[index]){LOCAL_LAYOUT_PENDING.delete(index);continue}
+    LOCAL_LAYOUT_ACTIVE++;
+    runLocalLayoutScan(index);
+  }
+}
+function queueLocalLayoutScan(index){
+  if(index<0||index>=ALL.length||VIDEO_LAYOUTS[index]||CLIENT_SAFE_LAYOUTS[index]||LOCAL_LAYOUT_PENDING.has(index))return;
+  LOCAL_LAYOUT_PENDING.add(index);
+  LOCAL_LAYOUT_QUEUE.push(index);
+  pumpLocalLayoutQueue();
+}
+
 function applyHookToCard(card,index){
   const text=hookFor(index),meta=metaFor(index);
   const primary=card.querySelector(".hook-primary"),secondary=card.querySelector(".hook-secondary");
@@ -1338,7 +1481,10 @@ function render(reset=false){
     c.innerHTML='<div class="skeleton"></div><video muted loop playsinline preload="metadata"></video><div class="hook-overlay"><span class="hook-primary"></span><small class="hook-secondary"></small></div><span class="num">'+String(n).padStart(4,"0")+'</span><span class="play">▶</span>';
     applyHookToCard(c,index);
     const v=c.querySelector("video");
-    v.addEventListener("loadeddata",()=>c.querySelector(".skeleton")?.remove(),{once:true});
+    v.addEventListener("loadeddata",()=>{
+      c.querySelector(".skeleton")?.remove();
+      if(!VIDEO_LAYOUTS[index])queueLocalLayoutScan(index);
+    },{once:true});
     v.addEventListener("error",()=>{const s=c.querySelector(".skeleton");if(s){s.style.animation="none";s.style.background="#151515"}});
     c.onclick=()=>openVideo(u,index);
     c.onkeydown=e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();openVideo(u,index)}};
