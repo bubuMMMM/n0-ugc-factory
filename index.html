@@ -938,12 +938,26 @@ const io=new IntersectionObserver(es=>es.forEach(e=>{
 }),{rootMargin:"600px 0px"});
 
 function hookFor(index){return HOOKS[index]||demoHookFor(index).hook}
+function emergencyFaceSafe(base={}){
+  return {
+    ...base,
+    placement:"lower",
+    horizontalAlign:"center",
+    secondLine:"",
+    textRect:{x:.12,y:.79,w:.76,h:.065},
+    fontScale:.68,
+    compact:true,
+    faceOcclusionPenalty:Number(base.faceOcclusionPenalty)||18,
+    layoutScore:Number(base.layoutScore)||70
+  };
+}
 function metaFor(index){
   const custom=HOOK_META[index];
   const base=custom||demoHookFor(index);
 
-  // Hook-specific layout wins because it knows the actual hook length.
+  // Exact hook-specific geometry wins only when its measured face risk is truly low.
   if(custom?.textRect){
+    if(Number(custom.faceOcclusionPenalty)>8)return emergencyFaceSafe(custom);
     return {
       ...base,
       placement:["top","lower"].includes(base.placement)?base.placement:"lower",
@@ -959,6 +973,7 @@ function metaFor(index){
 
   const layout=VIDEO_LAYOUTS[index];
   if(layout){
+    if(Number(layout.faceOcclusionPenalty)>8)return emergencyFaceSafe({...base,...layout});
     const allowSecond=layout.allowSecondLine!==false;
     return {
       ...base,
@@ -973,39 +988,7 @@ function metaFor(index){
     };
   }
 
-  return {
-    ...base,
-    placement:"lower",
-    horizontalAlign:"center",
-    secondLine:"",
-    textRect:base.textRect||{x:.10,y:.725,w:.80,h:.075},
-    fontScale:Number(base.fontScale)||.72,
-    compact:true,
-    faceOcclusionPenalty:Number(base.faceOcclusionPenalty)||18,
-    layoutScore:Number(base.layoutScore)||72
-  };
-}
-function validRect(rect){
-  return rect&&[rect.x,rect.y,rect.w,rect.h].every(v=>Number.isFinite(Number(v)));
-}
-function setHookGeometry(node,meta){
-  if(!node)return;
-  const rect=validRect(meta.textRect)
-    ? meta.textRect
-    : (meta.placement==="top"
-      ? {x:.10,y:.07,w:.80,h:.11}
-      : {x:.10,y:.725,w:.80,h:.075});
-  const x=Math.max(0,Math.min(.92,Number(rect.x)||0));
-  const y=Math.max(0,Math.min(.88,Number(rect.y)||0));
-  const w=Math.max(.28,Math.min(1-x,Number(rect.w)||.80));
-  const scale=Math.max(.68,Math.min(1.05,Number(meta.fontScale)||1));
-  const base=Number(fontSize?.value)||6.6;
-  const styleFactor=meta.style==="wall"?(5.4/6.6):1;
-  node.style.setProperty("--hook-left",(x*100).toFixed(2)+"%");
-  node.style.setProperty("--hook-top",(y*100).toFixed(2)+"%");
-  node.style.setProperty("--hook-width",(w*100).toFixed(2)+"%");
-  node.style.setProperty("--hook-font-size",(base*styleFactor*scale).toFixed(2)+"cqi");
-  node.style.setProperty("--hook-secondary-font-size",(base*(5/6.6)*Math.min(scale,.94)).toFixed(2)+"cqi");
+  return emergencyFaceSafe(base);
 }
 async function loadVideoLayouts(){
   try{
