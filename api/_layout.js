@@ -71,7 +71,7 @@ function hasUsableGeometry(intelligence){
   if(!intelligence||typeof intelligence!=='object')return false;
   const safe=intelligence.textSafeZone;
   if(!safe||typeof safe!=='object')return false;
-  if(!['top','upper','lower'].includes(String(safe.preferred||'')))return false;
+  if(!['top','upper','lower','bottom'].includes(String(safe.preferred||'')))return false;
   if(!['left','center','right'].includes(String(safe.horizontal||'')))return false;
   const faces=intelligence.faceRegions;
   if(!Array.isArray(faces))return false;
