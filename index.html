@@ -719,6 +719,44 @@ header{background:transparent}
 }
 .hook-overlay .hook-secondary[hidden],.modal-hook .hook-secondary[hidden]{display:none!important}
 
+
+/* Canonical face-first geometry: server/client textRect is the only positioning source */
+.card[data-placement] .hook-overlay,
+.card[data-placement][data-align] .hook-overlay,
+.card[data-placement][data-compact] .hook-overlay,
+.card[data-placement][data-face-risk] .hook-overlay,
+.modal-hook[data-placement],
+.modal-hook[data-placement][data-align],
+.modal-hook[data-placement][data-compact]{
+  left:var(--hook-left,12%)!important;
+  right:auto!important;
+  width:var(--hook-width,76%)!important;
+  max-width:none!important;
+  top:var(--hook-top,76%)!important;
+  bottom:auto!important;
+  transform:none!important;
+  margin:0!important;
+  font-size:var(--hook-font-size,var(--hook-short-size))!important;
+  overflow:visible!important;
+  max-height:none!important;
+}
+.card[data-placement][data-align="left"] .hook-overlay,
+.modal-hook[data-placement][data-align="left"]{text-align:left!important}
+.card[data-placement][data-align="right"] .hook-overlay,
+.modal-hook[data-placement][data-align="right"]{text-align:right!important}
+.card[data-placement][data-align="center"] .hook-overlay,
+.modal-hook[data-placement][data-align="center"]{text-align:center!important}
+.hook-overlay .hook-primary,.modal-hook .hook-primary{
+  display:block!important;
+  -webkit-line-clamp:unset!important;
+  overflow:visible!important;
+}
+.hook-overlay .hook-secondary,.modal-hook .hook-secondary{
+  font-size:var(--hook-secondary-font-size,var(--hook-secondary-size))!important;
+}
+.hook-overlay[data-text-overflow="true"],
+.modal-hook[data-text-overflow="true"]{outline:1px dashed rgba(255,183,77,.55)}
+
 </style>
 </head>
 <body>
@@ -1012,12 +1050,15 @@ function rectRisk(raw,placement,alignment,rect){
 function computeFaceSafeLayout(raw,requested="lower",hasSecondLine=false,style="short"){
   if(!raw||!Object.keys(raw).length){
     return {
-      placement:"lower",horizontalAlign:"center",
-      textRect:{x:.12,y:.59,w:.76,h:.13},
-      allowSecondLine:false,fontScale:.72,compact:true,
-      faceOcclusionPenalty:18,layoutScore:68,maxLines:2
+      placement:"bottom",horizontalAlign:"center",
+      textRect:{x:.12,y:.76,w:.76,h:.11},
+      allowSecondLine:false,fontScale:.68,compact:true,
+      faceOcclusionPenalty:35,objectOcclusionPenalty:0,
+      layoutScore:45,maxLines:2,noSafeZone:true,
+      safeForAutoApproval:false
     };
   }
+
   const choices=[];
   for(const placement of ["top","lower","bottom","upper","middle"]){
     const band=SAFE_BANDS[placement];
@@ -1031,32 +1072,31 @@ function computeFaceSafeLayout(raw,requested="lower",hasSecondLine=false,style="
     }
   }
   choices.sort((a,b)=>b.score-a.score);
-  let best=choices[0]||{
-    placement:"lower",horizontalAlign:"center",textRect:{x:.12,y:.59,w:.76,h:.13},
-    face:15,safety:70,score:55
+  const best=choices[0]||{
+    placement:"bottom",horizontalAlign:"center",
+    textRect:{x:.12,y:.76,w:.76,h:.11},
+    face:100,object:0,safety:0,score:-100
   };
-
-  // Never knowingly render over a face. If every candidate is risky, use a compact bottom band.
-  if(best.face>25){
-    best={
-      placement:"bottom",horizontalAlign:"center",textRect:{x:.14,y:.72,w:.72,h:.095},
-      face:Math.min(best.face,24),object:0,safety:64,score:40
-    };
-  }
 
   const safe=raw.textSafeZone||{};
   const maxLines=Math.max(1,Math.min(3,Number(safe.maxLines)||2));
+  const explicitSecond=
+    typeof safe.allowSecondLine==="boolean"?safe.allowSecondLine:
+    typeof safe.secondLineSafe==="boolean"?safe.secondLineSafe:null;
+  const noSafeZone=best.face>25||best.score<35;
   const allowSecondLine=Boolean(
     hasSecondLine &&
+    explicitSecond!==false &&
+    !noSafeZone &&
     best.face<=8 &&
-    best.safety>=88 &&
-    maxLines>=2 &&
-    safe.secondLineSafe!==false
+    best.object<=20 &&
+    best.safety>=86 &&
+    maxLines>=2
   );
-  const compact=best.face>8||best.safety<82||best.horizontalAlign!=="center";
+  const compact=noSafeZone||best.face>8||best.safety<82||best.horizontalAlign!=="center";
   const fontScale=style==="wall"
-    ? (compact?.76:.88)
-    : (best.horizontalAlign!=="center"?.72:compact?.80:1);
+    ? (compact?.72:.86)
+    : (noSafeZone?.68:best.horizontalAlign!=="center"?.76:compact?.84:1);
 
   return {
     placement:best.placement,
@@ -1066,12 +1106,38 @@ function computeFaceSafeLayout(raw,requested="lower",hasSecondLine=false,style="
     fontScale,
     compact,
     faceOcclusionPenalty:Math.round(best.face||0),
-    layoutScore:Math.max(0,Math.min(100,Math.round((best.safety||0)-(best.face||0)))),
-    maxLines:allowSecondLine?Math.min(3,maxLines):2
+    objectOcclusionPenalty:Math.round(best.object||0),
+    layoutScore:Math.max(0,Math.min(100,Math.round((best.safety||0)-(best.face||0)-((best.object||0)*.35)))),
+    maxLines:allowSecondLine?Math.min(3,maxLines):Math.min(2,maxLines),
+    noSafeZone,
+    safeForAutoApproval:!noSafeZone&&best.face<=8&&best.score>=55
   };
+}
+function validTextRect(rect){
+  if(!rect||typeof rect!=="object")return false;
+  const nums=[rect.x,rect.y,rect.w,rect.h].map(Number);
+  return nums.every(Number.isFinite)&&nums[0]>=0&&nums[1]>=0&&nums[2]>0&&nums[3]>0&&nums[0]+nums[2]<=1.01&&nums[1]+nums[3]<=1.01;
 }
 function metaFor(index){
   const base=HOOK_META[index]||demoHookFor(index);
+
+  // A server-approved rectangle is authoritative. Never recompute it client-side.
+  if(validTextRect(base.textRect)){
+    const secondSuppressed=Boolean(base.secondLineSuppressed)||Boolean(base.noSafeZone);
+    return {
+      ...base,
+      placement:base.placement||"lower",
+      horizontalAlign:base.horizontalAlign||"center",
+      secondLine:secondSuppressed?"":(base.secondLine||""),
+      fontScale:Math.max(.58,Math.min(1,Number(base.fontScale||base.hookScale)||1)),
+      compact:Boolean(base.compact)||Number(base.faceOcclusionPenalty)>8,
+      faceOcclusionPenalty:Number(base.faceOcclusionPenalty)||0,
+      objectOcclusionPenalty:Number(base.objectOcclusionPenalty)||0,
+      layoutScore:Number.isFinite(Number(base.layoutScore))?Number(base.layoutScore):100,
+      maxLines:Math.max(1,Math.min(3,Number(base.maxLines)||2))
+    };
+  }
+
   const raw=VIDEO_LAYOUTS[index]||VIDEO_MATCHES[index]?.intelligence||null;
   const decision=computeFaceSafeLayout(raw,base.placement||"lower",Boolean(base.secondLine),base.style||"short");
   return {
@@ -1084,14 +1150,17 @@ function metaFor(index){
     fontScale:Math.min(Number(base.hookScale)||1,decision.fontScale),
     compact:decision.compact||Boolean(base.compact),
     faceOcclusionPenalty:Math.max(Number(base.faceOcclusionPenalty)||0,decision.faceOcclusionPenalty),
-    layoutScore:Math.min(Number(base.layoutScore)||100,decision.layoutScore),
-    maxLines:decision.maxLines
+    objectOcclusionPenalty:Math.max(Number(base.objectOcclusionPenalty)||0,decision.objectOcclusionPenalty),
+    layoutScore:Math.min(Number.isFinite(Number(base.layoutScore))?Number(base.layoutScore):100,decision.layoutScore),
+    maxLines:decision.maxLines,
+    noSafeZone:decision.noSafeZone,
+    safeForAutoApproval:decision.safeForAutoApproval
   };
 }
 function setHookGeometry(node,meta){
   if(!node)return;
-  const rect=meta?.textRect||{x:.12,y:.59,w:.76,h:.13};
-  const scale=Math.max(.62,Math.min(1,Number(meta?.fontScale)||1));
+  const rect=validTextRect(meta?.textRect)?meta.textRect:{x:.12,y:.76,w:.76,h:.11};
+  const scale=Math.max(.58,Math.min(1,Number(meta?.fontScale)||1));
   const baseSize=Number(fontSize?.value)||6.6;
   const isWall=meta?.style==="wall";
   const size=(isWall?baseSize*(5.4/6.6):baseSize)*scale;
@@ -1101,11 +1170,45 @@ function setHookGeometry(node,meta){
   node.style.setProperty("--hook-width",(rect.w*100).toFixed(2)+"%");
   node.style.setProperty("--hook-font-size",size.toFixed(2)+"cqi");
   node.style.setProperty("--hook-secondary-font-size",secondary.toFixed(2)+"cqi");
-  node.style.setProperty("--hook-max-height",(rect.h*100).toFixed(2)+"%");
-  node.style.setProperty("--hook-max-lines",String(meta?.maxLines||2));
+  node.dataset.baseHookSize=String(size);
+  node.dataset.baseSecondarySize=String(secondary);
   node.dataset.align=meta?.horizontalAlign||"center";
   node.dataset.maxLines=String(meta?.maxLines||2);
 }
+function fitHookNode(node,meta){
+  if(!node)return;
+  requestAnimationFrame(()=>{
+    const host=node.offsetParent;
+    if(!host||!host.clientHeight||!host.clientWidth)return;
+    const rect=validTextRect(meta?.textRect)?meta.textRect:{x:.12,y:.76,w:.76,h:.11};
+    const maxHeight=Math.max(24,host.clientHeight*rect.h);
+    const secondary=node.querySelector(".hook-secondary");
+    let hookSize=Number(node.dataset.baseHookSize)||6.6;
+    let secondarySize=Number(node.dataset.baseSecondarySize)||5;
+    const minHook=3.65;
+    let tries=0;
+
+    const applySizes=()=>{
+      node.style.setProperty("--hook-font-size",hookSize.toFixed(2)+"cqi");
+      node.style.setProperty("--hook-secondary-font-size",secondarySize.toFixed(2)+"cqi");
+    };
+    applySizes();
+
+    // Preserve the face first: drop the optional second line before shrinking the main hook.
+    if(node.scrollHeight>maxHeight&&secondary&&!secondary.hidden){
+      secondary.hidden=true;
+      node.dataset.runtimeSecondLineSuppressed="true";
+    }
+    while(node.scrollHeight>maxHeight&&hookSize>minHook&&tries<10){
+      hookSize=Math.max(minHook,hookSize*.91);
+      secondarySize=Math.min(secondarySize,hookSize*.78);
+      applySizes();
+      tries++;
+    }
+    node.dataset.textOverflow=node.scrollHeight>maxHeight?"true":"false";
+  });
+}
+
 async function loadVideoLayouts(){
   try{
     const r=await fetch("/api/video-layouts",{cache:"no-store"});
@@ -1136,7 +1239,9 @@ function applyHookToCard(card,index){
   card.dataset.demo=meta.demo?"true":"false";
   card.dataset.faceRisk=String(Math.round(Number(meta.faceOcclusionPenalty)||0));
   card.dataset.align=meta.horizontalAlign||"center";
-  setHookGeometry(card.querySelector(".hook-overlay"),meta);
+  const overlay=card.querySelector(".hook-overlay");
+  setHookGeometry(overlay,meta);
+  fitHookNode(overlay,meta);
 }
 function render(reset=false){
   if(reset){grid.innerHTML="";cursor=0}
@@ -1207,7 +1312,7 @@ function openVideo(u,index){
   const primary=document.createElement("span");primary.className="hook-primary";primary.textContent=hookFor(index);modalHook.appendChild(primary);
   if(meta.secondLine){const second=document.createElement("small");second.className="hook-secondary";second.textContent=meta.secondLine;modalHook.appendChild(second)}
   modalHook.dataset.placement=meta.placement||"lower";modalHook.dataset.hookStyle=meta.style||"short";modalHook.dataset.compact=meta.compact?"true":"false";modalHook.dataset.align=meta.horizontalAlign||"center";modalHook.title=meta.rationale||"";setHookGeometry(modalHook,meta);
-  modal.classList.add("open");big.play().catch(()=>{});
+  modal.classList.add("open");fitHookNode(modalHook,meta);big.play().catch(()=>{});
 }
 document.querySelector("#close").onclick=()=>{modal.classList.remove("open");big.pause();big.removeAttribute("src");big.load();modalHook.innerHTML=""};
 modal.onclick=e=>{if(e.target===modal)document.querySelector("#close").click()};
