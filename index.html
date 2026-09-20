@@ -925,8 +925,13 @@ const SAFE_DEMO_HOOKS=[
   "Imagine ta marque ici."
 ]
 
+let CLIENT_SAFE_LAYOUTS=new Array(ALL.length).fill(null);
+const LOCAL_LAYOUT_PENDING=new Set();
+const LOCAL_LAYOUT_QUEUE=[];
+let LOCAL_LAYOUT_ACTIVE=0;
+
 function demoHookFor(index){
-  const layout=VIDEO_LAYOUTS[index];
+  const layout=VIDEO_LAYOUTS[index]||CLIENT_SAFE_LAYOUTS[index];
   const item=DEMO_HOOK_LIBRARY[index%DEMO_HOOK_LIBRARY.length];
   const safeHook=SAFE_DEMO_HOOKS[index%SAFE_DEMO_HOOKS.length];
   const n=index+1;
@@ -943,21 +948,21 @@ function demoHookFor(index){
     return {
       hook:safeHook,
       secondLine:"",
-      placement:"bottom",
+      placement:"top",
       horizontalAlign:right?"right":"left",
-      textRect:right?{x:.40,y:.845,w:.55,h:.065}:{x:.05,y:.845,w:.55,h:.065},
-      fontScale:.58,
+      textRect:right?{x:.50,y:.025,w:.46,h:.068}:{x:.04,y:.025,w:.46,h:.068},
+      fontScale:.52,
       style:"short",
       demo:true,
       compact:true,
       maxLines:1,
       secondLineSuppressed:true,
       noSafeZone:true,
-      faceOcclusionPenalty:12,
+      faceOcclusionPenalty:14,
       objectOcclusionPenalty:8,
-      layoutScore:76,
+      layoutScore:72,
       accepted:true,
-      rationale:"Safe-edge mode: une seule ligne compacte au bord inférieur du cadre jusqu’à disponibilité des bounding boxes visage."
+      rationale:"Safe-edge mode: une seule ligne compacte dans un coin haut, remplacée dès qu’une analyse visuelle locale ou permanente est disponible."
     };
   }
 
@@ -1200,6 +1205,18 @@ function metaFor(index){
   }
 
   const raw=VIDEO_LAYOUTS[index]||VIDEO_MATCHES[index]?.intelligence||null;
+  if(!raw&&CLIENT_SAFE_LAYOUTS[index]&&validTextRect(CLIENT_SAFE_LAYOUTS[index].textRect)){
+    const local=CLIENT_SAFE_LAYOUTS[index];
+    return {
+      ...base,
+      ...local,
+      secondLine:"",
+      secondLineSuppressed:Boolean(base.secondLine),
+      compact:true,
+      maxLines:1,
+      safeForAutoApproval:false
+    };
+  }
   const decision=computeFaceSafeLayout(raw,base.placement||"lower",Boolean(base.secondLine),base.style||"short");
   return {
     ...base,
