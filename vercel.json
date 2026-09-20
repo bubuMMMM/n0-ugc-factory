@@ -61,6 +61,9 @@
     },
     "api/admin/preanalysis-status.js": {
       "maxDuration": 60
+    },
+    "api/admin/process-preanalysis-batch.js": {
+      "maxDuration": 60
     }
   }
 }
