@@ -22,6 +22,16 @@ function overlap(a,b){
   return (r-x)*(bot-y);
 }
 function boxArea(b){return Math.max(.0001,(Number(b.w)||0)*(Number(b.h)||0))}
+function inflateFaceBox(b){
+  const padX=Math.max(.022,(Number(b.w)||0)*.16);
+  const padTop=Math.max(.022,(Number(b.h)||0)*.14);
+  const padBottom=Math.max(.028,(Number(b.h)||0)*.18);
+  const x=Math.max(0,b.x-padX);
+  const y=Math.max(0,b.y-padTop);
+  const r=Math.min(1,b.x+b.w+padX);
+  const bot=Math.min(1,b.y+b.h+padBottom);
+  return {...b,x,y,w:Math.max(.001,r-x),h:Math.max(.001,bot-y)};
+}
 function normalizedBox(raw){
   if(!raw||typeof raw!=='object')return null;
   const x=clamp01(raw.x),y=clamp01(raw.y),w=clamp01(raw.w),h=clamp01(raw.h);
@@ -53,10 +63,11 @@ function stringRegionPenalty(region,placement,alignment='center'){
   if(alignment==='right'&&/(droite|right)/.test(s))p=Math.max(p,85);
   return p;
 }
-function penaltyForRegions(regions,rect,placement,alignment,base=55,span=45){
+function penaltyForRegions(regions,rect,placement,alignment,base=55,span=45,inflateFaces=false){
   let penalty=0;
   const boxes=boxesFrom(regions);
-  for(const b of boxes){
+  for(const raw of boxes){
+    const b=inflateFaces?inflateFaceBox(raw):raw;
     const ov=overlap(b,rect);
     if(ov<=0)continue;
     const ratio=Math.min(1,ov/boxArea(b));
@@ -89,7 +100,7 @@ function facePenalty(intelligence,placement='lower',alignment='center',rect=null
   const band=BANDS[placement]||BANDS.lower;
   const col=COLUMNS[alignment]||COLUMNS.center;
   const target=rect||{x:col.x,y:band.y,w:col.w,h:band.h};
-  return penaltyForRegions(intelligence&&intelligence.faceRegions,target,placement,alignment,60,40);
+  return penaltyForRegions(intelligence&&intelligence.faceRegions,target,placement,alignment,68,32,true);
 }
 function objectPenalty(intelligence,placement='lower',alignment='center',rect=null){
   const band=BANDS[placement]||BANDS.lower;
@@ -176,4 +187,4 @@ function layoutDecision(intelligence,requested='lower',hasSecondLine=false,style
   return resolveLayout(intelligence,{requested,secondLine:hasSecondLine?'1':'',style});
 }
 
-module.exports={BANDS,COLUMNS,PLACEMENTS,resolveLayout,layoutDecision,facePenalty,objectPenalty,zoneScore,hasUsableGeometry};
+module.exports={BANDS,COLUMNS,PLACEMENTS,resolveLayout,layoutDecision,facePenalty,objectPenalty,zoneScore,hasUsableGeometry,inflateFaceBox};
