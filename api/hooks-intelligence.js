@@ -4,9 +4,10 @@ const {gatewayJson,MODEL}=require('./_ai');
 const db=require('./_db');
 const {HOOK_RULES}=require('./_hook-rules');
 const {evaluateHook,mapLimit,JEV_MODEL}=require('./_jev');
+const {resolveLayout}=require('./_layout');
 
 const MAX_ITEMS=24;
-const VERSION='hook-intelligence-v2-jev';
+const VERSION='hook-intelligence-v3-face-first';
 const MECHANISMS=['drama','story','credential','insider','numbered','diagnostic','inversion','overheard','confession','pov','value','take','fourthwall','transformation','wall','proof','pattern_break','product_natural','objection','pain','benefit','comparison','mistake','discovery','observation'];
 const SCORE_KEYS=['visualFit','brandFit','hookStrength','specificity','naturalness','claimSafety','novelty','readability','emotionMatch'];
 const WEIGHTS={visualFit:.16,brandFit:.16,hookStrength:.16,specificity:.12,naturalness:.10,claimSafety:.12,novelty:.07,readability:.06,emotionMatch:.05};
@@ -17,10 +18,12 @@ function weakQuality(r){
   const q=r.scores||{},score=overall(q);
   return score<84||Number(q.visualFit)<82||Number(q.brandFit)<82||Number(q.claimSafety)<95||Number(q.readability)<82||Number(q.novelty)<76||!r.visualAnchor||!r.brandAnchor;
 }
-function jevRejected(r){
-  return r.evaluationStatus==='jev'&&Number(r.jevAcceptProbability)<0.80;
+function evaluatorRejected(r){
+  return ['jev','openai-fallback'].includes(r.evaluationStatus)&&Number(r.jevAcceptProbability)<0.80;
 }
-function weak(r){return weakQuality(r)||jevRejected(r)}
+function weak(r){
+  return weakQuality(r)||evaluatorRejected(r)||Number(r.faceOcclusionPenalty)>22;
+}
 function normalizedWords(s){return tx(s,180).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9 ]/g,' ').split(/\s+/).filter(x=>x.length>2)}
 function similar(a,b){
   const A=new Set(normalizedWords(a)),B=new Set(normalizedWords(b));
@@ -66,8 +69,9 @@ async function generate(profile,videos,avoid,mechanismUsage,revision){
     '',
     'TASK:',
     'Write exactly one hook for every supplied video. Respect the matched signal unless the permanent video intelligence shows a clear mismatch; if so, use the closest supported brand insight from the profile.',
-    'The line is setup, the face is answer. Use reactionType, action, visualFocus, peakReason, textSafeZone and hookCompatibility.',
-    'Short hooks: 4–12 words. Wall hooks: 30–50 words and only for calm/thoughtful clips.',
+    'The line is setup, the face is answer. Use reactionType, action, visualFocus, peakReason, textSafeZone, faceRegions and hookCompatibility.',
+    'FACE-FIRST LAYOUT: never place text over eyes, nose or mouth. Prefer top or lower. Do not choose middle when a face is visible. If the safe zone is small, shorten the hook and leave secondLine empty.',
+    'Short hooks: 4–12 words. Wall hooks: 30–50 words only when the permanent Video Intelligence explicitly leaves enough free space.',
     'secondLine is optional and must be an empty string when it adds no new retention reason.',
     'Never copy any supplied example line. Reuse mechanisms, not wording.',
     'Never invent numbers, credentials, customers, guarantees, transformations, deadlines or proof.',
@@ -95,6 +99,26 @@ async function generate(profile,videos,avoid,mechanismUsage,revision){
     };
   });
 }
+function applySafeLayouts(videos,results){
+  const byIndex=new Map(videos.map(v=>[Number(v.index),v]));
+  return results.map(r=>{
+    const v=byIndex.get(Number(r.index));
+    const intelligence=v&&v.intelligence||{};
+    const layout=resolveLayout(intelligence,{requested:r.placement,secondLine:r.secondLine,style:r.style});
+    const hadSecond=Boolean(r.secondLine);
+    const secondLine=layout.allowSecondLine?r.secondLine:'';
+    return {
+      ...r,
+      placement:layout.placement,
+      secondLine,
+      faceOcclusionPenalty:layout.faceOcclusionPenalty,
+      layoutScore:layout.layoutScore,
+      secondLineSuppressed:hadSecond&&!secondLine,
+      compact:layout.compact
+    };
+  });
+}
+
 async function evaluateResults(profile,videos,results,avoid){
   const byIndex=new Map(videos.map(v=>[Number(v.index),v]));
   const batchHooks=results.map(r=>r.hook);
@@ -108,6 +132,8 @@ async function evaluateResults(profile,videos,results,avoid){
         mechanism:r.mechanism,
         visualAnchor:r.visualAnchor,
         brandAnchor:r.brandAnchor,
+        placement:r.placement,
+        faceOcclusionPenalty:r.faceOcclusionPenalty,
         video:v.intelligence||{},
         signal:v.signal||{},
         brand:profile,
@@ -121,7 +147,7 @@ async function evaluateResults(profile,videos,results,avoid){
         jevAcceptProbability:ev.acceptProbability,
         jevAnswers:ev.answers,
         evaluatorModel:ev.model||JEV_MODEL,
-        evaluationStatus:'jev'
+        evaluationStatus:ev.provider||'jev'
       };
     }catch(error){
       console.warn('Jev evaluation fallback',r.index,error&&error.message);
@@ -148,8 +174,8 @@ async function persist(brandProfileId,videos,results){
       'insert into hook_assignments(',
       'brand_profile_id,video_id,brand_signal_id,hook,second_line,mechanism,visual_anchor,brand_anchor,placement,',
       'visual_fit,brand_fit,hook_strength,specificity,naturalness,claim_safety,novelty,readability,emotion_match,quality_score,accepted,rationale,generator_version,',
-      'jev_accept_probability,jev_answers,evaluator_model,evaluation_version',
-      ') values($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24::jsonb,$25,$26)',
+      'jev_accept_probability,jev_answers,evaluator_model,evaluation_version,face_occlusion_penalty,layout_score,second_line_suppressed,layout_version',
+      ') values($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24::jsonb,$25,$26,$27,$28,$29,$30)',
       'on conflict(brand_profile_id,video_id) do update set ',
       'brand_signal_id=excluded.brand_signal_id,hook=excluded.hook,second_line=excluded.second_line,mechanism=excluded.mechanism,',
       'visual_anchor=excluded.visual_anchor,brand_anchor=excluded.brand_anchor,placement=excluded.placement,',
@@ -157,13 +183,15 @@ async function persist(brandProfileId,videos,results){
       'naturalness=excluded.naturalness,claim_safety=excluded.claim_safety,novelty=excluded.novelty,readability=excluded.readability,',
       'emotion_match=excluded.emotion_match,quality_score=excluded.quality_score,accepted=excluded.accepted,rationale=excluded.rationale,',
       'generator_version=excluded.generator_version,jev_accept_probability=excluded.jev_accept_probability,jev_answers=excluded.jev_answers,',
-      'evaluator_model=excluded.evaluator_model,evaluation_version=excluded.evaluation_version'
+      'evaluator_model=excluded.evaluator_model,evaluation_version=excluded.evaluation_version,',
+      'face_occlusion_penalty=excluded.face_occlusion_penalty,layout_score=excluded.layout_score,second_line_suppressed=excluded.second_line_suppressed,layout_version=excluded.layout_version'
     ].join(' ');
     await db.query(sql,[
       brandProfileId,v.intelligence.id,v.signal&&v.signal.id||null,r.hook,r.secondLine||null,r.mechanism,r.visualAnchor,r.brandAnchor,r.placement,
       r.scores.visualFit,r.scores.brandFit,r.scores.hookStrength,r.scores.specificity,r.scores.naturalness,r.scores.claimSafety,
       r.scores.novelty,r.scores.readability,r.scores.emotionMatch,r.quality,Boolean(r.accepted),r.rationale,VERSION,
-      Number(r.jevAcceptProbability)||0,JSON.stringify(r.jevAnswers||{}),r.evaluatorModel||JEV_MODEL,'jev-v1'
+      Number(r.jevAcceptProbability)||0,JSON.stringify(r.jevAnswers||{}),r.evaluatorModel||JEV_MODEL,'evaluator-v2',
+      Number(r.faceOcclusionPenalty)||0,Number(r.layoutScore)||0,Boolean(r.secondLineSuppressed),'face-first-v1'
     ]);
   }
 }
@@ -182,6 +210,7 @@ module.exports=async function handler(req,res){
   if(!profile||!videos.length)return res.status(400).json({error:'PROFILE_AND_VIDEOS_REQUIRED'});
   try{
     let results=await generate(profile,videos,avoid,mechanismUsage,'');
+    results=applySafeLayouts(videos,results);
     results=await evaluateResults(profile,videos,results,avoid);
 
     const weakOnes=results.filter(r=>
@@ -202,6 +231,7 @@ module.exports=async function handler(req,res){
       ).join('\n');
 
       let revised=await generate(profile,subset,[...avoid,...results.map(x=>x.hook)],mechanismUsage,critique);
+      revised=applySafeLayouts(subset,revised);
       revised=await evaluateResults(profile,subset,revised,[...avoid,...results.map(x=>x.hook)]);
       const map=new Map(revised.map(x=>[x.index,x]));
       results=results.map(x=>map.get(x.index)||x);
@@ -210,8 +240,9 @@ module.exports=async function handler(req,res){
     results=results.map(r=>({
       ...r,
       accepted:
-        r.evaluationStatus==='jev'&&
+        ['jev','openai-fallback'].includes(r.evaluationStatus)&&
         Number(r.jevAcceptProbability)>=.80&&
+        Number(r.faceOcclusionPenalty)<=22&&
         !weakQuality(r)&&
         !tooSimilar(r.hook,avoid)
     }));
@@ -220,7 +251,9 @@ module.exports=async function handler(req,res){
     return res.status(200).json({
       results,model:MODEL,evaluator:JEV_MODEL,version:VERSION,
       accepted:results.filter(x=>x.accepted).length,
-      jevEvaluated:results.filter(x=>x.evaluationStatus==='jev').length
+      jevEvaluated:results.filter(x=>x.evaluationStatus==='jev').length,
+      openaiEvaluated:results.filter(x=>x.evaluationStatus==='openai-fallback').length,
+      faceSafe:results.filter(x=>Number(x.faceOcclusionPenalty)<=22).length
     });
   }catch(err){
     console.error('hooks intelligence',err&&err.message,err&&err.detail||'');
