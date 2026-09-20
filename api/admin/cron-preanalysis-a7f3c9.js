@@ -1,4 +1,5 @@
 const core=require('./_preanalysis-core');
+const {openaiCredential}=require('../_ai');
 
 module.exports=async function handler(req,res){
   res.setHeader('Cache-Control','no-store');
@@ -6,7 +7,21 @@ module.exports=async function handler(req,res){
   const ua=String(req.headers['user-agent']||'');
   if(cronHeader!=='* * * * *'&&!ua.toLowerCase().includes('vercel-cron'))return res.status(403).json({error:'CRON_ONLY'});
   try{
-    const job=await core.latestActiveJob();
+    let job=await core.latestActiveJob();
+
+    // Recover exactly the old Gateway-credit pause when a direct OpenAI key is now present.
+    if(!job&&openaiCredential()){
+      const previous=await core.latestJob();
+      const recoverable=!previous||!previous.last_error||previous.last_error==='AI_GATEWAY_INSUFFICIENT_FUNDS';
+      if(recoverable){
+        const c=await core.counts();
+        if(Number(c.pending)+Number(c.errors)>0||Number(c.ready)<Number(c.total)){
+          const id=await core.createJob();
+          job=await core.getJob(id);
+        }
+      }
+    }
+
     if(!job)return res.status(200).json({done:true,active:false});
     const result=await core.runBatch(job.id);
     return res.status(200).json({
