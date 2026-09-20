@@ -92,7 +92,7 @@ function normalize(videos,data){
   });
 }
 
-function creativeBrief(profile,avoid,revision=''){
+function creativeBrief(profile,avoid,angleUsage={},revision=''){
   return `Tu es directeur créatif UGC senior, analyste visuel et copywriter direct-response.
 
 Chaque image jointe est une PLANCHE DE 4 FRAMES de la MÊME vidéo: début, premier tiers, deuxième tiers, fin — de gauche à droite.
@@ -155,11 +155,15 @@ PROFIL DE MARQUE:
 ${JSON.stringify(profile).slice(0,30000)}
 
 HOOKS DÉJÀ UTILISÉS:
-${avoid.join('\\n')||'(aucun)'}`;
+${avoid.join('\\n')||'(aucun)'}
+
+RÉPARTITION DES ANGLES DÉJÀ UTILISÉS:
+${Object.entries(angleUsage).sort((a,b)=>b[1]-a[1]).slice(0,30).map(([k,v])=>k+': '+v).join('\\n')||'(aucun)'}
+Évite de sur-utiliser les angles déjà dominants. Privilégie un angle sous-utilisé lorsqu'il reste naturel pour la scène.`;
 }
 
-async function generate(videos,profile,avoid,revision=''){
-  const content=[{type:'text',text:creativeBrief(profile,avoid,revision)}];
+async function generate(videos,profile,avoid,angleUsage={},revision=''){
+  const content=[{type:'text',text:creativeBrief(profile,avoid,angleUsage,revision)}];
   for(const v of videos){
     content.push({type:'text',text:`VIDÉO #${v.index}. Analyse les 4 frames puis retourne exactement un résultat avec index=${v.index}.`});
     content.push({type:'image_url',image_url:{url:v.contactSheet,detail:'low'}});
@@ -182,16 +186,17 @@ module.exports=async function handler(req,res){
   const profile=req.body?.profile;
   const videos=Array.isArray(req.body?.videos)?req.body.videos.slice(0,MAX_ITEMS):[];
   const avoid=Array.isArray(req.body?.avoid)?req.body.avoid.slice(-60).map(x=>trim(x,120)):[];
+  const angleUsage=req.body?.angleUsage&&typeof req.body.angleUsage==='object'?req.body.angleUsage:{};
   if(!profile||typeof profile!=='object')return res.status(400).json({error:'PROFILE_REQUIRED'});
   if(!videos.length||videos.some(v=>!Number.isInteger(v.index)||typeof v.contactSheet!=='string'||!v.contactSheet.startsWith('data:image/')))return res.status(400).json({error:'VIDEO_FRAMES_REQUIRED'});
 
   try{
-    let results=await generate(videos,profile,avoid);
+    let results=await generate(videos,profile,avoid,angleUsage);
     const weak=results.filter(r=>r.confidence<76||score(r)<82||Math.min(...Object.values(r.scores))<QUALITY_MIN||genericHook(r.hook)||tooSimilar(r.hook,avoid));
     if(weak.length){
       const weakVideos=videos.filter(v=>weak.some(w=>w.index===v.index));
       const critique=weak.map(r=>`#${r.index} REJETÉ — hook: "${r.hook}" — scores: ${JSON.stringify(r.scores)} — raison: ${r.rationale}. Réécris avec une accroche plus spécifique au visualCue "${r.visualCue}" et à un insight précis de la marque.`).join('\\n');
-      const revised=await generate(weakVideos,profile,[...avoid,...results.map(r=>r.hook)],critique);
+      const revised=await generate(weakVideos,profile,[...avoid,...results.map(r=>r.hook)],angleUsage,critique);
       const revisedMap=new Map(revised.map(r=>[r.index,r]));
       results=results.map(r=>revisedMap.get(r.index)||r);
     }
