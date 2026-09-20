@@ -1,6 +1,7 @@
 const db=require('./_db');
 const {statusForAiCode}=require('./_gateway-errors');
 const {embedMany,EMBEDDING_MODEL}=require('./_embedding');
+const {hasUsableGeometry}=require('./_layout');
 const {VIDEO_INTELLIGENCE_VERSION}=require('./_versions');
 const {requireProject,limitProject}=require('./_project-auth');
 
