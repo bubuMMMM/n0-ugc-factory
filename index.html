@@ -678,6 +678,32 @@ header{background:transparent}
   font-size:5cqi!important;
 }
 
+
+/* Exact face-safe geometry — bounding-box driven */
+.hook-overlay,.modal-hook{
+  left:var(--hook-left,10%)!important;
+  right:auto!important;
+  width:var(--hook-width,80%)!important;
+  max-width:none!important;
+  top:var(--hook-top,59.5%)!important;
+  bottom:auto!important;
+  transform:none!important;
+  margin:0!important;
+  font-size:var(--hook-font-size,var(--hook-short-size))!important;
+}
+.hook-overlay .hook-secondary,.modal-hook .hook-secondary{
+  font-size:var(--hook-secondary-font-size,var(--hook-secondary-size))!important;
+}
+.card[data-align="left"] .hook-overlay,.modal-hook[data-align="left"]{
+  text-align:left!important;
+}
+.card[data-align="right"] .hook-overlay,.modal-hook[data-align="right"]{
+  text-align:right!important;
+}
+.card[data-align="center"] .hook-overlay,.modal-hook[data-align="center"]{
+  text-align:center!important;
+}
+
 </style>
 </head>
 <body>
@@ -862,15 +888,17 @@ function demoHookFor(index){
     return {
       hook:safeHook,
       secondLine:"",
-      placement:index%4===0?"lower":"top",
+      placement:"lower",
       horizontalAlign:"center",
+      textRect:{x:.10,y:.595,w:.80,h:.09},
+      fontScale:.78,
       style:"short",
       demo:true,
       compact:true,
-      faceOcclusionPenalty:25,
-      layoutScore:65,
+      faceOcclusionPenalty:18,
+      layoutScore:72,
       accepted:true,
-      rationale:"Safe mode: une seule ligne, haut/bas uniquement, en attendant l’analyse permanente du visage."
+      rationale:"Safe mode: une seule ligne compacte sous la zone principale du visage, en attendant les bounding boxes permanentes."
     };
   }
 
@@ -879,6 +907,8 @@ function demoHookFor(index){
     secondLine:layout.allowSecondLine?(dynamic||item.second||""):"",
     placement:layout.placement||"top",
     horizontalAlign:layout.horizontalAlign||"center",
+    textRect:layout.textRect||null,
+    fontScale:Number(layout.fontScale)||1,
     style:"short",
     demo:true,
     compact:Boolean(layout.compact),
@@ -911,15 +941,32 @@ function hookFor(index){return HOOKS[index]||demoHookFor(index).hook}
 function metaFor(index){
   const custom=HOOK_META[index];
   const base=custom||demoHookFor(index);
-  const layout=VIDEO_LAYOUTS[index];
 
+  // Hook-specific layout wins because it knows the actual hook length.
+  if(custom?.textRect){
+    return {
+      ...base,
+      placement:["top","lower"].includes(base.placement)?base.placement:"lower",
+      horizontalAlign:["left","center","right"].includes(base.horizontalAlign)?base.horizontalAlign:"center",
+      secondLine:base.secondLine||"",
+      textRect:base.textRect,
+      fontScale:Number(base.fontScale)||1,
+      compact:Boolean(base.compact),
+      faceOcclusionPenalty:Number(base.faceOcclusionPenalty)||0,
+      layoutScore:Number(base.layoutScore)||0
+    };
+  }
+
+  const layout=VIDEO_LAYOUTS[index];
   if(layout){
     const allowSecond=layout.allowSecondLine!==false;
     return {
       ...base,
-      placement:layout.placement||(["top","lower"].includes(base.placement)?base.placement:"top"),
+      placement:layout.placement||(["top","lower"].includes(base.placement)?base.placement:"lower"),
       horizontalAlign:layout.horizontalAlign||base.horizontalAlign||"center",
       secondLine:allowSecond?(base.secondLine||""):"",
+      textRect:layout.textRect||base.textRect||null,
+      fontScale:Number(layout.fontScale)||Number(base.fontScale)||1,
       compact:Boolean(layout.compact)||Boolean(base.compact),
       faceOcclusionPenalty:Number(layout.faceOcclusionPenalty)||Number(base.faceOcclusionPenalty)||0,
       layoutScore:Number(layout.layoutScore)||Number(base.layoutScore)||0
@@ -928,13 +975,37 @@ function metaFor(index){
 
   return {
     ...base,
-    placement:["top","lower"].includes(base.placement)?base.placement:(index%4===0?"lower":"top"),
-    horizontalAlign:["left","center","right"].includes(base.horizontalAlign)?base.horizontalAlign:"center",
+    placement:"lower",
+    horizontalAlign:"center",
     secondLine:"",
+    textRect:base.textRect||{x:.10,y:.595,w:.80,h:.09},
+    fontScale:Number(base.fontScale)||.78,
     compact:true,
-    faceOcclusionPenalty:Number(base.faceOcclusionPenalty)||25,
-    layoutScore:Number(base.layoutScore)||65
+    faceOcclusionPenalty:Number(base.faceOcclusionPenalty)||18,
+    layoutScore:Number(base.layoutScore)||72
   };
+}
+function validRect(rect){
+  return rect&&[rect.x,rect.y,rect.w,rect.h].every(v=>Number.isFinite(Number(v)));
+}
+function setHookGeometry(node,meta){
+  if(!node)return;
+  const rect=validRect(meta.textRect)
+    ? meta.textRect
+    : (meta.placement==="top"
+      ? {x:.10,y:.07,w:.80,h:.11}
+      : {x:.10,y:.595,w:.80,h:.09});
+  const x=Math.max(0,Math.min(.92,Number(rect.x)||0));
+  const y=Math.max(0,Math.min(.88,Number(rect.y)||0));
+  const w=Math.max(.28,Math.min(1-x,Number(rect.w)||.80));
+  const scale=Math.max(.68,Math.min(1.05,Number(meta.fontScale)||1));
+  const base=Number(fontSize?.value)||6.6;
+  const styleFactor=meta.style==="wall"?(5.4/6.6):1;
+  node.style.setProperty("--hook-left",(x*100).toFixed(2)+"%");
+  node.style.setProperty("--hook-top",(y*100).toFixed(2)+"%");
+  node.style.setProperty("--hook-width",(w*100).toFixed(2)+"%");
+  node.style.setProperty("--hook-font-size",(base*styleFactor*scale).toFixed(2)+"cqi");
+  node.style.setProperty("--hook-secondary-font-size",(base*(5/6.6)*Math.min(scale,.94)).toFixed(2)+"cqi");
 }
 async function loadVideoLayouts(){
   try{
@@ -965,6 +1036,7 @@ function applyHookToCard(card,index){
   card.dataset.demo=meta.demo?"true":"false";
   card.dataset.faceRisk=String(Math.round(Number(meta.faceOcclusionPenalty)||0));
   card.dataset.align=meta.horizontalAlign||"center";
+  setHookGeometry(card.querySelector(".hook-overlay"),meta);
 }
 function render(reset=false){
   if(reset){grid.innerHTML="";cursor=0}
@@ -1001,6 +1073,8 @@ function applyStyle(){
   document.documentElement.style.setProperty("--hook-wall-size",(size*(5.4/6.6))+"cqi");
   document.documentElement.style.setProperty("--hook-secondary-size",(size*(5/6.6))+"cqi");
   fontSizeValue.textContent=size.toFixed(1)+" %";
+  refreshVisibleHooks();
+  if(modal.classList.contains("open")&&activeIndex>=0)setHookGeometry(modalHook,metaFor(activeIndex));
   saveProject();
 }
 fontSelect.addEventListener("change",applyStyle);fontSize.addEventListener("input",applyStyle);
@@ -1032,7 +1106,7 @@ function openVideo(u,index){
   modalHook.innerHTML="";
   const primary=document.createElement("span");primary.className="hook-primary";primary.textContent=hookFor(index);modalHook.appendChild(primary);
   if(meta.secondLine){const second=document.createElement("small");second.className="hook-secondary";second.textContent=meta.secondLine;modalHook.appendChild(second)}
-  modalHook.dataset.placement=meta.placement||"top";modalHook.dataset.hookStyle=meta.style||"short";modalHook.dataset.compact=meta.compact?"true":"false";modalHook.dataset.align=meta.horizontalAlign||"center";modalHook.title=meta.rationale||"";
+  modalHook.dataset.placement=meta.placement||"lower";modalHook.dataset.hookStyle=meta.style||"short";modalHook.dataset.compact=meta.compact?"true":"false";modalHook.dataset.align=meta.horizontalAlign||"center";modalHook.title=meta.rationale||"";setHookGeometry(modalHook,meta);
   modal.classList.add("open");big.play().catch(()=>{});
 }
 document.querySelector("#close").onclick=()=>{modal.classList.remove("open");big.pause();big.removeAttribute("src");big.load();modalHook.innerHTML=""};
@@ -1227,7 +1301,9 @@ async function generateVisualBatch(indices){
         jevAnswers:r.jevAnswers||{},
         faceOcclusionPenalty:Number(r.faceOcclusionPenalty)||0,
         horizontalAlign:r.horizontalAlign||"center",
-        compact:Number(r.faceOcclusionPenalty)>10
+        compact:Boolean(r.compact)||Number(r.faceOcclusionPenalty)>10,
+        textRect:r.textRect||null,
+        fontScale:Number(r.fontScale)||1
       };
     }
   }
@@ -1279,6 +1355,9 @@ async function generateIntelligenceBatch(indices){
       layoutScore:Number(r.layoutScore)||0,
       compact:Boolean(r.compact),
       secondLineSuppressed:Boolean(r.secondLineSuppressed),
+      textRect:r.textRect||null,
+      fontScale:Number(r.fontScale)||1,
+      objectOcclusionPenalty:Number(r.objectOcclusionPenalty)||0,
       evaluator:r.evaluatorModel||"typesafe-ai/jev",
       evaluationStatus:r.evaluationStatus||"",
       jevAcceptProbability:Number(r.jevAcceptProbability)||0
