@@ -781,6 +781,7 @@ header{background:transparent}
       <output id="fontSizeValue">6.6 %</output>
     </label>
     <button id="continueHooks" class="studio-action" type="button">Compléter les hooks</button>
+    <button id="copyProjectLink" class="studio-action" type="button" hidden>Copier le lien projet</button>
   </div>
 </section>
 
@@ -940,7 +941,7 @@ const BATCH=56;
 const grid=document.querySelector("#grid"), empty=document.querySelector("#empty");
 const studio=document.querySelector("#studio"), studioTitle=document.querySelector("#studioTitle"), studioMeta=document.querySelector("#studioMeta");
 const hookCount=document.querySelector("#hookCount"), progressFill=document.querySelector("#progressFill"), progressTrack=document.querySelector(".progress-track"), studioStatus=document.querySelector("#studioStatus");
-const fontSelect=document.querySelector("#fontSelect"), fontSize=document.querySelector("#fontSize"), fontSizeValue=document.querySelector("#fontSizeValue"), continueHooks=document.querySelector("#continueHooks");
+const fontSelect=document.querySelector("#fontSelect"), fontSize=document.querySelector("#fontSize"), fontSizeValue=document.querySelector("#fontSizeValue"), continueHooks=document.querySelector("#continueHooks"), copyProjectLink=document.querySelector("#copyProjectLink");
 const modal=document.querySelector("#modal"), big=document.querySelector("#big"), modalHook=document.querySelector("#modalHook"), renderDownload=document.querySelector("#renderDownload");
 
 const visibleCards=new Map();
@@ -1295,6 +1296,7 @@ function updateProgress(message){
 }
 function saveProject(){
   try{localStorage.setItem("videoma_project_v4",JSON.stringify({website:PROJECT_WEBSITE,profile:PROFILE,brandProfileId:BRAND_PROFILE_ID,projectToken:PROJECT_TOKEN,hooks:HOOKS,hookMeta:HOOK_META,style:{font:fontSelect.value,size:Number(fontSize.value)}}))}catch{}
+  if(copyProjectLink)copyProjectLink.hidden=!PROJECT_TOKEN;
 }
 function applyStyle(){
   const size=Number(fontSize.value)||6.6;
@@ -1327,6 +1329,64 @@ function restoreProject(){
   }catch{}
   applyStyle();
 }
+
+async function loadProjectState(){
+  if(!PROJECT_TOKEN)return false;
+  try{
+    const r=await fetch("/api/project-state",{cache:"no-store",headers:{"X-Project-Token":PROJECT_TOKEN}});
+    const data=await r.json().catch(()=>({}));
+    if(!r.ok)throw new Error(data.error||"PROJECT_STATE_FAILED");
+
+    PROFILE=data.profile||PROFILE;
+    PROJECT_WEBSITE=data.project?.website||PROJECT_WEBSITE;
+    BRAND_PROFILE_ID=data.project?.brandProfileId||BRAND_PROFILE_ID;
+    HOOKS=new Array(ALL.length).fill("");
+    HOOK_META=new Array(ALL.length).fill(null);
+    VIDEO_MATCHES=new Array(ALL.length).fill(null);
+
+    for(const item of data.hooks||[]){
+      const idx=Number(item.index)-1;
+      if(idx<0||idx>=ALL.length)continue;
+      HOOKS[idx]=String(item.hook||"");
+      HOOK_META[idx]=item.meta||null;
+    }
+    for(const match of data.matches||[]){
+      const idx=Number(match.index)-1;
+      if(idx>=0&&idx<ALL.length)VIDEO_MATCHES[idx]=match;
+    }
+
+    studio.hidden=false;
+    studioTitle.textContent=PROFILE?.brand||"Projet videoma";
+    studioMeta.textContent=(PROFILE?.summary||PROJECT_WEBSITE||"Projet restauré").slice(0,180);
+    const progress=data.progress||{};
+    updateProgress(
+      (Number(progress.validated)||0)+" hooks validés · "+
+      (Number(progress.delivered)||0)+" MP4 livrés"
+    );
+    refreshVisibleHooks();
+    saveProject();
+    return true;
+  }catch(error){
+    console.warn("project recovery failed",error);
+    if(error.message==="PROJECT_UNAUTHORIZED"){
+      PROJECT_TOKEN="";
+      saveProject();
+    }
+    return false;
+  }
+}
+copyProjectLink?.addEventListener("click",async()=>{
+  if(!PROJECT_TOKEN)return;
+  const link=location.origin+location.pathname+"#project="+encodeURIComponent(PROJECT_TOKEN);
+  try{
+    await navigator.clipboard.writeText(link);
+    const old=copyProjectLink.textContent;
+    copyProjectLink.textContent="Lien projet copié ✓";
+    setTimeout(()=>copyProjectLink.textContent=old,1600);
+  }catch{
+    copyProjectLink.textContent="Copie impossible";
+  }
+});
 
 new IntersectionObserver(es=>{if(es.some(e=>e.isIntersecting)&&cursor<shown.length)render(false)},{rootMargin:"900px"}).observe(document.querySelector("#sentinel"));
 
@@ -1828,6 +1888,7 @@ siteForm.addEventListener("submit",async e=>{
   PROJECT_WEBSITE=data.website||website;
   BRAND_PROFILE_ID=data.brandProfileId||"";
   PROJECT_TOKEN=data.projectToken||"";
+  if(copyProjectLink)copyProjectLink.hidden=!PROJECT_TOKEN;
   studioTitle.textContent=PROFILE?.brand||"Projet videoma";
   studioMeta.textContent=(PROFILE?.summary||PROJECT_WEBSITE).slice(0,180);
   studioStatus.textContent=data.fallback?"Site analysé · mode local activé":data.cached?"Profil marque chargé depuis le cache":"Site analysé avec succès";
@@ -1954,8 +2015,15 @@ if(paymentState==="success"){
 }
 
 restoreProject();
+const linkedProjectToken=new URLSearchParams(location.hash.replace(/^#/,"")).get("project");
+if(linkedProjectToken){
+  PROJECT_TOKEN=linkedProjectToken;
+  history.replaceState(null,"",location.pathname+location.search);
+  saveProject();
+}
 apply();
 loadVideoLayouts();
+if(PROJECT_TOKEN)loadProjectState();
 </script>
 <!-- env-redeploy-2026-09-20 -->
 <!-- db-env-redeploy-2026-09-20 -->
