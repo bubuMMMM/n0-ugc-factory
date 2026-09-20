@@ -262,6 +262,86 @@ async function discoverSitemap(base){
   return [...unique].map(([url,score])=>({url,score})).sort((a,b)=>b.score-a.score).slice(0,80).map(x=>x.url);
 }
 
+function compactText(v,n=180){
+  return String(v||'').replace(/\s+/g,' ').trim().slice(0,n);
+}
+function uniq(values,limit=12){
+  const seen=new Set(),out=[];
+  for(const raw of values||[]){
+    const v=compactText(raw,220);if(!v)continue;
+    const k=v.toLowerCase();if(seen.has(k))continue;
+    seen.add(k);out.push(v);if(out.length>=limit)break;
+  }
+  return out;
+}
+function brandFromPage(page){
+  const h1=page&&page.signals&&page.signals.h1&&page.signals.h1[0]||'';
+  const title=page&&page.title||'';
+  let domain='votre marque';try{domain=new URL(page&&page.url||'').hostname.replace(/^www\./,'')}catch{}
+  const candidate=(title.split(/\s+[|—–-]\s+/)[0]||h1||domain).trim();
+  return compactText(candidate,80)||domain;
+}
+function buildFallbackProfile(pages){
+  const first=pages[0]||{};
+  const brand=brandFromPage(first);
+  const allH1=uniq(pages.flatMap(p=>p.signals&&p.signals.h1||[]),10);
+  const allH2=uniq(pages.flatMap(p=>p.signals&&p.signals.h2||[]),24);
+  const allH3=uniq(pages.flatMap(p=>p.signals&&p.signals.h3||[]),24);
+  const ctas=uniq(pages.flatMap(p=>p.signals&&p.signals.ctas||[]).filter(x=>x.length>2),20);
+  const prices=uniq(pages.flatMap(p=>p.signals&&p.signals.prices||[]),12);
+  const descriptions=uniq(pages.map(p=>p.description).filter(Boolean),8);
+  const summary=compactText(descriptions[0]||first.text||(brand+' présente son offre sur son site.'),260);
+  const primaryOffer=compactText(allH1[0]||allH2[0]||summary,180);
+  const benefitSeeds=uniq(allH2.filter(x=>!/^(faq|contact|à propos|about|blog|menu)$/i.test(x)).concat(allH3.filter(x=>x.length<140),descriptions),10);
+  const customerLanguage=uniq(allH1.concat(allH2,ctas),18);
+  const questionHeadings=uniq(allH2.concat(allH3).filter(x=>/\?$/.test(x)||/^(comment|pourquoi|quel|quelle|combien|est-ce|peut-on|faut-il)/i.test(x)),10);
+  const pains=uniq(questionHeadings.slice(0,4).map(x=>x.replace(/\?$/,'')).concat(['Trouver une offre adaptée chez '+brand,'Comprendre rapidement ce que propose '+brand]),6);
+  const benefits=uniq(benefitSeeds.slice(0,6).concat([primaryOffer]),8);
+  const objections=uniq(questionHeadings.slice(0,5).concat([prices.length?'Quel est le bon niveau de prix pour cette offre ?':'','Est-ce que '+brand+' correspond vraiment à mon besoin ?']),6);
+  const offers=[{name:compactText(primaryOffer,100),description:summary,price:prices[0]||'',cta:ctas[0]||''}];
+  const proofPoints=prices.slice(0,3).map(price=>({claim:'Prix affiché : '+price,evidence:'Le prix '+price+' est visible sur le site.',sourceUrl:first.url||''}));
+  const pillars=[
+    {name:'Offre',insight:primaryOffer,evidence:allH1[0]||summary,suitableVisuals:['présentation','pointage','démonstration']},
+    {name:'Bénéfices',insight:benefits[0]||summary,evidence:benefits[0]||summary,suitableVisuals:['validation','sourire','réaction positive']},
+    {name:'Questions clients',insight:objections[0]||('Comprendre '+brand),evidence:questionHeadings[0]||'',suitableVisuals:['scepticisme','confusion','réflexion']},
+    {name:'Découverte',insight:'Découvrir '+brand,evidence:first.url||'',suitableVisuals:['surprise','téléphone','découverte']},
+    {name:'Choix',insight:'Évaluer si '+brand+' correspond au besoin',evidence:summary,suitableVisuals:['comparaison','réflexion','validation']}
+  ];
+  const awarenessMap=[
+    {stage:'unaware',currentBelief:'Le besoin n’est pas encore formulé.',friction:'Peu de contexte.',hookDirections:['observation','curiosité','POV']},
+    {stage:'problem_aware',currentBelief:'Le problème est identifié.',friction:objections[0]||'Hésitation.',hookDirections:['diagnostic','question','pain']},
+    {stage:'solution_aware',currentBelief:'Plusieurs solutions sont envisagées.',friction:'Comparer les options.',hookDirections:['comparaison','bénéfice','démonstration']},
+    {stage:'product_aware',currentBelief:brand+' est connu.',friction:'Vérifier l’adéquation.',hookDirections:['preuve','FAQ','objection']},
+    {stage:'most_aware',currentBelief:'La décision est proche.',friction:'Dernière hésitation.',hookDirections:['CTA','preuve','validation']}
+  ];
+  const playbookAngles=[
+    ['question',objections[0]||primaryOffer,['scepticisme','confusion']],
+    ['benefit',benefits[0]||primaryOffer,['validation','sourire']],
+    ['discovery','Découvrir '+brand,['surprise','téléphone']],
+    ['comparison',primaryOffer,['réflexion','scepticisme']],
+    ['pov','Découvrir '+brand+' au bon moment',['réaction','regard caméra']],
+    ['overheard',customerLanguage[0]||brand,['confusion','rire']],
+    ['diagnostic',pains[0]||primaryOffer,['scepticisme','réflexion']],
+    ['value',benefits[1]||benefits[0]||primaryOffer,['calme','validation']],
+    ['proof',proofPoints[0]&&proofPoints[0].claim||primaryOffer,['pointage','démonstration']],
+    ['inversion',primaryOffer,['scepticisme','surprise']],
+    ['story',brand,['calme','réflexion']],
+    ['product_natural',primaryOffer,['démonstration','téléphone']]
+  ];
+  return {
+    brand,category:compactText(allH2[0]||primaryOffer,120),summary,primaryOffer,
+    audiences:['Personnes intéressées par '+primaryOffer],
+    jobsToBeDone:['Comprendre '+primaryOffer,'Évaluer si '+brand+' répond au besoin','Passer à l’action depuis le site'],
+    pains,desires:benefits.slice(0,5),benefits,objections,offers,
+    differentiators:uniq(allH2.slice(1,6),6),proofPoints,customerLanguage,
+    faqInsights:questionHeadings.slice(0,5).map(q=>({question:q,answer:'Réponse à vérifier sur la page source.',hookPotential:q})),
+    claimsAllowed:uniq(allH1.concat(benefits,prices),20),
+    claimsForbidden:['Résultats non affichés sur le site','Avis clients inventés','Garanties non affichées','Chiffres non présents dans les pages crawlées'],
+    tone:['direct','clair','proche du vocabulaire du site'],contentPillars:pillars,awarenessMap,
+    hookPlaybook:playbookAngles.map(x=>({angle:x[0],insight:x[1],visualMatch:x[2],examplePattern:'Angle '+x[0]+' basé sur : '+compactText(x[1],100),avoid:'Ne rien inventer au-delà du site.'}))
+  };
+}
+function aiFailure(code){return /^(AI_|OPENAI_|EMBEDDING_|JEV_)/.test(String(code||''));}
 async function crawl(website){
   const first=await safeFetch(website);
   const origin=new URL(first.url).origin;
@@ -329,6 +409,7 @@ module.exports=async function handler(req,res){
   const website=String(req.body?.website||'').trim();
   if(!website) return res.status(400).json({error:'WEBSITE_REQUIRED'});
   const startedAt=Date.now();
+  let pages=[];
   try{
     if(req.body?.force!==true){
       const cached=await cachedBrandProfile(website);
@@ -344,7 +425,7 @@ module.exports=async function handler(req,res){
         });
       }
     }
-    const pages=await crawl(website);
+    pages=await crawl(website);
     if(!pages.length) return res.status(422).json({error:'SITE_UNREADABLE'});
     const source=pages.map((p,i)=>`--- PAGE ${i+1}: ${p.url}\nTITLE: ${p.title}\nDESCRIPTION: ${p.description}\nSIGNALS: ${JSON.stringify(p.signals)}\nCONTENT:\n${p.text}`).join('\n\n').slice(0,MAX_TOTAL_CHARS);
     const schema={
@@ -472,7 +553,13 @@ ${source}`
   }catch(err){
     console.error('analyze error',err?.message,err?.status||'',err?.detail||'');
     const raw=String(err?.message||'ANALYZE_FAILED');
-    const code=/timeout|aborted/i.test(raw)&&!raw.startsWith('AI_')?'ANALYZE_TIMEOUT':raw;
+    const code=/timeout|aborted/i.test(raw)&&!raw.startsWith('AI_')&&!raw.startsWith('OPENAI_')?'ANALYZE_TIMEOUT':raw;
+    if(pages.length&&aiFailure(code)){
+      const profile=buildFallbackProfile(pages);
+      const origin=new URL(pages[0].url).origin;
+      const brandProfileId=await persistBrandProfile(origin,profile);
+      return res.status(200).json({website:origin,profile,brandProfileId,pages:pages.map(p=>({url:p.url,title:p.title})),model:'local-html-fallback',cached:false,fallback:true,fallbackReason:code,elapsedMs:Date.now()-startedAt});
+    }
     const status=
       code==='AI_GATEWAY_INSUFFICIENT_FUNDS'?402:
       code==='AI_GATEWAY_RATE_LIMIT'?429:
