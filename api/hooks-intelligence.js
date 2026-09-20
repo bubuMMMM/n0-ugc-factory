@@ -3,19 +3,24 @@ const path=require('node:path');
 const {gatewayJson,MODEL}=require('./_ai');
 const db=require('./_db');
 const {HOOK_RULES}=require('./_hook-rules');
+const {evaluateHook,mapLimit,JEV_MODEL}=require('./_jev');
 
 const MAX_ITEMS=24;
-const VERSION='hook-intelligence-v1';
+const VERSION='hook-intelligence-v2-jev';
 const MECHANISMS=['drama','story','credential','insider','numbered','diagnostic','inversion','overheard','confession','pov','value','take','fourthwall','transformation','wall','proof','pattern_break','product_natural','objection','pain','benefit','comparison','mistake','discovery','observation'];
 const SCORE_KEYS=['visualFit','brandFit','hookStrength','specificity','naturalness','claimSafety','novelty','readability','emotionMatch'];
 const WEIGHTS={visualFit:.16,brandFit:.16,hookStrength:.16,specificity:.12,naturalness:.10,claimSafety:.12,novelty:.07,readability:.06,emotionMatch:.05};
 
 function tx(v,n=500){return String(v||'').replace(/\s+/g,' ').trim().slice(0,n)}
 function overall(scores){return Math.round(SCORE_KEYS.reduce((sum,k)=>sum+(Number(scores&&scores[k])||0)*WEIGHTS[k],0))}
-function weak(r){
+function weakQuality(r){
   const q=r.scores||{},score=overall(q);
   return score<84||Number(q.visualFit)<82||Number(q.brandFit)<82||Number(q.claimSafety)<95||Number(q.readability)<82||Number(q.novelty)<76||!r.visualAnchor||!r.brandAnchor;
 }
+function jevRejected(r){
+  return r.evaluationStatus==='jev'&&Number(r.jevAcceptProbability)<0.80;
+}
+function weak(r){return weakQuality(r)||jevRejected(r)}
 function normalizedWords(s){return tx(s,180).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9 ]/g,' ').split(/\s+/).filter(x=>x.length>2)}
 function similar(a,b){
   const A=new Set(normalizedWords(a)),B=new Set(normalizedWords(b));
@@ -90,6 +95,50 @@ async function generate(profile,videos,avoid,mechanismUsage,revision){
     };
   });
 }
+async function evaluateResults(profile,videos,results,avoid){
+  const byIndex=new Map(videos.map(v=>[Number(v.index),v]));
+  const batchHooks=results.map(r=>r.hook);
+  const evaluated=await mapLimit(results,6,async r=>{
+    const v=byIndex.get(r.index);
+    if(!v)return {...r,evaluationStatus:'missing-video',jevAcceptProbability:0};
+    try{
+      const ev=await evaluateHook({
+        hook:r.hook,
+        secondLine:r.secondLine,
+        mechanism:r.mechanism,
+        visualAnchor:r.visualAnchor,
+        brandAnchor:r.brandAnchor,
+        video:v.intelligence||{},
+        signal:v.signal||{},
+        brand:profile,
+        previousHooks:[...(avoid||[]),...batchHooks.filter(x=>x!==r.hook)]
+      });
+      return {
+        ...r,
+        generatorScores:r.scores,
+        scores:ev.scores,
+        quality:overall(ev.scores),
+        jevAcceptProbability:ev.acceptProbability,
+        jevAnswers:ev.answers,
+        evaluatorModel:ev.model||JEV_MODEL,
+        evaluationStatus:'jev'
+      };
+    }catch(error){
+      console.warn('Jev evaluation fallback',r.index,error&&error.message);
+      return {
+        ...r,
+        quality:overall(r.scores||{}),
+        jevAcceptProbability:0,
+        jevAnswers:{},
+        evaluatorModel:JEV_MODEL,
+        evaluationStatus:'fallback',
+        evaluationError:String(error&&error.message||error)
+      };
+    }
+  });
+  return evaluated;
+}
+
 async function persist(brandProfileId,videos,results){
   if(!db.configured()||!brandProfileId)return;
   const byIndex=new Map(videos.map(v=>[Number(v.index),v]));
@@ -98,26 +147,33 @@ async function persist(brandProfileId,videos,results){
     const sql=[
       'insert into hook_assignments(',
       'brand_profile_id,video_id,brand_signal_id,hook,second_line,mechanism,visual_anchor,brand_anchor,placement,',
-      'visual_fit,brand_fit,hook_strength,specificity,naturalness,claim_safety,novelty,readability,emotion_match,quality_score,accepted,rationale,generator_version',
-      ') values($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22)',
+      'visual_fit,brand_fit,hook_strength,specificity,naturalness,claim_safety,novelty,readability,emotion_match,quality_score,accepted,rationale,generator_version,',
+      'jev_accept_probability,jev_answers,evaluator_model,evaluation_version',
+      ') values($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24::jsonb,$25,$26)',
       'on conflict(brand_profile_id,video_id) do update set ',
       'brand_signal_id=excluded.brand_signal_id,hook=excluded.hook,second_line=excluded.second_line,mechanism=excluded.mechanism,',
       'visual_anchor=excluded.visual_anchor,brand_anchor=excluded.brand_anchor,placement=excluded.placement,',
       'visual_fit=excluded.visual_fit,brand_fit=excluded.brand_fit,hook_strength=excluded.hook_strength,specificity=excluded.specificity,',
       'naturalness=excluded.naturalness,claim_safety=excluded.claim_safety,novelty=excluded.novelty,readability=excluded.readability,',
-      'emotion_match=excluded.emotion_match,quality_score=excluded.quality_score,accepted=excluded.accepted,rationale=excluded.rationale,generator_version=excluded.generator_version'
+      'emotion_match=excluded.emotion_match,quality_score=excluded.quality_score,accepted=excluded.accepted,rationale=excluded.rationale,',
+      'generator_version=excluded.generator_version,jev_accept_probability=excluded.jev_accept_probability,jev_answers=excluded.jev_answers,',
+      'evaluator_model=excluded.evaluator_model,evaluation_version=excluded.evaluation_version'
     ].join(' ');
     await db.query(sql,[
       brandProfileId,v.intelligence.id,v.signal&&v.signal.id||null,r.hook,r.secondLine||null,r.mechanism,r.visualAnchor,r.brandAnchor,r.placement,
       r.scores.visualFit,r.scores.brandFit,r.scores.hookStrength,r.scores.specificity,r.scores.naturalness,r.scores.claimSafety,
-      r.scores.novelty,r.scores.readability,r.scores.emotionMatch,r.quality,!weak(r),r.rationale,VERSION
+      r.scores.novelty,r.scores.readability,r.scores.emotionMatch,r.quality,Boolean(r.accepted),r.rationale,VERSION,
+      Number(r.jevAcceptProbability)||0,JSON.stringify(r.jevAnswers||{}),r.evaluatorModel||JEV_MODEL,'jev-v1'
     ]);
   }
 }
 
 module.exports=async function handler(req,res){
   res.setHeader('Cache-Control','no-store');
-  if(req.method==='GET')return res.status(200).json({model:MODEL,maxItems:MAX_ITEMS,version:VERSION,thresholds:{overall:84,visualFit:82,brandFit:82,claimSafety:95,readability:82,novelty:76}});
+  if(req.method==='GET')return res.status(200).json({
+    model:MODEL,evaluator:JEV_MODEL,maxItems:MAX_ITEMS,version:VERSION,
+    thresholds:{overall:84,visualFit:82,brandFit:82,claimSafety:95,readability:82,novelty:76,jevAcceptProbability:.80}
+  });
   if(req.method!=='POST')return res.status(405).json({error:'METHOD_NOT_ALLOWED'});
   const profile=req.body&&req.body.profile,videos=Array.isArray(req.body&&req.body.videos)?req.body.videos.slice(0,MAX_ITEMS):[];
   const avoid=Array.isArray(req.body&&req.body.avoid)?req.body.avoid.slice(-100).map(x=>tx(x,180)):[];
@@ -126,20 +182,50 @@ module.exports=async function handler(req,res){
   if(!profile||!videos.length)return res.status(400).json({error:'PROFILE_AND_VIDEOS_REQUIRED'});
   try{
     let results=await generate(profile,videos,avoid,mechanismUsage,'');
-    const weakOnes=results.filter(r=>weak(r)||tooSimilar(r.hook,[...avoid,...results.filter(x=>x.index!==r.index).map(x=>x.hook)]));
+    results=await evaluateResults(profile,videos,results,avoid);
+
+    const weakOnes=results.filter(r=>
+      weak(r)||
+      tooSimilar(r.hook,[...avoid,...results.filter(x=>x.index!==r.index).map(x=>x.hook)])
+    );
+
     if(weakOnes.length){
       const weakSet=new Set(weakOnes.map(x=>x.index));
       const subset=videos.filter(v=>weakSet.has(Number(v.index)));
-      const critique=weakOnes.map(r=>'#'+r.index+' rejected. hook="'+r.hook+'" quality='+r.quality+' scores='+JSON.stringify(r.scores)+' anchors=['+r.visualAnchor+'] + ['+r.brandAnchor+']. Rewrite with stronger visual specificity and a safer, more human brand claim.').join('\n');
-      const revised=await generate(profile,subset,[...avoid,...results.map(x=>x.hook)],mechanismUsage,critique);
-      const map=new Map(revised.map(x=>[x.index,x]));results=results.map(x=>map.get(x.index)||x);
+      const critique=weakOnes.map(r=>
+        '#'+r.index+' rejected by QA. hook="'+r.hook+
+        '" JevAccept='+Math.round((Number(r.jevAcceptProbability)||0)*100)+'%'+
+        ' quality='+r.quality+
+        ' scores='+JSON.stringify(r.scores)+
+        ' anchors=['+r.visualAnchor+'] + ['+r.brandAnchor+'].'+
+        ' Rewrite the hook itself, not just the rationale. Fix the weakest Jev dimensions while keeping the visible reaction and supported brand signal.'
+      ).join('\n');
+
+      let revised=await generate(profile,subset,[...avoid,...results.map(x=>x.hook)],mechanismUsage,critique);
+      revised=await evaluateResults(profile,subset,revised,[...avoid,...results.map(x=>x.hook)]);
+      const map=new Map(revised.map(x=>[x.index,x]));
+      results=results.map(x=>map.get(x.index)||x);
     }
-    results=results.map(r=>({...r,accepted:!weak(r)&&!tooSimilar(r.hook,avoid)}));
+
+    results=results.map(r=>({
+      ...r,
+      accepted:
+        r.evaluationStatus==='jev'&&
+        Number(r.jevAcceptProbability)>=.80&&
+        !weakQuality(r)&&
+        !tooSimilar(r.hook,avoid)
+    }));
+
     await persist(brandProfileId,videos,results);
-    return res.status(200).json({results,model:MODEL,version:VERSION,accepted:results.filter(x=>x.accepted).length});
+    return res.status(200).json({
+      results,model:MODEL,evaluator:JEV_MODEL,version:VERSION,
+      accepted:results.filter(x=>x.accepted).length,
+      jevEvaluated:results.filter(x=>x.evaluationStatus==='jev').length
+    });
   }catch(err){
     console.error('hooks intelligence',err&&err.message,err&&err.detail||'');
     const code=String(err&&err.message||'HOOK_INTELLIGENCE_FAILED');
     return res.status(code==='AI_GATEWAY_NOT_CONFIGURED'?503:500).json({error:code});
   }
 };
+
