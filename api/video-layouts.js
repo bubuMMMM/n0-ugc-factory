@@ -2,6 +2,33 @@ const db=require('./_db');
 const {VIDEO_INTELLIGENCE_VERSION,LAYOUT_VERSION}=require('./_versions');
 const {resolveLayout,hasUsableGeometry}=require('./_layout');
 
+function usableLegacyFaces(regions){
+  if(!Array.isArray(regions)||!regions.length)return false;
+  let valid=0;
+  for(const face of regions){
+    if(!face||typeof face!=='object'||Array.isArray(face))continue;
+    const nums=[face.x,face.y,face.w,face.h].map(Number);
+    if(!nums.every(Number.isFinite))continue;
+    const [x,y,w,h]=nums;
+    if(x<0||y<0||w<=0||h<=0||x+w>1.01||y+h>1.01)continue;
+    valid++;
+  }
+  return valid>0;
+}
+function normalizeSafeZone(raw,current){
+  const safe=raw&&typeof raw==='object'?{...raw}:{};
+  if(!['top','upper','lower','bottom'].includes(String(safe.preferred||'')))safe.preferred='bottom';
+  if(!['left','center','right'].includes(String(safe.horizontal||'')))safe.horizontal='center';
+  if(!safe.zoneScores||typeof safe.zoneScores!=='object'){
+    safe.zoneScores={top:78,upper:58,middle:16,lower:86,bottom:82};
+  }
+  if(!current){
+    safe.allowSecondLine=false;
+    safe.maxLines=1;
+  }
+  return safe;
+}
+
 module.exports=async function handler(req,res){
   if(req.method!=='GET')return res.status(405).json({error:'METHOD_NOT_ALLOWED'});
   res.setHeader('Cache-Control','public, s-maxage=90, stale-while-revalidate=600');
@@ -13,7 +40,7 @@ module.exports=async function handler(req,res){
     );
     let currentVersionReady=0;
     const layouts=r.rows.map(x=>{
-      const intelligence={
+      const rawIntelligence={
         textSafeZone:x.text_safe_zone||{},
         faceRegions:x.face_regions||[],
         objectRegions:x.object_regions||[],
@@ -21,15 +48,25 @@ module.exports=async function handler(req,res){
         reactionType:x.reaction_type||'',
         energyScore:Number(x.energy_score)||0
       };
-      const current=x.analysis_version===VIDEO_INTELLIGENCE_VERSION&&hasUsableGeometry(intelligence);
-      if(!current)return null;
-      currentVersionReady++;
-      const preferred=intelligence.textSafeZone&&intelligence.textSafeZone.preferred||'bottom';
-      const resolved=resolveLayout(intelligence,{requested:preferred,secondLine:'1',style:'short'});
+      const current=x.analysis_version===VIDEO_INTELLIGENCE_VERSION&&hasUsableGeometry(rawIntelligence);
+      const legacy=!current&&usableLegacyFaces(rawIntelligence.faceRegions);
+      if(!current&&!legacy)return null;
+      if(current)currentVersionReady++;
+      const intelligence={
+        ...rawIntelligence,
+        textSafeZone:normalizeSafeZone(rawIntelligence.textSafeZone,current)
+      };
+      const preferred=intelligence.textSafeZone.preferred||'bottom';
+      const resolved=resolveLayout(intelligence,{
+        requested:preferred,
+        secondLine:current?'1':'',
+        style:'short'
+      });
       return {
         index:x.canonical_index,
         analysisVersion:x.analysis_version,
         current,
+        legacy,
         layoutVersion:LAYOUT_VERSION,
         textSafeZone:intelligence.textSafeZone,
         faceRegions:intelligence.faceRegions,
@@ -55,6 +92,7 @@ module.exports=async function handler(req,res){
       configured:true,
       ready:layouts.length,
       currentVersionReady,
+      legacyReady:layouts.filter(x=>x.legacy).length,
       layouts
     });
   }catch(error){
