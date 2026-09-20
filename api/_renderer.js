@@ -9,6 +9,44 @@ const ffmpeg=require('ffmpeg-static');
 const ffprobe=require('ffprobe-static').path;
 
 const MAX_SOURCE_BYTES=90*1024*1024;
+const MAX_FONT_BYTES=2*1024*1024;
+let cachedFontFile=null;
+let fontPromise=null;
+
+async function ensureRenderFont(){
+  const configured=String(process.env.VIDEOMA_FONT_FILE||'').trim();
+  if(configured&&fs.existsSync(configured))return {file:configured,family:'TikTok Sans',fallback:false};
+  if(cachedFontFile&&fs.existsSync(cachedFontFile))return {file:cachedFontFile,family:'TikTok Sans',fallback:false};
+  if(fontPromise)return fontPromise;
+  fontPromise=(async()=>{
+    try{
+      const cssResponse=await fetch('https://fonts.googleapis.com/css2?family=TikTok+Sans:wght@700&display=swap',{
+        headers:{'User-Agent':'Mozilla/5.0 Chrome/140 Safari/537.36'},
+        signal:AbortSignal.timeout(8000)
+      });
+      if(!cssResponse.ok)throw new Error('FONT_CSS_'+cssResponse.status);
+      const css=await cssResponse.text();
+      const latin=(css.match(/\/\*\s*latin\s*\*\/[\s\S]*?src:\s*url\((https:[^)]+)\)/i)||[])[1];
+      const urls=[...css.matchAll(/src:\s*url\((https:[^)]+)\)/gi)].map(m=>m[1]);
+      const url=latin||urls[urls.length-1];
+      if(!url)throw new Error('FONT_URL_MISSING');
+      const fontResponse=await fetch(url,{signal:AbortSignal.timeout(10000)});
+      if(!fontResponse.ok)throw new Error('FONT_FETCH_'+fontResponse.status);
+      const ab=await fontResponse.arrayBuffer();
+      if(!ab.byteLength||ab.byteLength>MAX_FONT_BYTES)throw new Error('FONT_SIZE_INVALID');
+      const file=path.join(os.tmpdir(),'videoma-tiktok-sans-700.woff2');
+      fs.writeFileSync(file,Buffer.from(ab));
+      cachedFontFile=file;
+      return {file,family:'TikTok Sans',fallback:false};
+    }catch(error){
+      console.warn('TikTok Sans renderer fallback',error&&error.message);
+      return {file:'',family:'DejaVu Sans',fallback:true};
+    }finally{
+      fontPromise=null;
+    }
+  })();
+  return fontPromise;
+}
 
 function cleanText(value,max=500){
   return String(value||'').replace(/\r/g,'').replace(/\u0000/g,'').trim().slice(0,max);
@@ -101,14 +139,13 @@ function fitText({hook,secondLine,rect,width,height,fontScale=1,style='short',ma
 function escapeFilterPath(value){
   return String(value).replace(/\\/g,'\\\\').replace(/:/g,'\\:').replace(/'/g,"\\'");
 }
-function drawFilter({file,rect,width,height,fontSize,align,lineSpacing,borderWidth,y}){
+function drawFilter({file,rect,width,height,fontSize,align,lineSpacing,borderWidth,y,fontFile}){
   const xPx=Math.round(rect.x*width),wPx=Math.round(rect.w*width);
   const x=align==='left'
     ? String(xPx)
     : align==='right'
       ? String(xPx+wPx)+'-text_w'
       : String(xPx)+'+('+String(wPx)+'-text_w)/2';
-  const fontFile=String(process.env.VIDEOMA_FONT_FILE||'').trim();
   const font=fontFile
     ? "fontfile='"+escapeFilterPath(fontFile)+"'"
     : "font='DejaVu Sans'";
@@ -136,6 +173,7 @@ async function renderVideo({sourceUrl,hook,secondLine,textRect,fontScale,style,h
   try{
     await download(sourceUrl,input);
     const meta=await probe(input);
+    const renderFont=await ensureRenderFont();
     const fit=fitText({
       hook:cleanText(hook,500),
       secondLine:cleanText(secondLine,300),
@@ -148,14 +186,15 @@ async function renderVideo({sourceUrl,hook,secondLine,textRect,fontScale,style,h
     const filters=[drawFilter({
       file:mainFile,rect,width:meta.width,height:meta.height,fontSize:fit.mainSize,
       align:horizontalAlign||'center',lineSpacing:fit.mainSize*.2,
-      borderWidth:fit.mainSize*.125,y
+      borderWidth:fit.mainSize*.125,y,fontFile:renderFont.file
     })];
     if(fit.second.length){
       filters.push(drawFilter({
         file:secondFile,rect,width:meta.width,height:meta.height,fontSize:fit.secondSize,
         align:horizontalAlign||'center',lineSpacing:fit.secondSize*.2,
         borderWidth:fit.secondSize*.125,
-        y:y+fit.main.length*fit.mainSize*1.2+fit.gap
+        y:y+fit.main.length*fit.mainSize*1.2+fit.gap,
+        fontFile:renderFont.file
       }));
     }
 
@@ -171,7 +210,14 @@ async function renderVideo({sourceUrl,hook,secondLine,textRect,fontScale,style,h
 
     const stat=fs.statSync(output);
     if(!stat.size)throw new Error('RENDER_EMPTY');
-    return {output,size:stat.size,durationMs:Math.round(meta.duration*1000),width:meta.width,height:meta.height};
+    const verified=await probe(output);
+    if(verified.width!==meta.width||verified.height!==meta.height)throw new Error('RENDER_DIMENSIONS_MISMATCH');
+    if(Math.abs(verified.duration-meta.duration)>Math.max(.35,meta.duration*.03))throw new Error('RENDER_DURATION_MISMATCH');
+    return {
+      output,size:stat.size,durationMs:Math.round(verified.duration*1000),
+      width:verified.width,height:verified.height,
+      fontFamily:renderFont.family,fontFallbackUsed:renderFont.fallback
+    };
   }catch(error){
     try{fs.unlinkSync(output)}catch{}
     throw error;
