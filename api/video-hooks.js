@@ -45,6 +45,7 @@ function schemaFor(count){
             angle:{type:'string'},
             mechanism:{type:'string',enum:['question','objection','pain','benefit','contrast','demonstration','list','opinion','curiosity','identity','proof','mistake','observation']},
             placement:{type:'string',enum:['top','lower']},
+            horizontalAlign:{type:'string',enum:['left','center','right']},
             faceOcclusionPenalty:{type:'integer',minimum:0,maximum:100},
             confidence:{type:'integer',minimum:0,maximum:100},
             scores:{
@@ -61,7 +62,7 @@ function schemaFor(count){
             },
             rationale:{type:'string'}
           },
-          required:['index','scene','action','emotion','visualCue','brandAnchor','hook','angle','mechanism','placement','faceOcclusionPenalty','confidence','scores','rationale'],
+          required:['index','scene','action','emotion','visualCue','brandAnchor','hook','angle','mechanism','placement','horizontalAlign','faceOcclusionPenalty','confidence','scores','rationale'],
           additionalProperties:false
         }
       }
@@ -86,6 +87,7 @@ function normalize(videos,data){
       angle:trim(r.angle,90),
       mechanism:['question','objection','pain','benefit','contrast','demonstration','list','opinion','curiosity','identity','proof','mistake','observation'].includes(r.mechanism)?r.mechanism:'observation',
       placement:['top','lower'].includes(r.placement)?r.placement:'top',
+      horizontalAlign:['left','center','right'].includes(r.horizontalAlign)?r.horizontalAlign:'center',
       faceOcclusionPenalty:Math.max(0,Math.min(100,Number(r.faceOcclusionPenalty)||0)),
       confidence:Math.max(0,Math.min(100,Number(r.confidence)||0)),
       scores:{
@@ -161,6 +163,7 @@ RÈGLES DE COPY:
 - "mechanism" décrit le mécanisme créatif dominant utilisé.
 - "rationale" explique en une phrase pourquoi brandAnchor + visualCue + hook fonctionnent ensemble.
 - FACE-FIRST: placement est uniquement "top" ou "lower". Compare les 4 frames et choisis la bande qui ne couvre jamais les yeux, le nez ou la bouche.
+- horizontalAlign vaut left, center ou right. Si le visage est clairement d’un côté, décale le texte de l’autre côté plutôt que de le superposer au visage.
 - faceOcclusionPenalty: 0 signifie aucune collision probable avec un visage sur les 4 frames; 100 signifie que le texte masque clairement un visage. Au-dessus de 22, le résultat est rejeté et doit être réécrit/repositionné.
 - Si aucune zone n’est parfaite, raccourcis le hook plutôt que de couvrir le visage.
 ${revision?`\\nMODE RÉVISION:\\n${revision}`:''}
@@ -223,6 +226,7 @@ async function evaluateVisualResults(profile,results,avoid){
         visualAnchor:r.visualCue,
         brandAnchor:r.brandAnchor,
         placement:r.placement,
+        horizontalAlign:r.horizontalAlign,
         faceOcclusionPenalty:r.faceOcclusionPenalty,
         video:{
           scene:r.scene,
