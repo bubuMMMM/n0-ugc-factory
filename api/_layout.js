@@ -1,9 +1,9 @@
 const BANDS={
-  top:{x:.10,y:.075,w:.80,h:.15},
-  upper:{x:.10,y:.17,w:.80,h:.16},
-  middle:{x:.10,y:.38,w:.80,h:.18},
-  lower:{x:.10,y:.58,w:.80,h:.15},
-  bottom:{x:.10,y:.73,w:.80,h:.13}
+  top:{x:.10,y:.055,w:.80,h:.115},
+  upper:{x:.10,y:.155,w:.80,h:.12},
+  middle:{x:.10,y:.40,w:.80,h:.14},
+  lower:{x:.10,y:.645,w:.80,h:.105},
+  bottom:{x:.10,y:.815,w:.80,h:.085}
 };
 const COLUMNS={
   center:{x:.10,w:.80},
@@ -123,7 +123,7 @@ function resolveLayout(intelligence={},options={}){
   candidates.sort((a,b)=>b.score-a.score);
   const best=candidates[0]||{
     placement:'bottom',horizontalAlign:'center',
-    textRect:{x:.12,y:.74,w:.76,h:.11},
+    textRect:{x:.10,y:.835,w:.80,h:.07},
     faceOcclusionPenalty:100,objectOcclusionPenalty:0,safety:0,score:-100
   };
 
