@@ -15,15 +15,6 @@ function genericHook(text){
 function normWords(text){
   return trim(text,160).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9 ]/g,' ').split(/\s+/).filter(w=>w.length>2);
 }
-function similarity(a,b){
-  const A=normWords(a),B=normWords(b);
-  if(!A.length||!B.length)return 0;
-  const sa=new Set(A),sb=new Set(B),inter=[...sa].filter(x=>sb.has(x)).length;
-  const union=new Set([...sa,...sb]).size;
-  const j=union?inter/union:0;
-  const openA=A.slice(0,3).join(' '),openB=B.slice(0,3).join(' ');
-  return Math.max(j,openA&&openA===openB?.length?1:0);
-}
 function tooSimilar(hook,avoid){
   const words=normWords(hook),open=words.slice(0,3).join(' ');
   return avoid.some(x=>{
@@ -102,9 +93,9 @@ function normalize(videos,data){
 }
 
 function creativeBrief(profile,avoid,revision=''){
-  return \`Tu es directeur créatif UGC senior, analyste visuel et copywriter direct-response.
+  return `Tu es directeur créatif UGC senior, analyste visuel et copywriter direct-response.
 
-Chaque image jointe est une PLANCHE DE 3 FRAMES de la MÊME vidéo: début à gauche, milieu au centre, fin à droite.
+Chaque image jointe est une PLANCHE DE 4 FRAMES de la MÊME vidéo: début, premier tiers, deuxième tiers, fin — de gauche à droite.
 
 BUT:
 Écrire un hook qui ne pourrait pas être interverti avec n'importe quelle autre vidéo. Le texte doit exploiter ce que la scène montre réellement ET un insight réellement présent dans le profil de marque.
@@ -137,7 +128,7 @@ BARÈME — note sévèrement:
 - stopPower: donne-t-il une raison crédible de ne pas scroller?
 - naturalness: quelqu'un pourrait-il réellement écrire ça sur TikTok/Reels?
 
-Un résultat < \${QUALITY_MIN}/100 sur un de ces critères est FAIBLE. Réécris avant de répondre.
+Un résultat < ${QUALITY_MIN}/100 sur un de ces critères est FAIBLE. Réécris avant de répondre.
 
 RÈGLES DE COPY:
 - 4 à 12 mots, cible 25–78 caractères.
@@ -158,19 +149,19 @@ RÈGLES DE COPY:
 - "visualCue" nomme le détail de la scène qui justifie le hook.
 - "rationale" explique en une phrase pourquoi hook + scène + marque fonctionnent ensemble.
 - placement évite visage, mains et objet clé.
-\${revision?\`\\nMODE RÉVISION:\\n\${revision}\`:''}
+${revision?`\\nMODE RÉVISION:\\n${revision}`:''}
 
 PROFIL DE MARQUE:
-\${JSON.stringify(profile).slice(0,30000)}
+${JSON.stringify(profile).slice(0,30000)}
 
 HOOKS DÉJÀ UTILISÉS:
-\${avoid.join('\\n')||'(aucun)'}\`;
+${avoid.join('\\n')||'(aucun)'}`;
 }
 
 async function generate(videos,profile,avoid,revision=''){
   const content=[{type:'text',text:creativeBrief(profile,avoid,revision)}];
   for(const v of videos){
-    content.push({type:'text',text:\`VIDÉO #\${v.index}. Analyse les 3 frames puis retourne exactement un résultat avec index=\${v.index}.\`});
+    content.push({type:'text',text:`VIDÉO #${v.index}. Analyse les 4 frames puis retourne exactement un résultat avec index=${v.index}.`});
     content.push({type:'image_url',image_url:{url:v.contactSheet,detail:'low'}});
   }
   const data=await gatewayJson({
@@ -199,7 +190,7 @@ module.exports=async function handler(req,res){
     const weak=results.filter(r=>r.confidence<76||score(r)<82||Math.min(...Object.values(r.scores))<QUALITY_MIN||genericHook(r.hook)||tooSimilar(r.hook,avoid));
     if(weak.length){
       const weakVideos=videos.filter(v=>weak.some(w=>w.index===v.index));
-      const critique=weak.map(r=>\`#\${r.index} REJETÉ — hook: "\${r.hook}" — scores: \${JSON.stringify(r.scores)} — raison: \${r.rationale}. Réécris avec une accroche plus spécifique au visualCue "\${r.visualCue}" et à un insight précis de la marque.\`).join('\\n');
+      const critique=weak.map(r=>`#${r.index} REJETÉ — hook: "${r.hook}" — scores: ${JSON.stringify(r.scores)} — raison: ${r.rationale}. Réécris avec une accroche plus spécifique au visualCue "${r.visualCue}" et à un insight précis de la marque.`).join('\\n');
       const revised=await generate(weakVideos,profile,[...avoid,...results.map(r=>r.hook)],critique);
       const revisedMap=new Map(revised.map(r=>[r.index,r]));
       results=results.map(r=>revisedMap.get(r.index)||r);
