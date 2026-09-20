@@ -762,6 +762,25 @@ header{background:transparent}
 .modal-actions .copy{position:static;transform:none;white-space:nowrap}
 .card:focus-visible{outline:2px solid #78baff;outline-offset:3px}
 
+
+/* Final face-safe clipping: text is never allowed to escape its approved rectangle */
+.hook-overlay,.modal-hook{
+  max-height:var(--hook-height,7%)!important;
+  overflow:hidden!important;
+}
+.hook-overlay .hook-primary,.modal-hook .hook-primary{
+  display:-webkit-box!important;
+  -webkit-box-orient:vertical!important;
+  -webkit-line-clamp:var(--hook-max-lines,1)!important;
+  overflow:hidden!important;
+}
+.hook-overlay .hook-secondary,.modal-hook .hook-secondary{
+  overflow:hidden!important;
+  text-overflow:ellipsis;
+}
+.card[data-demo="true"] .hook-overlay{
+  text-wrap:balance;
+}
 </style>
 </head>
 <body>
@@ -893,27 +912,27 @@ const DEMO_HOOK_LIBRARY=[
 ];
 
 const SAFE_DEMO_HOOKS=[
-  "1000 vidéos en moins de 5 min.",
+  "1000 vidéos. 5 min.",
   "1 URL → 1000 vidéos.",
-  "Ton site devient 1000 vidéos.",
-  "1000 vidéos. Une seule URL.",
-  "Ton contenu du mois, déjà prêt.",
-  "Une URL entre. 1000 vidéos sortent.",
-  "Tu filmes encore tout à la main ?",
-  "1017 vidéos. Continue de scroller.",
-  "Ton prochain post est déjà prêt.",
-  "Ta marque mérite 1000 variations.",
+  "Ton site devient contenu.",
+  "1000 vidéos. Une URL.",
   "5 minutes. Puis tu choisis.",
-  "Le problème ? Choisir quoi poster.",
-  "Une URL. Tout ce feed.",
-  "Ce feed pourrait être le tien.",
-  "Ton site produit maintenant du contenu.",
+  "Ton prochain post est prêt.",
+  "Tout ce feed. Une URL.",
+  "1017 vidéos ici.",
+  "Ta marque, 1000 variations.",
+  "Le contenu, sans tournage.",
   "1000 hooks. 1000 vidéos.",
-  "Chaque scroll = une nouvelle créa.",
-  "Plus besoin de manquer de contenu.",
-  "Videoma transforme ton site en vidéos.",
-  "Imagine ta marque sur celle-ci."
-];
+  "Videoma fait le volume.",
+  "Une URL. Puis ce feed.",
+  "Encore 1000 idées.",
+  "Ton site devient vidéos.",
+  "Le scroll ne finit plus.",
+  "1000 créas à tester.",
+  "Ton contenu est déjà là.",
+  "5 min pour tout générer.",
+  "Imagine ta marque ici."
+]
 
 function demoHookFor(index){
   const layout=VIDEO_LAYOUTS[index];
@@ -929,20 +948,25 @@ function demoHookFor(index){
   ][Math.floor(index/DEMO_HOOK_LIBRARY.length)%4];
 
   if(!layout){
+    const right=index%2===1;
     return {
       hook:safeHook,
       secondLine:"",
-      placement:"lower",
-      horizontalAlign:"center",
-      textRect:{x:.10,y:.725,w:.80,h:.075},
-      fontScale:.72,
+      placement:"bottom",
+      horizontalAlign:right?"right":"left",
+      textRect:right?{x:.40,y:.845,w:.55,h:.065}:{x:.05,y:.845,w:.55,h:.065},
+      fontScale:.58,
       style:"short",
       demo:true,
       compact:true,
-      faceOcclusionPenalty:18,
-      layoutScore:72,
+      maxLines:1,
+      secondLineSuppressed:true,
+      noSafeZone:true,
+      faceOcclusionPenalty:12,
+      objectOcclusionPenalty:8,
+      layoutScore:76,
       accepted:true,
-      rationale:"Safe mode: une seule ligne compacte sous la zone principale du visage, en attendant les bounding boxes permanentes."
+      rationale:"Safe-edge mode: une seule ligne compacte au bord inférieur du cadre jusqu’à disponibilité des bounding boxes visage."
     };
   }
 
@@ -1024,11 +1048,11 @@ document.addEventListener("visibilitychange",schedulePlayback);
 function hookFor(index){return HOOKS[index]||demoHookFor(index).hook}
 
 const SAFE_BANDS={
-  top:{y:.075,h:.14},
-  upper:{y:.15,h:.16},
-  middle:{y:.37,h:.18},
-  lower:{y:.55,h:.15},
-  bottom:{y:.66,h:.14}
+  top:{y:.055,h:.115},
+  upper:{y:.155,h:.12},
+  middle:{y:.40,h:.14},
+  lower:{y:.645,h:.105},
+  bottom:{y:.815,h:.085}
 };
 const SAFE_COLUMNS={
   left:{x:.06,w:.50},
@@ -1096,10 +1120,10 @@ function computeFaceSafeLayout(raw,requested="lower",hasSecondLine=false,style="
   if(!raw||!Object.keys(raw).length){
     return {
       placement:"bottom",horizontalAlign:"center",
-      textRect:{x:.12,y:.76,w:.76,h:.11},
-      allowSecondLine:false,fontScale:.68,compact:true,
-      faceOcclusionPenalty:35,objectOcclusionPenalty:0,
-      layoutScore:45,maxLines:2,noSafeZone:true,
+      textRect:{x:.10,y:.835,w:.80,h:.07},
+      allowSecondLine:false,fontScale:.58,compact:true,
+      faceOcclusionPenalty:18,objectOcclusionPenalty:8,
+      layoutScore:62,maxLines:1,noSafeZone:true,
       safeForAutoApproval:false
     };
   }
@@ -1119,7 +1143,7 @@ function computeFaceSafeLayout(raw,requested="lower",hasSecondLine=false,style="
   choices.sort((a,b)=>b.score-a.score);
   const best=choices[0]||{
     placement:"bottom",horizontalAlign:"center",
-    textRect:{x:.12,y:.76,w:.76,h:.11},
+    textRect:{x:.10,y:.835,w:.80,h:.07},
     face:100,object:0,safety:0,score:-100
   };
 
@@ -1213,12 +1237,16 @@ function setHookGeometry(node,meta){
   node.style.setProperty("--hook-left",(rect.x*100).toFixed(2)+"%");
   node.style.setProperty("--hook-top",(rect.y*100).toFixed(2)+"%");
   node.style.setProperty("--hook-width",(rect.w*100).toFixed(2)+"%");
+  node.style.setProperty("--hook-height",(rect.h*100).toFixed(2)+"%");
   node.style.setProperty("--hook-font-size",size.toFixed(2)+"cqi");
   node.style.setProperty("--hook-secondary-font-size",secondary.toFixed(2)+"cqi");
+  const maxLines=Math.max(1,Math.min(3,Number(meta?.maxLines)||1));
+  const primaryLines=meta?.secondLine?1:maxLines;
+  node.style.setProperty("--hook-max-lines",String(primaryLines));
   node.dataset.baseHookSize=String(size);
   node.dataset.baseSecondarySize=String(secondary);
   node.dataset.align=meta?.horizontalAlign||"center";
-  node.dataset.maxLines=String(meta?.maxLines||2);
+  node.dataset.maxLines=String(maxLines);
 }
 function fitHookNode(node,meta){
   if(!node)return;
