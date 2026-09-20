@@ -1,3 +1,4 @@
+const crypto=require('node:crypto');
 const {gatewayJson,MODEL,DIRECT_MODEL,credential,canDirect}=require('./_ai');
 const db=require('./_db');
 const {issueProject,limitAnonymous}=require('./_project-auth');
@@ -8,6 +9,25 @@ const MAX_TOTAL_CHARS=52000;
 const MAX_PAGES=6;
 const PAGE_TIMEOUT_MS=5500;
 const SITEMAP_TIMEOUT_MS=3500;
+
+function manualOrigin(description){
+  const digest=crypto.createHash('sha256').update(String(description||'')).digest('hex').slice(0,16);
+  return 'https://manual-'+digest+'.videoma.local';
+}
+function manualInputPage(description){
+  const text=String(description||'').replace(/\s+/g,' ').trim().slice(0,12000);
+  const origin=manualOrigin(text);
+  const firstSentence=(text.split(/[.!?]\s/)[0]||'Votre activité').slice(0,120);
+  return {
+    url:origin,
+    title:firstSentence,
+    description:text.slice(0,280),
+    signals:{
+      h1:[firstSentence],h2:[],h3:[],quotes:[],ctas:[],prices:priceMentions(text),imageAlts:[],jsonLd:[]
+    },
+    text
+  };
+}
 
 function siteIdentity(raw){
   let u;
@@ -369,7 +389,9 @@ module.exports=async function handler(req,res){
   });
   if(req.method!=='POST') return res.status(405).json({error:'METHOD_NOT_ALLOWED'});
   const website=String(req.body?.website||'').trim();
-  if(!website) return res.status(400).json({error:'WEBSITE_REQUIRED'});
+  const description=String(req.body?.description||'').replace(/\s+/g,' ').trim().slice(0,12000);
+  const manualMode=!website&&description.length>=20;
+  if(!website&&!manualMode)return res.status(400).json({error:'WEBSITE_OR_DESCRIPTION_REQUIRED'});
   const rate=await limitAnonymous(req,'analyze',5,3600).catch(()=>({allowed:true}));
   if(!rate.allowed){
     res.setHeader('Retry-After',String(rate.retryAfter||3600));
@@ -378,8 +400,9 @@ module.exports=async function handler(req,res){
   const startedAt=Date.now();
   let pages=[];
   try{
+    const inputOrigin=manualMode?manualOrigin(description):website;
     if(req.body?.force!==true){
-      const cached=await cachedBrandProfile(website);
+      const cached=await cachedBrandProfile(inputOrigin);
       if(cached){
         const projectToken=await issueProject({brandProfileId:cached.id,website:cached.website});
         return res.status(200).json({
@@ -390,12 +413,13 @@ module.exports=async function handler(req,res){
           pages:[],
           model:MODEL,
           cached:true,
+          inputMode:manualMode?'description':'website',
           elapsedMs:Date.now()-startedAt
         });
       }
     }
-    pages=await crawl(website);
-    if(!pages.length) return res.status(422).json({error:'SITE_UNREADABLE'});
+    pages=manualMode?[manualInputPage(description)]:await crawl(website);
+    if(!pages.length)return res.status(422).json({error:manualMode?'DESCRIPTION_UNREADABLE':'SITE_UNREADABLE'});
     const source=pages.map((p,i)=>`--- PAGE ${i+1}: ${p.url}\nTITLE: ${p.title}\nDESCRIPTION: ${p.description}\nSIGNALS: ${JSON.stringify(p.signals)}\nCONTENT:\n${p.text}`).join('\n\n').slice(0,MAX_TOTAL_CHARS);
     const schema={
       type:'object',
@@ -503,7 +527,7 @@ MÉTHODE:
         },
         {
           role:'user',
-          content:`Voici les pages crawlées. Les champs SIGNALS contiennent notamment titres, CTA, prix détectés et JSON-LD.
+          content:`${manualMode?'Voici la description fournie directement par le client.':'Voici les pages crawlées. Les champs SIGNALS contiennent notamment titres, CTA, prix détectés et JSON-LD.'}
 
 Construis le profil créatif complet. Dans hookPlaybook, "visualMatch" doit décrire des scènes observables qui conviennent à l'angle (ex: personne surprise, personne qui pointe, écran de téléphone, geste de frustration, démonstration produit, avant/après visuel, sourire/validation, scène neutre face caméra).
 
@@ -518,7 +542,7 @@ ${source}`
     return res.status(200).json({
       website:origin,profile,brandProfileId,projectToken,
       pages:pages.map(p=>({url:p.url,title:p.title})),
-      model:MODEL,cached:false,elapsedMs:Date.now()-startedAt
+      model:MODEL,cached:false,inputMode:manualMode?'description':'website',elapsedMs:Date.now()-startedAt
     });
   }catch(err){
     console.error('analyze error',err?.message,err?.status||'',err?.detail||'');
@@ -529,7 +553,7 @@ ${source}`
       const origin=new URL(pages[0].url).origin;
       const brandProfileId=await persistBrandProfile(origin,profile);
       const projectToken=await issueProject({brandProfileId,website:origin});
-      return res.status(200).json({website:origin,profile,brandProfileId,projectToken,pages:pages.map(p=>({url:p.url,title:p.title})),model:'local-html-fallback',cached:false,fallback:true,fallbackReason:code,elapsedMs:Date.now()-startedAt});
+      return res.status(200).json({website:origin,profile,brandProfileId,projectToken,pages:pages.map(p=>({url:p.url,title:p.title})),model:'local-input-fallback',cached:false,fallback:true,inputMode:manualMode?'description':'website',fallbackReason:code,elapsedMs:Date.now()-startedAt});
     }
     const status=
       code==='AI_GATEWAY_INSUFFICIENT_FUNDS'?402:
@@ -541,7 +565,7 @@ ${source}`
       code==='OPENAI_API_RATE_LIMIT'?429:
       code==='OPENAI_API_TIMEOUT'?504:
       code==='OPENAI_API_UNAVAILABLE'?503:
-      code.startsWith('SITE_')||code==='SITE_UNREADABLE'?422:
+      code.startsWith('SITE_')||code==='SITE_UNREADABLE'||code==='DESCRIPTION_UNREADABLE'?422:
       code==='INVALID_URL'||code==='INVALID_PROTOCOL'||code==='PRIVATE_HOST'?400:500;
     return res.status(status).json({error:code});
   }
