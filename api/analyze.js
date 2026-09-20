@@ -2,6 +2,7 @@ const dns=require('node:dns').promises;
 const net=require('node:net');
 const {gatewayJson,MODEL,DIRECT_MODEL,credential,canDirect}=require('./_ai');
 const db=require('./_db');
+const {issueProject,limitAnonymous}=require('./_project-auth');
 
 const MAX_PAGE_CHARS=12000;
 const MAX_TOTAL_CHARS=52000;
@@ -408,16 +409,23 @@ module.exports=async function handler(req,res){
   if(req.method!=='POST') return res.status(405).json({error:'METHOD_NOT_ALLOWED'});
   const website=String(req.body?.website||'').trim();
   if(!website) return res.status(400).json({error:'WEBSITE_REQUIRED'});
+  const rate=await limitAnonymous(req,'analyze',5,3600).catch(()=>({allowed:true}));
+  if(!rate.allowed){
+    res.setHeader('Retry-After',String(rate.retryAfter||3600));
+    return res.status(429).json({error:'ANALYZE_RATE_LIMIT'});
+  }
   const startedAt=Date.now();
   let pages=[];
   try{
     if(req.body?.force!==true){
       const cached=await cachedBrandProfile(website);
       if(cached){
+        const projectToken=await issueProject({brandProfileId:cached.id,website:cached.website});
         return res.status(200).json({
           website:cached.website,
           profile:cached.profile,
           brandProfileId:cached.id,
+          projectToken,
           pages:[],
           model:MODEL,
           cached:true,
@@ -545,8 +553,9 @@ ${source}`
     });
     const origin=new URL(pages[0].url).origin;
     const brandProfileId=await persistBrandProfile(origin,profile);
+    const projectToken=await issueProject({brandProfileId,website:origin});
     return res.status(200).json({
-      website:origin,profile,brandProfileId,
+      website:origin,profile,brandProfileId,projectToken,
       pages:pages.map(p=>({url:p.url,title:p.title})),
       model:MODEL,cached:false,elapsedMs:Date.now()-startedAt
     });
@@ -558,7 +567,8 @@ ${source}`
       const profile=buildFallbackProfile(pages);
       const origin=new URL(pages[0].url).origin;
       const brandProfileId=await persistBrandProfile(origin,profile);
-      return res.status(200).json({website:origin,profile,brandProfileId,pages:pages.map(p=>({url:p.url,title:p.title})),model:'local-html-fallback',cached:false,fallback:true,fallbackReason:code,elapsedMs:Date.now()-startedAt});
+      const projectToken=await issueProject({brandProfileId,website:origin});
+      return res.status(200).json({website:origin,profile,brandProfileId,projectToken,pages:pages.map(p=>({url:p.url,title:p.title})),model:'local-html-fallback',cached:false,fallback:true,fallbackReason:code,elapsedMs:Date.now()-startedAt});
     }
     const status=
       code==='AI_GATEWAY_INSUFFICIENT_FUNDS'?402:
