@@ -2,6 +2,7 @@ const fs=require('node:fs');
 const path=require('node:path');
 const {gatewayJson,MODEL}=require('./_ai');
 const db=require('./_db');
+const {HOOK_RULES}=require('./_hook-rules');
 
 const MAX_ITEMS=24;
 const VERSION='hook-intelligence-v1';
@@ -25,7 +26,7 @@ function similar(a,b){
 function tooSimilar(hook,avoid){return avoid.some(x=>similar(hook,x)>=.68)}
 function readSkill(){
   try{return fs.readFileSync(path.join(process.cwd(),'skills/hook-writing/SKILL.md'),'utf8').slice(0,18000)}
-  catch{return 'Write specific, grounded, human-sounding reaction-video hooks. Avoid generic ad copy and unsupported claims.'}
+  catch{return HOOK_RULES}
 }
 function schema(count){
   const scoreProps={};
