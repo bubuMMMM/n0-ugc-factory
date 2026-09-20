@@ -1,13 +1,11 @@
 const fs=require('node:fs');
 const path=require('node:path');
-const crypto=require('node:crypto');
 const {gatewayJson,MODEL}=require('../_ai');
 const {embedMany,EMBEDDING_MODEL}=require('../_embedding');
-const {transcribeVideoUrl}=require('../_transcribe');
 const {extract}=require('../_video-frames');
 const db=require('../_db');
 
-const VERSION='video-intel-v3-job';
+const VERSION='video-intel-v4-visual-only';
 const BATCH=4;
 
 function s(v,n=400){return String(v||'').replace(/\s+/g,' ').trim().slice(0,n)}
@@ -105,7 +103,7 @@ function prompt(){
     'Sois factuel, compact et cohérent entre vidéos.'
   ].join('\n');
 }
-function embeddingText(r,transcript){
+function embeddingText(r){
   return [
     'scene '+r.scene,
     'action '+r.action,
@@ -115,8 +113,7 @@ function embeddingText(r,transcript){
     'reaction '+r.reactionType,
     'focus '+r.visualFocus,
     'hook compatibility '+(r.hookCompatibility||[]).join(' '),
-    'tags '+(r.tags||[]).join(' '),
-    transcript?'transcript '+transcript:''
+    'tags '+(r.tags||[]).join(' ')
   ].filter(Boolean).join('\n');
 }
 async function analyze(rows){
@@ -146,19 +143,18 @@ async function analyze(rows){
     ]
   });
   const byIndex=new Map((data.videos||[]).map(x=>[Number(x.index),x]));
-  const transcripts=extracted.map(v=>v.hasAudio?{status:'detected',text:''}:{status:'none',text:''});
-  const embeddingTexts=extracted.map((v,i)=>{
+  const embeddingTexts=extracted.map(v=>{
     const r=byIndex.get(v.canonical_index);
     if(!r)throw new Error('MISSING_ANALYSIS_'+v.canonical_index);
-    return embeddingText(r,'');
+    return embeddingText(r);
   });
   const embeddings=await embedMany(embeddingTexts);
   const saved=[];
   for(let i=0;i<extracted.length;i++){
-    const v=extracted[i],r=byIndex.get(v.canonical_index),tr=transcripts[i]||{status:'unknown',text:''};
+    const v=extracted[i],r=byIndex.get(v.canonical_index);
     const ratio=[.08,.34,.64,.90][Math.max(0,Math.min(3,(Number(r.peakFrame)||1)-1))];
     await db.query(
-      "update video_intelligence set duration_ms=$2,status='ready',scene=$3,action=$4,primary_emotion=$5,emotions=$6,objects=$7,gestures=$8,person_count=$9,has_phone=$10,has_computer=$11,has_product=$12,gaze_direction=$13,reaction_intensity=$14,energy_score=$15,versatility_score=$16,reaction_type=$17,visual_focus=$18,peak_moment_ms=$19,peak_reason=$20,text_safe_zone=$21::jsonb,face_regions=$22::jsonb,object_regions=$23::jsonb,hook_compatibility=$24,tags=$25,keyframes=$26::jsonb,contact_sheet_data=$27,has_audio=$28,audio_status=$29,transcript=$30,embedding_text=$31,embedding_model=$32,embedding=$33::vector,raw_analysis=$34::jsonb,error_message=null,analyzed_at=now(),analysis_version=$35 where id=$1",
+      "update video_intelligence set duration_ms=$2,status='ready',scene=$3,action=$4,primary_emotion=$5,emotions=$6,objects=$7,gestures=$8,person_count=$9,has_phone=$10,has_computer=$11,has_product=$12,gaze_direction=$13,reaction_intensity=$14,energy_score=$15,versatility_score=$16,reaction_type=$17,visual_focus=$18,peak_moment_ms=$19,peak_reason=$20,text_safe_zone=$21::jsonb,face_regions=$22::jsonb,object_regions=$23::jsonb,hook_compatibility=$24,tags=$25,keyframes=$26::jsonb,contact_sheet_data=$27,has_audio=false,audio_status='ignored',transcript='',embedding_text=$28,embedding_model=$29,embedding=$30::vector,raw_analysis=$31::jsonb,error_message=null,analyzed_at=now(),analysis_version=$32 where id=$1",
       [
         v.id,v.durationMs,s(r.scene,500),s(r.action,500),s(r.primaryEmotion,100),
         r.emotions||[],r.objects||[],r.gestures||[],Number(r.personCount)||0,
@@ -166,14 +162,14 @@ async function analyze(rows){
         Number(r.reactionIntensity)||0,Number(r.energyScore)||0,Number(r.versatilityScore)||0,
         s(r.reactionType,80),s(r.visualFocus,180),Math.round(v.durationMs*ratio),s(r.peakReason,300),
         JSON.stringify(r.textSafeZone||{}),JSON.stringify(r.faceRegions||[]),JSON.stringify(r.objectRegions||[]),
-        r.hookCompatibility||[],r.tags||[],JSON.stringify(v.keyframes),v.contactSheet,Boolean(v.hasAudio),
-        tr.status,tr.text||'',embeddingTexts[i],EMBEDDING_MODEL,db.vectorLiteral(embeddings[i]),
+        r.hookCompatibility||[],r.tags||[],JSON.stringify(v.keyframes),v.contactSheet,
+        embeddingTexts[i],EMBEDDING_MODEL,db.vectorLiteral(embeddings[i]),
         JSON.stringify({...r,analysisConfidence:Number(r.analysisConfidence)||0}),VERSION
       ]
     );
     saved.push({
       index:v.canonical_index,reactionType:r.reactionType,
-      energyScore:r.energyScore,versatilityScore:r.versatilityScore,audioStatus:tr.status
+      energyScore:r.energyScore,versatilityScore:r.versatilityScore
     });
   }
   return saved;
@@ -212,6 +208,7 @@ async function resetErrors(){
 async function runBatch(jobId){
   const job=await getJob(jobId);
   if(!job||!job.active)return {stop:true,reason:'JOB_INACTIVE'};
+  await db.query("update video_intelligence set has_audio=false,audio_status='ignored',transcript='' where status='ready' and (has_audio is distinct from false or audio_status is distinct from 'ignored' or transcript is distinct from '')");
   await recoverStale();
   const rows=await claim(BATCH);
   let lastError=null,saved=[];
