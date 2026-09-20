@@ -5,7 +5,7 @@ const {gatewayJson,MODEL}=require('./_ai');
 const db=require('./_db');
 const {HOOK_RULES}=require('./_hook-rules');
 const {evaluateHook,mapLimit,JEV_MODEL}=require('./_jev');
-const {resolveLayout}=require('./_layout');
+const {resolveLayout,hasUsableGeometry}=require('./_layout');
 const {LAYOUT_VERSION,HOOK_INTELLIGENCE_VERSION,VIDEO_INTELLIGENCE_VERSION}=require('./_versions');
 const {requireProject,limitProject}=require('./_project-auth');
 
@@ -245,6 +245,12 @@ async function loadMatchedVideos(brandProfileId,requested){
   return indices.map(index=>{
     const row=byIndex.get(index);
     if(!row)return null;
+    const geometry={
+      textSafeZone:row.text_safe_zone||{},
+      faceRegions:row.face_regions||[],
+      objectRegions:row.object_regions||[]
+    };
+    if(!hasUsableGeometry(geometry))return null;
     return {
       index,
       compatibilityScore:Number(row.compatibility_score)||0,
