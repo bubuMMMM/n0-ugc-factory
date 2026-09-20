@@ -23,7 +23,7 @@ module.exports=async function handler(req,res){
     persistentMp4RenderConfigured:Boolean(process.env.BLOB_READ_WRITE_TOKEN||process.env.VERCEL_OIDC_TOKEN),
     layoutVersion:LAYOUT_VERSION,
     renderVersion:RENDER_VERSION,
-    videoIntelligence:{ready:0,pending:0,processing:0,errors:0,total:0,currentVersionReady:0,geometryReady:0}
+    videoIntelligence:{ready:0,pending:0,processing:0,errors:0,total:0,currentVersionReady:0,geometryReady:0,outdated:0}
   };
   if(db.configured()){
     try{
@@ -40,6 +40,7 @@ module.exports=async function handler(req,res){
         [VIDEO_INTELLIGENCE_VERSION]
       );
       result.videoIntelligence.currentVersionReady=current.rows[0]?.ready||0;
+      result.videoIntelligence.outdated=Math.max(0,(Number(result.videoIntelligence.ready)||0)-Number(result.videoIntelligence.currentVersionReady||0));
       const geometryRows=await db.query(
         "select text_safe_zone,face_regions,object_regions from video_intelligence where status='ready' and analysis_version=$1",
         [VIDEO_INTELLIGENCE_VERSION]
