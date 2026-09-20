@@ -41,22 +41,13 @@
     "api/video-proxy.js": {
       "maxDuration": 60
     },
-    "api/admin/preanalyze.js": {
-      "maxDuration": 60
-    },
     "api/match-videos.js": {
       "maxDuration": 180
     },
     "api/hooks-intelligence.js": {
       "maxDuration": 300
     },
-    "api/admin/run-preanalysis.js": {
-      "maxDuration": 60
-    },
     "api/admin/start-preanalysis.js": {
-      "maxDuration": 60
-    },
-    "api/admin/continue-preanalysis.js": {
       "maxDuration": 60
     },
     "api/admin/preanalysis-status.js": {
