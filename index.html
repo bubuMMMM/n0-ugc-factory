@@ -833,12 +833,12 @@ async function createContactSheet(url){
   if(video.readyState<1) await once(video,"loadedmetadata",15000);
   const duration=Number(video.duration);
   if(!Number.isFinite(duration)||duration<=0) throw new Error("VIDEO_DURATION_INVALID");
-  const frameW=180,frameH=320,canvas=document.createElement("canvas");
-  canvas.width=frameW*3;canvas.height=frameH;
+  const frameW=160,frameH=284,canvas=document.createElement("canvas");
+  canvas.width=frameW*4;canvas.height=frameH;
   const ctx=canvas.getContext("2d",{alpha:false});
   ctx.fillStyle="#000";ctx.fillRect(0,0,canvas.width,canvas.height);
-  const ratios=duration<2?[.08,.5,.9]:[.12,.52,.88];
-  for(let i=0;i<3;i++){
+  const ratios=duration<2?[.06,.32,.62,.9]:[.08,.34,.64,.9];
+  for(let i=0;i<4;i++){
     await seekFrame(video,Math.max(.02,duration*ratios[i]));
     drawCover(ctx,video,i*frameW,0,frameW,frameH);
   }
