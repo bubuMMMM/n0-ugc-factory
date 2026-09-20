@@ -1443,16 +1443,23 @@ async function loadVideoLayouts(){
 }
 
 function localRectCandidates(faceAware=false){
-  const bottom=[
+  // Works even when Safari does not expose FaceDetector:
+  // compare several narrow edge zones and choose the least visually busy one.
+  const candidates=[
     {placement:"bottom",horizontalAlign:"center",textRect:{x:.12,y:.855,w:.76,h:.058}},
     {placement:"bottom",horizontalAlign:"left",textRect:{x:.04,y:.855,w:.46,h:.058}},
-    {placement:"bottom",horizontalAlign:"right",textRect:{x:.50,y:.855,w:.46,h:.058}}
+    {placement:"bottom",horizontalAlign:"right",textRect:{x:.50,y:.855,w:.46,h:.058}},
+    {placement:"top",horizontalAlign:"center",textRect:{x:.12,y:.028,w:.76,h:.060}},
+    {placement:"top",horizontalAlign:"left",textRect:{x:.04,y:.028,w:.46,h:.060}},
+    {placement:"top",horizontalAlign:"right",textRect:{x:.50,y:.028,w:.46,h:.060}}
   ];
-  if(!faceAware)return bottom;
-  return bottom.concat([
-    {placement:"top",horizontalAlign:"left",textRect:{x:.04,y:.028,w:.40,h:.060}},
-    {placement:"top",horizontalAlign:"right",textRect:{x:.56,y:.028,w:.40,h:.060}}
-  ]);
+  if(faceAware){
+    candidates.push(
+      {placement:"upper",horizontalAlign:"left",textRect:{x:.035,y:.125,w:.40,h:.065}},
+      {placement:"upper",horizontalAlign:"right",textRect:{x:.565,y:.125,w:.40,h:.065}}
+    );
+  }
+  return candidates;
 }
 function pixelClutter(data,width,height,rect,frameOffsetX){
   const x0=Math.max(0,Math.floor(frameOffsetX+rect.x*160));
