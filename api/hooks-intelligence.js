@@ -45,7 +45,7 @@ function schema(count){
   return {type:'object',properties:{results:{type:'array',minItems:count,maxItems:count,items:{
     type:'object',properties:{
       index:{type:'integer'},hook:{type:'string'},secondLine:{type:'string'},mechanism:{type:'string',enum:MECHANISMS},
-      visualAnchor:{type:'string'},brandAnchor:{type:'string'},placement:{type:'string',enum:['top','upper','middle','lower']},
+      visualAnchor:{type:'string'},brandAnchor:{type:'string'},placement:{type:'string',enum:['top','upper','lower','bottom']},
       style:{type:'string',enum:['short','wall']},scores:{type:'object',properties:scoreProps,required:SCORE_KEYS,additionalProperties:false},
       rationale:{type:'string'}
     },required:['index','hook','secondLine','mechanism','visualAnchor','brandAnchor','placement','style','scores','rationale'],additionalProperties:false
