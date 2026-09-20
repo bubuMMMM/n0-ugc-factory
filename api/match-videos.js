@@ -56,7 +56,7 @@ function reactionScore(type,reaction,compat){
 module.exports=async function handler(req,res){
   res.setHeader('Cache-Control','no-store');
   if(req.method==='GET'){
-    if(!db.configured())return res.status(200).json({configured:false,ready:0});
+    if(!db.configured())return res.status(200).json({configured:false,ready:0,database:db.parseDatabaseUrl()});
     const r=await db.query("select count(*)::int ready from video_intelligence where status='ready' and embedding is not null");
     return res.status(200).json({configured:true,ready:r.rows[0]&&r.rows[0].ready||0,embeddingModel:EMBEDDING_MODEL});
   }
