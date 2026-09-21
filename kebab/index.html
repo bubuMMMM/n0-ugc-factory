@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#000000">
+<meta name="theme-color" content="#f7f7f5">
 <title>clipfa.st / kebab — 1000 vidéos pour votre kebab</title>
 <meta name="description" content="Transformez votre kebab ou snack en 1000 vidéos prêtes à publier sur TikTok, Instagram, Facebook et YouTube.">
 <style>
@@ -168,35 +168,325 @@ h1 em{display:block;color:var(--orange);font-style:italic;font-weight:400;letter
 .video-retry{position:absolute;z-index:8;left:50%;top:50%;transform:translate(-50%,-50%);border:1px solid #555;border-radius:14px;padding:14px;background:#151515;color:#fff}
 .video-retry[hidden]{display:none}
 .card:focus-visible,.modal button:focus-visible{outline:2px solid var(--orange);outline-offset:3px}
+
+/* ===== Kebab hero clone — white editorial UGC ===== */
+html{background:#f7f7f5;color:#111}
+body{background:#f7f7f5;color:#111}
+.page{background:#f7f7f5}
+.hero-clone{
+  min-height:100svh;
+  background:#f7f7f5;
+  color:#0a0a0a;
+  border-bottom:0;
+  padding:0;
+  overflow:hidden;
+}
+.hero-clone:before{display:none}
+.clone-shell{
+  min-height:100svh;
+  padding:calc(14px + env(safe-area-inset-top)) 14px 22px;
+  display:flex;
+  flex-direction:column;
+}
+.clone-topbar{
+  height:58px;
+  grid-template-columns:1fr auto auto;
+  gap:10px;
+  padding:0 12px 0 18px;
+  background:#050505;
+  color:#fff;
+  border-radius:32px;
+  box-shadow:0 2px 0 rgba(0,0,0,.05);
+}
+.clone-topbar .brand{
+  font-size:27px;
+  letter-spacing:-1.7px;
+  color:#fff;
+}
+.clone-start{
+  height:42px;
+  min-width:126px;
+  padding:0 16px 0 20px;
+  border:0;
+  border-radius:999px;
+  background:#fff;
+  color:#090909;
+  font-size:14px;
+  font-weight:800;
+  backdrop-filter:none;
+}
+.clone-start b{font-size:24px}
+.clone-menu{
+  width:38px;
+  height:38px;
+  border:0;
+  background:transparent;
+  backdrop-filter:none;
+}
+.clone-menu:hover{background:transparent;border-color:transparent}
+.clone-menu i,.clone-menu:before,.clone-menu:after{
+  left:6px;
+  width:27px;
+  height:2px;
+  background:#fff;
+}
+.clone-menu:before{top:9px}
+.clone-menu i{top:18px}
+.clone-menu:after{top:27px}
+.clone-menu[aria-expanded="true"]:before{top:18px}
+.clone-menu[aria-expanded="true"]:after{top:18px}
+
+.clone-copy{
+  text-align:center;
+  margin-top:clamp(82px,12svh,118px);
+  padding:0 8px;
+}
+.social-proof{
+  width:max-content;
+  max-width:100%;
+  margin:0 auto 26px;
+  min-height:38px;
+  padding:5px 14px 5px 7px;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  border-radius:999px;
+  background:#ececea;
+  color:#2b2b2b;
+  font-size:12px;
+  font-weight:600;
+  letter-spacing:-.2px;
+}
+.proof-avatars{display:flex;align-items:center;padding-left:1px}
+.proof-avatars span{
+  width:29px;
+  height:29px;
+  margin-left:-7px;
+  border:2px solid #f7f7f5;
+  border-radius:50%;
+  background-size:cover;
+  background-position:center;
+}
+.proof-avatars span:first-child{margin-left:0}
+.clone-title{
+  margin:0 auto;
+  max-width:398px;
+  font-family:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  font-size:clamp(43px,11.6vw,54px);
+  line-height:.96;
+  font-weight:520;
+  letter-spacing:-3.1px;
+  text-wrap:balance;
+}
+.clone-sub{
+  margin:20px auto 0;
+  color:#8a8a8a;
+  font-size:16px;
+  line-height:1.3;
+  font-weight:500;
+  letter-spacing:-.55px;
+}
+
+.featured-strip{
+  width:calc(100% + 28px);
+  margin-left:-14px;
+  margin-top:clamp(50px,7svh,72px);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:12px;
+  overflow:hidden;
+  flex:none;
+}
+.featured-card{
+  position:relative;
+  flex:0 0 154px;
+  aspect-ratio:9/16;
+  overflow:hidden;
+  border-radius:20px;
+  background:#d9d9d9;
+  text-decoration:none;
+  color:#fff;
+  box-shadow:0 1px 0 rgba(0,0,0,.04);
+}
+.featured-main{flex-basis:180px}
+.featured-card img{
+  width:100%;
+  height:100%;
+  display:block;
+  object-fit:cover;
+}
+.featured-card:after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:linear-gradient(180deg,rgba(0,0,0,.12),transparent 38%,rgba(0,0,0,.08));
+  pointer-events:none;
+}
+.featured-index{
+  position:absolute;
+  z-index:2;
+  top:14px;
+  left:12px;
+  min-width:58px;
+  height:29px;
+  padding:0 10px;
+  border-radius:999px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:rgba(18,18,18,.68);
+  color:#fff;
+  font-size:10px;
+  font-weight:800;
+  letter-spacing:.6px;
+  backdrop-filter:blur(9px);
+}
+.featured-play{
+  position:absolute;
+  z-index:2;
+  top:12px;
+  right:11px;
+  width:36px;
+  height:36px;
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  padding-left:2px;
+  background:#fff;
+  color:#060606;
+  font-size:13px;
+  box-shadow:0 3px 14px rgba(0,0,0,.12);
+}
+.featured-plus{
+  position:absolute;
+  z-index:2;
+  right:10px;
+  bottom:10px;
+  width:42px;
+  height:42px;
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  background:#050505;
+  color:#fff;
+  font-size:31px;
+  line-height:1;
+  font-weight:250;
+}
+.featured-hook{
+  position:absolute;
+  z-index:2;
+  top:58px;
+  left:50%;
+  transform:translateX(-50%);
+  width:120px;
+  color:#fff;
+  font-size:20px;
+  line-height:.95;
+  font-weight:900;
+  letter-spacing:-.8px;
+  text-align:center;
+  text-shadow:0 2px 12px rgba(0,0,0,.3);
+}
+.scroll-explore{
+  margin:auto auto 0;
+  padding-top:30px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:5px;
+  color:#7d7d7d;
+  text-decoration:none;
+  font-size:12px;
+  font-weight:500;
+}
+.scroll-explore span{font-size:25px;line-height:1;color:#8a8a8a}
+
+.gallery{
+  background:#f7f7f5;
+  color:#0a0a0a;
+  padding-top:18px;
+}
+.load-state{color:#7a7a7a}
+.unlock-card{color:#fff}
+.sticky-cta{
+  border-color:#151515;
+  background:#050505;
+  color:#fff;
+}
+
+@media(max-height:780px){
+  .clone-copy{margin-top:64px}
+  .featured-strip{margin-top:34px}
+  .featured-card{flex-basis:138px}
+  .featured-main{flex-basis:160px}
+  .scroll-explore{padding-top:18px}
+}
+@media(max-width:370px){
+  .clone-topbar{padding-left:14px}
+  .clone-topbar .brand{font-size:23px}
+  .clone-start{min-width:108px;font-size:12px;padding:0 12px}
+  .clone-title{font-size:40px;letter-spacing:-2.5px}
+  .clone-sub{font-size:14px}
+  .featured-card{flex-basis:138px}
+  .featured-main{flex-basis:160px}
+  .featured-strip{gap:9px}
+}
+
 </style>
 </head>
 <body>
 <main class="page">
-  <section class="hero" id="top">
-    <div class="shell">
-      <header class="topbar">
+  <section class="hero hero-clone" id="top">
+    <div class="shell clone-shell">
+      <header class="topbar clone-topbar">
         <div class="brand">clipfa<span>.st</span></div>
-        <button class="start" data-onboard>Commencer <b>→</b></button>
-        <button class="menu" id="menuToggle" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="siteMenu"><i></i></button>
+        <button class="start clone-start" data-onboard>Commencer <b>→</b></button>
+        <button class="menu clone-menu" id="menuToggle" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="siteMenu"><i></i></button>
       </header>
 
-      <div class="copy">
-        <p class="eyebrow">POUR LES KEBABS &amp; SNACKS</p>
-        <h1>
-          <span class="line">1000 vidéos</span>
-          <span class="line">pour votre kebab</span>
-          <span class="line">en moins de</span>
-          <em>5 minutes.</em>
-        </h1>
-        <svg class="hero-swoosh" viewBox="0 0 180 24" aria-hidden="true"><path d="M4 18 C 50 6, 128 5, 176 16"/></svg>
-        <p class="sub">Zéro tournage. Zéro montage.<br>Des vidéos prêtes à publier sur TikTok, Instagram,<br>Facebook et YouTube.</p>
+      <div class="clone-copy">
+        <div class="social-proof">
+          <span class="proof-avatars" aria-hidden="true">
+            <span style="background-image:url('/media/kebab/reaction.jpg')"></span>
+            <span style="background-image:url('/media/kebab/street.jpg')"></span>
+            <span style="background-image:url('/media/kebab/preparation.jpg')"></span>
+          </span>
+          <span>Utilisé par 2 500+ snacks</span>
+        </div>
 
-        <button class="primary-cta" data-onboard>Créer mes 1000 vidéos <b>→</b></button>
-        <div class="hero-proof"><strong>ϟ</strong><span>Prêtes en quelques minutes</span><i></i><span>aucun montage</span></div>
-
+        <h1 class="clone-title">Des vidéos UGC<br>pour votre kebab</h1>
+        <p class="clone-sub">1000 vidéos prêtes à publier.<br>Aucun tournage. Aucun montage.</p>
       </div>
-     </div>
-   </section>
+
+      <div class="featured-strip" aria-label="Exemples de vidéos UGC">
+        <a class="featured-card featured-side" href="#videos" aria-label="Voir la vidéo 1">
+          <img src="/media/kebab/reaction.jpg" alt="">
+          <span class="featured-index">#0001</span>
+          <span class="featured-play">▶</span>
+          <span class="featured-plus">＋</span>
+        </a>
+
+        <a class="featured-card featured-main" href="#videos" aria-label="Voir la vidéo 2">
+          <img src="/media/kebab/preparation.jpg" alt="">
+          <span class="featured-index">#0002</span>
+          <span class="featured-play">▶</span>
+          <strong class="featured-hook">Le kebab<br>qui régale<br>toujours.</strong>
+          <span class="featured-plus">＋</span>
+        </a>
+
+        <a class="featured-card featured-side" href="#videos" aria-label="Voir la vidéo 3">
+          <img src="/media/kebab/street.jpg" alt="">
+          <span class="featured-index">#0003</span>
+          <span class="featured-play">▶</span>
+          <span class="featured-plus">＋</span>
+        </a>
+      </div>
+
+      <a class="scroll-explore" href="#videos">Scroll to explore <span>⌄</span></a>
+    </div>
+  </section>
 
   <section class="gallery" id="videos">
     <div class="video-grid" id="grid" aria-live="polite"></div>
