@@ -14,7 +14,7 @@ body{margin:0;background:#000;color:#fff;font-family:Inter,ui-sans-serif,-apple-
 button,input{font:inherit}
 button{cursor:pointer}
 .page{width:100%;max-width:430px;margin:0 auto;background:#000;min-height:100vh;position:relative}
-.hero{position:relative;min-height:100svh;isolation:isolate;overflow:hidden;border-bottom:1px solid #171719;background:#000}
+.hero{position:relative;min-height:0;isolation:isolate;overflow:hidden;border-bottom:1px solid #171719;background:#000;padding-bottom:10px}
 .shell{padding:calc(9px + env(safe-area-inset-top)) 22px 0;position:relative}
 .topbar{height:38px;display:grid;grid-template-columns:1fr auto auto;align-items:center;gap:14px}
 .brand{font-family:Georgia,"Times New Roman",serif;font-size:23px;line-height:1;font-weight:700;letter-spacing:-1.35px}
@@ -38,9 +38,8 @@ h1 em{display:block;color:var(--orange);font-style:italic;font-weight:400;letter
 .link-field input::placeholder{color:#898994;opacity:1}
 .micro{display:flex;justify-content:center;gap:6px;margin-top:9px;flex-wrap:wrap}
 .micro span{font-size:7px;color:#8b8b93;border:1px solid #252529;border-radius:999px;padding:4px 7px;background:rgba(0,0,0,.46);backdrop-filter:blur(8px)}
-.visual-space{height:308px;pointer-events:none}
-.scroll-cue{position:absolute;left:50%;bottom:16px;transform:translateX(-50%);font-size:7px;color:#6e6e76;letter-spacing:.12em;text-transform:uppercase;display:flex;align-items:center;gap:7px}
-.scroll-cue:after{content:"↓";font-size:11px;color:#aaa}
+.visual-space{display:none}
+.scroll-cue{display:none}
 .gallery{position:relative;background:#000;padding:6px 12px 92px}
 .gallery-head{padding:0 10px 16px}
 .gallery-kicker{margin:0 0 7px;color:var(--orange);font-size:8px;font-weight:850;letter-spacing:.16em;text-transform:uppercase}
@@ -118,10 +117,8 @@ h1 em{display:block;color:var(--orange);font-style:italic;font-weight:400;letter
           <span>0 tournage</span><span>0 montage</span><span>formats réseaux sociaux</span>
         </div>
       </div>
-      <div class="visual-space"></div>
-    </div>
-    <div class="scroll-cue">Voir les 1017 exemples</div>
-  </section>
+     </div>
+   </section>
 
   <section class="gallery" id="videos">
     <div class="video-grid" id="grid" aria-live="polite"></div>
