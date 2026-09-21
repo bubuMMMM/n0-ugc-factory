@@ -3,614 +3,404 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>clipfa.st / kebab</title>
+<meta name="theme-color" content="#000000">
+<title>clipfa.st / kebab — 1000 vidéos pour votre kebab</title>
+<meta name="description" content="Transformez votre kebab ou snack en 1000 vidéos prêtes à publier sur TikTok, Instagram, Facebook et YouTube.">
 <style>
-  :root {
-    --orange:#ff9827;
-    --muted:#aaaab3;
-    --line:#323238;
-  }
-
-  * { box-sizing:border-box; }
-
-  html, body {
-    margin:0;
-    background:#000;
-    color:#fff;
-  }
-
-  body {
-    font-family:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-    overflow-x:hidden;
-  }
-
-  .page {
-    width:100%;
-    max-width:430px;
-    margin:0 auto;
-    background:#000;
-    min-height:100vh;
-  }
-
-  .hero {
-    position:relative;
-    min-height:100svh;
-    overflow:visible;
-    isolation:isolate;
-  }
-
-  .hero-bg {
-    position:absolute;
-    inset:0 0 auto 0;
-    height:100svh;
-    min-height:720px;
-    z-index:-3;
-    overflow:hidden;
-    pointer-events:none;
-  }
-
-  .hero-bg::before {
-    content:"";
-    position:absolute;
-    left:-26%;
-    width:154%;
-    top:36%;
-    height:48%;
-    background:url("/kebab-bg.jpeg") 40% 50% / cover no-repeat;
-    filter:saturate(1.05) contrast(1.08);
-  }
-
-  .hero-bg::after {
-    content:"";
-    position:absolute;
-    inset:0;
-    background:linear-gradient(
-      to bottom,
-      #000 0%,
-      #000 30%,
-      rgba(0,0,0,.95) 36%,
-      rgba(0,0,0,.58) 46%,
-      rgba(0,0,0,.08) 59%,
-      rgba(0,0,0,.2) 74%,
-      #000 92%
-    );
-  }
-
-  .shell {
-    position:relative;
-    padding:9px 22px 0;
-  }
-
-  .topbar {
-    height:38px;
-    display:grid;
-    grid-template-columns:1fr auto auto;
-    align-items:center;
-    gap:14px;
-  }
-
-  .brand {
-    font-family:Georgia,"Times New Roman",serif;
-    font-size:23px;
-    line-height:1;
-    font-weight:700;
-    letter-spacing:-1.35px;
-  }
-
-  .brand span {
-    font-size:.7em;
-    font-weight:400;
-    letter-spacing:-.5px;
-  }
-
-  .start {
-    border:0;
-    background:#fff;
-    color:#0a0a0a;
-    height:31px;
-    min-width:108px;
-    border-radius:999px;
-    padding:0 14px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    gap:9px;
-    font-size:10.5px;
-    font-weight:800;
-    cursor:pointer;
-  }
-
-  .start b {
-    font-size:20px;
-    line-height:1;
-    font-weight:400;
-    margin-top:-2px;
-  }
-
-  .menu {
-    position:relative;
-    width:20px;
-    height:18px;
-    border:0;
-    background:transparent;
-    padding:0;
-    cursor:pointer;
-  }
-
-  .menu i,
-  .menu::before,
-  .menu::after {
-    content:"";
-    position:absolute;
-    left:0;
-    width:20px;
-    height:1.6px;
-    border-radius:20px;
-    background:#fff;
-  }
-
-  .menu::before { top:1px; }
-  .menu i { top:8px; }
-  .menu::after { top:15px; }
-
-  .copy {
-    text-align:center;
-    margin-top:10px;
-  }
-
-  .eyebrow {
-    margin:0 0 9px;
-    color:#9797a2;
-    font-size:7.4px;
-    letter-spacing:4.1px;
-    text-transform:uppercase;
-    font-weight:700;
-  }
-
-  h1 {
-    margin:0 auto;
-    max-width:360px;
-    font-family:Georgia,"Times New Roman",serif;
-    font-size:clamp(40px,10.8vw,46px);
-    line-height:.89;
-    font-weight:700;
-    letter-spacing:-2.7px;
-    text-wrap:balance;
-  }
-
-  h1 em {
-    display:block;
-    color:var(--orange);
-    font-style:italic;
-    font-weight:400;
-    letter-spacing:-2.2px;
-    margin-top:1px;
-  }
-
-  .sub {
-    max-width:320px;
-    margin:11px auto 0;
-    color:#b7b7bf;
-    font-size:11px;
-    line-height:1.45;
-  }
-
-  .primary-cta {
-    width:100%;
-    height:48px;
-    border:0;
-    border-radius:17px;
-    margin-top:12px;
-    background:var(--orange);
-    color:#050505;
-    font-size:12.2px;
-    font-weight:850;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    gap:12px;
-    box-shadow:0 10px 28px rgba(0,0,0,.24);
-    cursor:pointer;
-  }
-
-  .primary-cta b {
-    font-size:20px;
-    line-height:1;
-    font-weight:400;
-  }
-
-  .link-field {
-    margin-top:8px;
-    height:43px;
-    border:1px solid #3a3a40;
-    border-radius:15px;
-    background:rgba(7,7,8,.76);
-    backdrop-filter:blur(8px);
-    display:flex;
-    align-items:center;
-    gap:12px;
-    padding:0 14px;
-  }
-
-  .link-field svg {
-    width:19px;
-    height:19px;
-    flex:none;
-  }
-
-  .link-field input {
-    width:100%;
-    min-width:0;
-    border:0;
-    outline:0;
-    color:#fff;
-    background:transparent;
-    font-size:10.6px;
-  }
-
-  .link-field input::placeholder {
-    color:#898994;
-    opacity:1;
-  }
-
-  .visual-space {
-    height:300px;
-    pointer-events:none;
-  }
-
-  .examples {
-    position:relative;
-    padding:0 0 26px;
-    background:#000;
-    overflow:visible;
-  }
-
-  .examples-head {
-    padding:0 22px 10px;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-  }
-
-  .examples-title {
-    margin:0;
-    font-size:9px;
-    font-weight:700;
-    color:#d8d8de;
-    letter-spacing:.3px;
-  }
-
-  .examples-hint {
-    font-size:8px;
-    color:#6f6f79;
-  }
-
-  .phones-viewport {
-    width:100%;
-    overflow-x:hidden;
-    overflow-y:visible;
-    padding:2px 0 18px;
-  }
-
-  .marquee {
-    display:flex;
-    width:max-content;
-    gap:12px;
-    padding:0 10px;
-    animation:move 28s linear infinite;
-    will-change:transform;
-  }
-
-  @keyframes move {
-    from { transform:translateX(0); }
-    to { transform:translateX(-50%); }
-  }
-
-  .phone {
-    width:108px;
-    height:220px;
-    flex:0 0 108px;
-    background:#080808;
-    border:1px solid #38383d;
-    border-radius:25px;
-    padding:4px;
-    position:relative;
-    box-shadow:
-      inset 0 0 0 1px rgba(255,255,255,.05),
-      0 14px 32px rgba(0,0,0,.54);
-  }
-
-  .phone::before {
-    content:"";
-    position:absolute;
-    z-index:4;
-    top:8px;
-    left:50%;
-    transform:translateX(-50%);
-    width:31px;
-    height:8px;
-    border-radius:999px;
-    background:#060606;
-  }
-
-  .screen {
-    position:relative;
-    width:100%;
-    height:100%;
-    overflow:hidden;
-    border-radius:21px;
-    background:#141414;
-  }
-
-  .pic {
-    position:absolute;
-    inset:0;
-    background-image:url("/kebab-bg.jpeg");
-    background-repeat:no-repeat;
-    filter:saturate(1.08) contrast(1.05);
-  }
-
-  .p1 .pic { background-position:17% 49%; background-size:340px 192px; }
-  .p2 .pic { background-position:51% 47%; background-size:325px 183px; }
-  .p3 .pic { background-position:92% 48%; background-size:348px 195px; }
-  .p4 .pic { background-position:30% 55%; background-size:370px 208px; }
-  .p5 .pic { background-position:76% 44%; background-size:312px 175px; }
-
-  .screen::after {
-    content:"";
-    position:absolute;
-    inset:0;
-    background:linear-gradient(to top,rgba(0,0,0,.78),transparent 58%);
-  }
-
-  .hook {
-    position:absolute;
-    z-index:2;
-    top:42px;
-    left:8px;
-    right:8px;
-    text-align:center;
-    font-size:8px;
-    line-height:1.05;
-    font-weight:900;
-    text-shadow:0 2px 8px #000;
-  }
-
-  .hook strong {
-    display:block;
-    color:#fff;
-    font-size:10px;
-  }
-
-  .hook .orange { color:var(--orange); }
-
-  .meta {
-    position:absolute;
-    z-index:2;
-    left:8px;
-    right:8px;
-    bottom:9px;
-    font-size:5.7px;
-    line-height:1.25;
-    color:#fff;
-    opacity:.96;
-  }
-
-  .meta b {
-    display:block;
-    font-size:6.5px;
-    margin-bottom:2px;
-  }
-
-  @media (prefers-reduced-motion:reduce) {
-    .marquee { animation:none; }
-  }
+:root{--orange:#ff9827;--bg:#000;--panel:#0b0b0d;--muted:#9b9ba4;--line:#25252a;--white:#fff}
+*{box-sizing:border-box}
+html{background:#000;color:#fff;scroll-behavior:smooth}
+body{margin:0;background:#000;color:#fff;font-family:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;overflow-x:hidden}
+button,input{font:inherit}
+button{cursor:pointer}
+.page{width:100%;max-width:430px;margin:0 auto;background:#000;min-height:100vh;position:relative}
+.hero{position:relative;min-height:100svh;isolation:isolate;overflow:hidden;border-bottom:1px solid #171719}
+.hero-photo{position:absolute;z-index:-4;top:315px;left:50%;transform:translateX(-50%);width:142%;aspect-ratio:8/9;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;overflow:hidden;pointer-events:none;filter:saturate(1.06) contrast(1.08)}
+.hero-photo img{display:block;width:100%;height:100%;object-fit:fill}
+.hero-shade{position:absolute;z-index:-3;inset:0;pointer-events:none;background:linear-gradient(to bottom,#000 0%,#000 29%,rgba(0,0,0,.93) 37%,rgba(0,0,0,.44) 49%,rgba(0,0,0,.04) 61%,rgba(0,0,0,.22) 77%,#000 94%,#000 100%)}
+.hero-glow{position:absolute;z-index:-2;width:280px;height:280px;left:50%;top:260px;transform:translateX(-50%);border-radius:50%;background:radial-gradient(circle,rgba(255,152,39,.16),transparent 70%);filter:blur(28px);pointer-events:none}
+.shell{padding:calc(9px + env(safe-area-inset-top)) 22px 0;position:relative}
+.topbar{height:38px;display:grid;grid-template-columns:1fr auto auto;align-items:center;gap:14px}
+.brand{font-family:Georgia,"Times New Roman",serif;font-size:23px;line-height:1;font-weight:700;letter-spacing:-1.35px}
+.brand span{font-size:.7em;font-weight:400;letter-spacing:-.5px}
+.start{border:0;background:#fff;color:#080808;height:31px;min-width:108px;border-radius:999px;padding:0 14px;display:flex;align-items:center;justify-content:center;gap:9px;font-size:10.5px;font-weight:800}
+.start b{font-size:20px;line-height:1;font-weight:400;margin-top:-2px}
+.menu{position:relative;width:20px;height:18px;border:0;background:transparent;padding:0}
+.menu i,.menu:before,.menu:after{content:"";position:absolute;left:0;width:20px;height:1.6px;border-radius:20px;background:#fff}
+.menu:before{top:1px}.menu i{top:8px}.menu:after{top:15px}
+.copy{text-align:center;margin-top:10px}
+.eyebrow{margin:0 0 9px;color:#9797a2;font-size:7.4px;letter-spacing:3.7px;text-transform:uppercase;font-weight:800}
+h1{margin:0 auto;max-width:365px;font-family:Georgia,"Times New Roman",serif;font-size:clamp(40px,10.8vw,46px);line-height:.89;font-weight:700;letter-spacing:-2.7px;text-wrap:balance}
+h1 em{display:block;color:var(--orange);font-style:italic;font-weight:400;letter-spacing:-2.2px;margin-top:2px}
+.sub{max-width:330px;margin:12px auto 0;color:#b6b6bd;font-size:11px;line-height:1.48}
+.primary-cta{width:100%;height:48px;border:0;border-radius:17px;margin-top:13px;background:var(--orange);color:#050505;font-size:12.2px;font-weight:850;display:flex;align-items:center;justify-content:center;gap:12px;box-shadow:0 12px 34px rgba(0,0,0,.34)}
+.primary-cta b{font-size:20px;line-height:1;font-weight:400}
+.link-field{margin-top:8px;height:43px;border:1px solid #38383e;border-radius:15px;background:rgba(7,7,8,.78);backdrop-filter:blur(12px);display:flex;align-items:center;gap:12px;padding:0 14px;box-shadow:inset 0 1px 0 rgba(255,255,255,.025)}
+.link-field:focus-within{border-color:rgba(255,152,39,.7);box-shadow:0 0 0 3px rgba(255,152,39,.08)}
+.link-field svg{width:19px;height:19px;flex:none}
+.link-field input{width:100%;min-width:0;border:0;outline:0;color:#fff;background:transparent;font-size:10.6px}
+.link-field input::placeholder{color:#898994;opacity:1}
+.micro{display:flex;justify-content:center;gap:6px;margin-top:9px;flex-wrap:wrap}
+.micro span{font-size:7px;color:#8b8b93;border:1px solid #252529;border-radius:999px;padding:4px 7px;background:rgba(0,0,0,.46);backdrop-filter:blur(8px)}
+.visual-space{height:308px;pointer-events:none}
+.scroll-cue{position:absolute;left:50%;bottom:16px;transform:translateX(-50%);font-size:7px;color:#6e6e76;letter-spacing:.12em;text-transform:uppercase;display:flex;align-items:center;gap:7px}
+.scroll-cue:after{content:"↓";font-size:11px;color:#aaa}
+.gallery{position:relative;background:#000;padding:22px 12px 92px}
+.gallery-head{padding:0 10px 16px}
+.gallery-kicker{margin:0 0 7px;color:var(--orange);font-size:8px;font-weight:850;letter-spacing:.16em;text-transform:uppercase}
+.gallery-title{font-family:Georgia,"Times New Roman",serif;font-size:29px;line-height:.95;letter-spacing:-1.5px;margin:0;max-width:380px;font-weight:700}
+.gallery-title em{color:var(--orange);font-style:italic;font-weight:400}
+.gallery-copy{margin:10px 0 0;color:#878790;font-size:10px;line-height:1.45;max-width:365px}
+.gallery-toolbar{display:flex;align-items:center;gap:8px;margin-top:13px}
+.search{height:38px;flex:1;min-width:0;border:1px solid #2a2a2f;background:#0b0b0d;color:#fff;border-radius:12px;padding:0 11px;font-size:10px;outline:0}
+.search:focus{border-color:#515159}
+.count{font-size:8px;color:#777780;white-space:nowrap;font-variant-numeric:tabular-nums}
+.video-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.card{position:relative;aspect-ratio:9/16;overflow:hidden;border-radius:13px;border:1px solid #242429;background:linear-gradient(150deg,#17171a,#080809);padding:0;min-width:0;box-shadow:0 8px 26px rgba(0,0,0,.28);content-visibility:auto;contain-intrinsic-size:125px 222px}
+.card video{width:100%;height:100%;object-fit:cover;display:block;background:#111;opacity:0;transition:opacity .2s ease}
+.card.ready video{opacity:1}
+.card:after{content:"";position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.82) 0%,rgba(0,0,0,.12) 45%,rgba(0,0,0,.18) 100%);pointer-events:none}
+.card-index{position:absolute;z-index:3;top:7px;left:7px;font-size:6.5px;font-weight:800;color:#e5e5e8;background:rgba(0,0,0,.62);border:1px solid rgba(255,255,255,.09);padding:3px 5px;border-radius:999px;backdrop-filter:blur(5px)}
+.card-play{position:absolute;z-index:3;top:7px;right:7px;width:20px;height:20px;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.9);color:#000;font-size:7px}
+.card-hook{position:absolute;z-index:3;left:7px;right:7px;color:#fff;font-size:8.3px;line-height:1.05;font-weight:900;letter-spacing:-.22px;text-align:center;text-shadow:0 2px 7px #000,0 1px 2px #000;overflow:hidden;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:5}
+.card-hook.top{top:36px}.card-hook.upper{top:49px}.card-hook.lower{bottom:27px}.card-hook.bottom{bottom:15px}
+.card-hook.paper{background:rgba(255,255,255,.92);color:#060606;text-shadow:none;padding:4px 5px;border-radius:5px;left:9px;right:9px}
+.card-brand{position:absolute;z-index:3;left:7px;bottom:7px;font-size:6px;color:#f4f4f5;font-weight:750;text-shadow:0 1px 4px #000}
+.skeleton{position:absolute;inset:0;background:linear-gradient(110deg,#0d0d0f 8%,#1a1a1e 18%,#0d0d0f 33%);background-size:200% 100%;animation:shimmer 1.25s linear infinite}
+@keyframes shimmer{to{background-position-x:-200%}}
+.card.ready .skeleton{display:none}
+.sentinel{height:3px}
+.load-state{text-align:center;font-size:8px;color:#5e5e66;padding:14px 0 2px}
+.sticky-cta{position:fixed;z-index:35;left:50%;bottom:calc(12px + env(safe-area-inset-bottom));transform:translateX(-50%);width:min(calc(100% - 28px),402px);height:48px;border:1px solid rgba(255,255,255,.09);border-radius:16px;background:rgba(255,152,39,.95);color:#050505;font-size:11.5px;font-weight:900;box-shadow:0 12px 34px rgba(0,0,0,.55);backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:center;gap:10px;transition:opacity .2s,transform .2s}
+.sticky-cta.hidden{opacity:0;pointer-events:none;transform:translateX(-50%) translateY(12px)}
+.modal{position:fixed;z-index:100;inset:0;background:#000;display:none;align-items:center;justify-content:center;touch-action:none}
+.modal.open{display:flex}
+.modal-player{position:relative;width:min(100vw,430px);height:100dvh;background:#050505;overflow:hidden}
+.modal-player video{width:100%;height:100%;object-fit:contain;background:#000}
+.modal-shade{position:absolute;inset:0;pointer-events:none;background:linear-gradient(to top,rgba(0,0,0,.78),transparent 38%,rgba(0,0,0,.22) 100%)}
+.modal-close{position:absolute;z-index:4;top:calc(12px + env(safe-area-inset-top));right:12px;width:36px;height:36px;border:1px solid rgba(255,255,255,.15);border-radius:50%;background:rgba(0,0,0,.56);color:#fff;font-size:19px;backdrop-filter:blur(8px)}
+.modal-count{position:absolute;z-index:4;top:calc(20px + env(safe-area-inset-top));left:14px;color:#ddd;font-size:9px;font-weight:700}
+.modal-hook{position:absolute;z-index:4;left:18px;right:18px;top:14%;font-size:24px;line-height:.98;text-align:center;font-weight:950;letter-spacing:-1px;text-shadow:0 3px 16px #000,0 1px 3px #000}
+.modal-hook.paper{background:#fff;color:#050505;text-shadow:none;padding:9px 11px;border-radius:10px;top:15%;left:24px;right:24px}
+.modal-hook.lower{top:auto;bottom:18%}.modal-hook.bottom{top:auto;bottom:11%}.modal-hook.upper{top:21%}
+.modal-meta{position:absolute;z-index:4;left:16px;bottom:calc(18px + env(safe-area-inset-bottom));right:76px;font-size:10px;color:#fff}
+.modal-meta b{display:block;font-size:12px;margin-bottom:4px}
+.modal-nav{position:absolute;z-index:5;right:12px;bottom:calc(18px + env(safe-area-inset-bottom));display:grid;gap:7px}
+.modal-nav button{width:42px;height:42px;border-radius:50%;border:1px solid rgba(255,255,255,.15);background:rgba(0,0,0,.56);color:#fff;font-size:17px;backdrop-filter:blur(8px)}
+.no-results{display:none;text-align:center;padding:52px 16px;color:#777;font-size:11px}
+.no-results.show{display:block}
+@media(max-width:350px){.shell{padding-left:16px;padding-right:16px}.video-grid{gap:4px}.gallery{padding-left:8px;padding-right:8px}.card-hook{font-size:7.6px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.skeleton{animation:none}}
 </style>
 </head>
 <body>
 <main class="page">
-  <section class="hero">
-    <div class="hero-bg"></div>
+  <section class="hero" id="top">
+    <div class="hero-photo" aria-hidden="true">
+      <img src="/kebab-bg-2.webp" alt="">
+      <img src="/kebab-bg-3.webp" alt="">
+      <img src="/kebab-bg-6.webp" alt="">
+      <img src="/kebab-bg-7.webp" alt="">
+    </div>
+    <div class="hero-shade"></div>
+    <div class="hero-glow"></div>
     <div class="shell">
       <header class="topbar">
         <div class="brand">clipfa<span>.st</span></div>
-        <button class="start">Commencer <b>→</b></button>
-        <button class="menu" aria-label="Menu"><i></i></button>
+        <button class="start" data-focus-url>Commencer <b>→</b></button>
+        <button class="menu" aria-label="Voir les vidéos" data-gallery><i></i></button>
       </header>
 
       <div class="copy">
-        <p class="eyebrow">POUR LES KEBABS UNIQUEMENT</p>
-        <h1>
-          1000 vidéos
-          <br>
-          pour votre kebab
-          <br>
-          en moins de
-          <em>5 minutes.</em>
-        </h1>
+        <p class="eyebrow">POUR LES KEBABS &amp; SNACKS</p>
+        <h1>1000 vidéos<br>pour votre kebab<br>en moins de<em>5 minutes.</em></h1>
+        <p class="sub">Aucun tournage. Aucun montage.<br>Des vidéos prêtes à publier sur TikTok, Instagram,<br>Facebook et YouTube.</p>
 
-        <p class="sub">
-          Aucun tournage. Aucun montage.
-          <br>
-          Des vidéos prêtes à publier sur TikTok, Instagram,
-          <br>
-          Facebook et YouTube.
-        </p>
+        <button class="primary-cta" data-focus-url>Créer mes 1000 vidéos <b>→</b></button>
 
-        <button class="primary-cta">
-          Créer mes 1000 vidéos
-          <b>→</b>
-        </button>
-
-        <label class="link-field">
-          <svg viewBox="0 0 24 24" fill="none" stroke="#a6a7b2" stroke-width="2" stroke-linecap="round">
+        <label class="link-field" id="urlField">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#a6a7b2" stroke-width="2" stroke-linecap="round" aria-hidden="true">
             <path d="M10 13a5 5 0 0 0 7.54.54l2-2a5 5 0 0 0-7.07-7.07l-1.15 1.15"/>
             <path d="M14 11a5 5 0 0 0-7.54-.54l-2 2a5 5 0 0 0 7.07 7.07l1.15-1.15"/>
           </svg>
-          <input type="url" placeholder="lien de votre kebab (site, Instagram, etc.)">
+          <input id="kebabUrl" type="url" inputmode="url" autocomplete="url" placeholder="lien de votre kebab (site, Instagram, etc.)">
         </label>
-      </div>
 
+        <div class="micro">
+          <span>0 tournage</span><span>0 montage</span><span>formats réseaux sociaux</span>
+        </div>
+      </div>
       <div class="visual-space"></div>
     </div>
+    <div class="scroll-cue">Voir les 1017 exemples</div>
   </section>
 
-  <section class="examples">
-    <div class="examples-head">
-      <p class="examples-title">Exemples de vidéos générées</p>
-      <span class="examples-hint">défilement automatique</span>
-    </div>
-
-    <div class="phones-viewport">
-      <div class="marquee">
-        <article class="phone p1">
-          <div class="screen">
-            <div class="pic"></div>
-            <div class="hook">
-              <strong>POV :</strong>
-              tu viens de trouver
-              <span class="orange">ton nouveau kebab</span>
-            </div>
-            <div class="meta">
-              <b>@votre.kebab</b>
-              Une vidéo prête à poster. #kebab #foodtok
-            </div>
-          </div>
-        </article>
-
-        <article class="phone p2">
-          <div class="screen">
-            <div class="pic"></div>
-            <div class="hook">
-              Le kebab que
-              <strong>tout le quartier</strong>
-              devrait connaître
-            </div>
-            <div class="meta">
-              <b>@votre.kebab</b>
-              Une vidéo prête à poster. #kebab #foodtok
-            </div>
-          </div>
-        </article>
-
-        <article class="phone p3">
-          <div class="screen">
-            <div class="pic"></div>
-            <div class="hook">
-              Quand tu veux
-              <strong>un vrai kebab</strong>
-              et pas juste un sandwich
-            </div>
-            <div class="meta">
-              <b>@votre.kebab</b>
-              Une vidéo prête à poster. #kebab #foodtok
-            </div>
-          </div>
-        </article>
-
-        <article class="phone p4">
-          <div class="screen">
-            <div class="pic"></div>
-            <div class="hook">
-              On m’a dit “teste-le”…
-              <strong class="orange">j’ai compris pourquoi</strong>
-            </div>
-            <div class="meta">
-              <b>@votre.kebab</b>
-              Une vidéo prête à poster. #kebab #foodtok
-            </div>
-          </div>
-        </article>
-
-        <article class="phone p5">
-          <div class="screen">
-            <div class="pic"></div>
-            <div class="hook">
-              Ce kebab mérite
-              <strong>beaucoup plus de vues</strong>
-            </div>
-            <div class="meta">
-              <b>@votre.kebab</b>
-              Une vidéo prête à poster. #kebab #foodtok
-            </div>
-          </div>
-        </article>
-
-        <article class="phone p1">
-          <div class="screen">
-            <div class="pic"></div>
-            <div class="hook">
-              <strong>POV :</strong>
-              tu viens de trouver
-              <span class="orange">ton nouveau kebab</span>
-            </div>
-            <div class="meta">
-              <b>@votre.kebab</b>
-              Une vidéo prête à poster. #kebab #foodtok
-            </div>
-          </div>
-        </article>
-
-        <article class="phone p2">
-          <div class="screen">
-            <div class="pic"></div>
-            <div class="hook">
-              Le kebab que
-              <strong>tout le quartier</strong>
-              devrait connaître
-            </div>
-            <div class="meta">
-              <b>@votre.kebab</b>
-              Une vidéo prête à poster. #kebab #foodtok
-            </div>
-          </div>
-        </article>
-
-        <article class="phone p3">
-          <div class="screen">
-            <div class="pic"></div>
-            <div class="hook">
-              Quand tu veux
-              <strong>un vrai kebab</strong>
-              et pas juste un sandwich
-            </div>
-            <div class="meta">
-              <b>@votre.kebab</b>
-              Une vidéo prête à poster. #kebab #foodtok
-            </div>
-          </div>
-        </article>
-
-        <article class="phone p4">
-          <div class="screen">
-            <div class="pic"></div>
-            <div class="hook">
-              On m’a dit “teste-le”…
-              <strong class="orange">j’ai compris pourquoi</strong>
-            </div>
-            <div class="meta">
-              <b>@votre.kebab</b>
-              Une vidéo prête à poster. #kebab #foodtok
-            </div>
-          </div>
-        </article>
-
-        <article class="phone p5">
-          <div class="screen">
-            <div class="pic"></div>
-            <div class="hook">
-              Ce kebab mérite
-              <strong>beaucoup plus de vues</strong>
-            </div>
-            <div class="meta">
-              <b>@votre.kebab</b>
-              Une vidéo prête à poster. #kebab #foodtok
-            </div>
-          </div>
-        </article>
+  <section class="gallery" id="videos">
+    <div class="gallery-head">
+      <p class="gallery-kicker">LA BIBLIOTHÈQUE COMPLÈTE</p>
+      <h2 class="gallery-title"><span id="videoTotal">1 017</span> vidéos.<br><em>Un hook pour chacune.</em></h2>
+      <p class="gallery-copy">Parcours la même bibliothèque de 1 017 vidéos que sur la page principale, ici présentée avec des accroches pensées pour un kebab ou un snack.</p>
+      <div class="gallery-toolbar">
+        <input class="search" id="search" type="search" placeholder="Rechercher un hook…">
+        <span class="count" id="counter">0 / 1 017</span>
       </div>
     </div>
+
+    <div class="video-grid" id="grid" aria-live="polite"></div>
+    <div class="sentinel" id="sentinel"></div>
+    <div class="load-state" id="loadState">Chargement des vidéos…</div>
+    <div class="no-results" id="noResults">Aucune vidéo ne correspond à cette recherche.</div>
   </section>
 </main>
+
+<button class="sticky-cta hidden" id="stickyCta" data-focus-url>Créer mes 1000 vidéos <span>→</span></button>
+
+<div class="modal" id="modal" aria-hidden="true">
+  <div class="modal-player" id="modalPlayer">
+    <video id="modalVideo" playsinline muted loop preload="metadata"></video>
+    <div class="modal-shade"></div>
+    <button class="modal-close" id="modalClose" aria-label="Fermer">×</button>
+    <div class="modal-count" id="modalCount"></div>
+    <div class="modal-hook" id="modalHook"></div>
+    <div class="modal-meta"><b>@votre.kebab</b><span>Vidéo prête à personnaliser et publier.</span></div>
+    <div class="modal-nav">
+      <button id="prev" aria-label="Vidéo précédente">↑</button>
+      <button id="next" aria-label="Vidéo suivante">↓</button>
+    </div>
+  </div>
+</div>
+
+<script src="/assets/demo-hooks.js"></script>
+<script>
+(function(){
+  var grid=document.getElementById('grid');
+  var sentinel=document.getElementById('sentinel');
+  var counter=document.getElementById('counter');
+  var totalEl=document.getElementById('videoTotal');
+  var loadState=document.getElementById('loadState');
+  var noResults=document.getElementById('noResults');
+  var search=document.getElementById('search');
+  var sticky=document.getElementById('stickyCta');
+  var hero=document.querySelector('.hero');
+  var urlInput=document.getElementById('kebabUrl');
+  var modal=document.getElementById('modal');
+  var modalVideo=document.getElementById('modalVideo');
+  var modalHook=document.getElementById('modalHook');
+  var modalCount=document.getElementById('modalCount');
+  var activeIndex=-1;
+  var videos=[];
+  var filtered=[];
+  var rendered=0;
+  var batch=42;
+  var wheelLock=false;
+  var touchStartY=0;
+  var hooksMeta=Array.isArray(window.VIDEOMA_DEMO_HOOKS)?window.VIDEOMA_DEMO_HOOKS:[];
+
+  var openers=[
+    'POV : tu viens de trouver',
+    'Quand tu découvres',
+    'Le kebab que',
+    'On m’a dit “teste-le”…',
+    'Personne ne parle assez de',
+    'Tu pensais commander normal… puis tu trouves',
+    'Ce kebab mérite',
+    'Le spot du quartier que',
+    'Si tu aimes les vrais kebabs, regarde',
+    'Je pensais connaître les bons kebabs… jusqu’à',
+    'Le genre d’adresse que tu gardes pour toi :'
+  ];
+  var middles=[
+    'ton nouveau kebab préféré',
+    'celui que tout le quartier devrait connaître',
+    'celui qui met tout le monde d’accord',
+    'un snack qui fait oublier les chaînes',
+    'une viande grillée qui change tout',
+    'un kebab qui mérite beaucoup plus de vues',
+    'l’adresse où tu reviens dès le lendemain',
+    'le kebab qui transforme une pause dej',
+    'le spot que tes potes vont te réclamer',
+    'un kebab qui ne ressemble pas aux autres'
+  ];
+  var endings=[
+    'Sauvegarde l’adresse.',
+    'Envoie ça à ton pote.',
+    'Tu testes quand ?',
+    'Ne dis pas qu’on ne t’avait pas prévenu.',
+    'Oui, ça existe vraiment.',
+    'Le quartier était déjà au courant.',
+    'À tester au moins une fois.',
+    'Tu connais mieux ?',
+    'On en reparle après la première bouchée.',
+    'La prochaine commande est déjà décidée.'
+  ];
+
+  function hookFor(i){
+    var a=i%openers.length;
+    var b=Math.floor(i/openers.length)%middles.length;
+    var c=Math.floor(i/(openers.length*middles.length))%endings.length;
+    return openers[a]+' '+middles[b]+'. '+endings[c];
+  }
+
+  function metaFor(i){
+    var m=hooksMeta[i]||{};
+    var placement=['top','upper','lower','bottom'].indexOf(m.placement)>=0?m.placement:(i%4===0?'top':'lower');
+    var design=m.design==='paper'?'paper':'outline';
+    return {placement:placement,design:design};
+  }
+
+  function focusUrl(){
+    document.getElementById('urlField').scrollIntoView({behavior:'smooth',block:'center'});
+    setTimeout(function(){urlInput.focus({preventScroll:true});},420);
+  }
+  document.querySelectorAll('[data-focus-url]').forEach(function(b){b.addEventListener('click',focusUrl);});
+  document.querySelector('[data-gallery]').addEventListener('click',function(){document.getElementById('videos').scrollIntoView({behavior:'smooth'});});
+
+  var heroObserver=new IntersectionObserver(function(entries){
+    sticky.classList.toggle('hidden',entries[0].isIntersecting);
+  },{threshold:.15});
+  heroObserver.observe(hero);
+
+  var videoObserver=new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){
+      var v=entry.target;
+      var card=v.closest('.card');
+      if(entry.isIntersecting){
+        if(!v.src){
+          v.src=v.dataset.src;
+          v.load();
+        }
+        var p=v.play();
+        if(p&&p.catch)p.catch(function(){});
+      }else{
+        v.pause();
+      }
+      if(v.readyState>=2)card.classList.add('ready');
+    });
+  },{rootMargin:'260px 0px',threshold:.15});
+
+  function cardFor(realIndex){
+    var card=document.createElement('button');
+    card.className='card';
+    card.type='button';
+    card.setAttribute('aria-label','Ouvrir la vidéo '+(realIndex+1));
+    var m=metaFor(realIndex);
+    var v=document.createElement('video');
+    v.muted=true;v.loop=true;v.playsInline=true;v.preload='none';v.dataset.src=videos[realIndex];
+    v.addEventListener('loadeddata',function(){card.classList.add('ready');});
+    var sk=document.createElement('span');sk.className='skeleton';
+    var n=document.createElement('span');n.className='card-index';n.textContent='#'+String(realIndex+1).padStart(4,'0');
+    var play=document.createElement('span');play.className='card-play';play.textContent='▶';
+    var h=document.createElement('span');h.className='card-hook '+m.placement+' '+m.design;h.textContent=hookFor(realIndex);
+    var brand=document.createElement('span');brand.className='card-brand';brand.textContent='@votre.kebab';
+    card.appendChild(v);card.appendChild(sk);card.appendChild(n);card.appendChild(play);card.appendChild(h);card.appendChild(brand);
+    card.addEventListener('click',function(){openVideo(realIndex);});
+    videoObserver.observe(v);
+    return card;
+  }
+
+  function updateCounter(){
+    counter.textContent=Math.min(rendered,filtered.length).toLocaleString('fr-FR')+' / '+filtered.length.toLocaleString('fr-FR');
+  }
+
+  function renderMore(){
+    if(rendered>=filtered.length){
+      loadState.textContent=filtered.length?'Toutes les '+filtered.length.toLocaleString('fr-FR')+' vidéos sont chargées.':'';
+      updateCounter();
+      return;
+    }
+    var frag=document.createDocumentFragment();
+    var end=Math.min(rendered+batch,filtered.length);
+    for(var i=rendered;i<end;i++)frag.appendChild(cardFor(filtered[i]));
+    grid.appendChild(frag);
+    rendered=end;
+    updateCounter();
+    loadState.textContent=rendered<filtered.length?'Chargement progressif — '+rendered.toLocaleString('fr-FR')+' / '+filtered.length.toLocaleString('fr-FR'):'Toutes les '+filtered.length.toLocaleString('fr-FR')+' vidéos sont chargées.';
+  }
+
+  function resetFilter(q){
+    grid.querySelectorAll('video').forEach(function(v){videoObserver.unobserve(v);v.pause();});
+    grid.innerHTML='';
+    rendered=0;
+    q=(q||'').trim().toLowerCase();
+    filtered=[];
+    for(var i=0;i<videos.length;i++){
+      if(!q||hookFor(i).toLowerCase().indexOf(q)>=0)filtered.push(i);
+    }
+    noResults.classList.toggle('show',filtered.length===0);
+    loadState.style.display=filtered.length?'block':'none';
+    renderMore();
+  }
+
+  var sentinelObserver=new IntersectionObserver(function(entries){
+    if(entries[0].isIntersecting)renderMore();
+  },{rootMargin:'900px 0px'});
+  sentinelObserver.observe(sentinel);
+
+  search.addEventListener('input',function(){resetFilter(search.value);});
+
+  function openVideo(index){
+    if(index<0||index>=videos.length)return;
+    activeIndex=index;
+    var m=metaFor(index);
+    modalVideo.pause();
+    modalVideo.src=videos[index];
+    modalVideo.load();
+    modalHook.className='modal-hook '+m.placement+' '+m.design;
+    modalHook.textContent=hookFor(index);
+    modalCount.textContent=(index+1).toLocaleString('fr-FR')+' / '+videos.length.toLocaleString('fr-FR');
+    modal.classList.add('open');
+    modal.setAttribute('aria-hidden','false');
+    document.body.style.overflow='hidden';
+    var p=modalVideo.play();if(p&&p.catch)p.catch(function(){});
+  }
+  function closeModal(){
+    modal.classList.remove('open');
+    modal.setAttribute('aria-hidden','true');
+    document.body.style.overflow='';
+    modalVideo.pause();
+    modalVideo.removeAttribute('src');
+    modalVideo.load();
+  }
+  function step(dir){
+    if(!videos.length)return;
+    var n=(activeIndex+dir+videos.length)%videos.length;
+    openVideo(n);
+  }
+  document.getElementById('modalClose').addEventListener('click',closeModal);
+  document.getElementById('prev').addEventListener('click',function(){step(-1);});
+  document.getElementById('next').addEventListener('click',function(){step(1);});
+  document.addEventListener('keydown',function(e){
+    if(!modal.classList.contains('open'))return;
+    if(e.key==='Escape')closeModal();
+    if(e.key==='ArrowDown'||e.key==='ArrowRight')step(1);
+    if(e.key==='ArrowUp'||e.key==='ArrowLeft')step(-1);
+  });
+  modal.addEventListener('wheel',function(e){
+    if(wheelLock)return;
+    if(Math.abs(e.deltaY)<18)return;
+    wheelLock=true;step(e.deltaY>0?1:-1);
+    setTimeout(function(){wheelLock=false;},520);
+  },{passive:true});
+  modal.addEventListener('touchstart',function(e){touchStartY=e.changedTouches[0].clientY;},{passive:true});
+  modal.addEventListener('touchend',function(e){
+    var dy=e.changedTouches[0].clientY-touchStartY;
+    if(Math.abs(dy)>50)step(dy<0?1:-1);
+  },{passive:true});
+
+  fetch('/videos.txt',{cache:'force-cache'})
+    .then(function(r){if(!r.ok)throw new Error('VIDEOS_HTTP_'+r.status);return r.text();})
+    .then(function(text){
+      videos=text.split(/\r?\n/).map(function(x){return x.trim();}).filter(Boolean);
+      totalEl.textContent=videos.length.toLocaleString('fr-FR');
+      filtered=videos.map(function(_,i){return i;});
+      renderMore();
+      loadState.textContent='Chargement progressif — '+rendered.toLocaleString('fr-FR')+' / '+videos.length.toLocaleString('fr-FR');
+    })
+    .catch(function(err){
+      console.error(err);
+      loadState.textContent='Impossible de charger la bibliothèque vidéo.';
+    });
+})();
+</script>
 </body>
 </html>
