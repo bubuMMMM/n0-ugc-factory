@@ -192,7 +192,8 @@
   new MutationObserver(syncPlayback).observe(document.getElementById('onboarding'),{attributes:true,attributeFilter:['class']});
   const sticky=document.getElementById('stickyCta');
   new IntersectionObserver(entries=>sticky.classList.toggle('hidden',entries[0].isIntersecting),{threshold:.15}).observe(document.querySelector('.hero'));
-  document.querySelector('[data-gallery]').addEventListener('click',()=>document.getElementById('videos').scrollIntoView({behavior:'smooth'}));
+  const galleryTrigger=document.querySelector('[data-gallery]');
+  if(galleryTrigger)galleryTrigger.addEventListener('click',()=>document.getElementById('videos').scrollIntoView({behavior:'smooth'}));
   // Uploaded clips remain usable even when the remote library cannot load.
   appendFrom(0);
   loadState.textContent='3 vidéos kebab disponibles. Chargement des autres aperçus…';
