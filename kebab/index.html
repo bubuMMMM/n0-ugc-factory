@@ -40,9 +40,14 @@ radial-gradient(35% 18% at 50% 100%,rgba(255,152,39,.06),transparent 80%),#000;p
 .menu-brand span{font-size:.7em;font-weight:400}
 .menu-close{width:38px;height:38px;border:1px solid rgba(255,255,255,.12);border-radius:50%;background:#0b0b0d;color:#fff;font-size:22px;line-height:1}
 .menu-kicker{margin:42px 0 14px;color:#707078;font-size:8px;letter-spacing:.22em;font-weight:850;text-transform:uppercase}
-.menu-nav{display:grid;border-top:1px solid #202024;max-height:52dvh;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:none}
+.menu-nav{display:block;border-top:1px solid #202024;max-height:54dvh;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:none;padding-bottom:8px}
 .menu-nav::-webkit-scrollbar{display:none}
-.menu-link{width:100%;min-height:69px;border:0;border-bottom:1px solid #202024;background:transparent;color:#fff;padding:0;display:flex;align-items:center;justify-content:space-between;text-decoration:none;text-align:left;font-family:Georgia,"Times New Roman",serif;font-size:28px;letter-spacing:-1px}
+.menu-category{padding-top:17px}
+.menu-category:first-child{padding-top:11px}
+.menu-category-title{display:flex;align-items:center;gap:8px;margin:0 0 6px;padding:0 2px;color:#6f6f78;font-size:7.5px;font-weight:900;letter-spacing:.22em;text-transform:uppercase}
+.menu-category-title:before{content:"";width:6px;height:6px;border-radius:50%;background:var(--orange);box-shadow:0 0 10px rgba(255,152,39,.55)}
+.menu-category-links{border-top:1px solid #17171b}
+.menu-link{width:100%;min-height:56px;border:0;border-bottom:1px solid #202024;background:transparent;color:#fff;padding:0 2px;display:flex;align-items:center;justify-content:space-between;text-decoration:none;text-align:left;font-family:Georgia,"Times New Roman",serif;font-size:23px;letter-spacing:-.8px}
 .menu-link small{font-family:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#777780;font-size:9px;letter-spacing:0;font-weight:700}
 .menu-link .arrow{font-family:Inter,sans-serif;color:var(--orange);font-size:21px}
 .menu-spacer{flex:1;min-height:30px}
@@ -216,18 +221,41 @@ h1 em{display:block;color:var(--orange);font-style:italic;font-weight:400;letter
       <button class="menu-close" id="menuClose" aria-label="Fermer le menu">×</button>
     </div>
 
-    <p class="menu-kicker">CHOISIR UNE LANDING PAGE</p>
+    <p class="menu-kicker">CHOISIR VOTRE SECTEUR</p>
     <nav class="menu-nav" aria-label="Navigation principale">
-      <a class="menu-link" href="/#analyser"><span>Analyser mon activité</span><span class="arrow">→</span></a>
-      <a class="menu-link" href="/kebab"><span>Kebab / Snack</span><small>page actuelle</small></a>
-      <a class="menu-link" href="/plombier"><span>Plombier</span><span class="arrow">↗</span></a>
-      <a class="menu-link" href="/electricien"><span>Électricien</span><span class="arrow">↗</span></a>
-      <a class="menu-link" href="/pizzeria"><span>Pizzeria</span><span class="arrow">↗</span></a>
-      <a class="menu-link" href="/tasty-crousty"><span>Tasty Crousty</span><span class="arrow">↗</span></a>
-      <a class="menu-link" href="/tacos"><span>Tacos</span><span class="arrow">↗</span></a>
-      <a class="menu-link" href="/peintre-batiment"><span>Peintre bâtiment</span><span class="arrow">↗</span></a>
-      <a class="menu-link" href="/installateur-clim"><span>Installateur clim</span><span class="arrow">↗</span></a>
-      <a class="menu-link" href="/garagiste"><span>Garagiste</span><span class="arrow">↗</span></a>
+      <section class="menu-category" aria-labelledby="menu-general">
+        <h3 class="menu-category-title" id="menu-general">Général</h3>
+        <div class="menu-category-links">
+          <a class="menu-link" href="/#analyser"><span>Analyser mon activité</span><span class="arrow">→</span></a>
+        </div>
+      </section>
+
+      <section class="menu-category" aria-labelledby="menu-food">
+        <h3 class="menu-category-title" id="menu-food">Food</h3>
+        <div class="menu-category-links">
+          <a class="menu-link" href="/kebab"><span>Kebab / Snack</span><small>page actuelle</small></a>
+          <a class="menu-link" href="/pizzeria"><span>Pizzeria</span><span class="arrow">↗</span></a>
+          <a class="menu-link" href="/tasty-crousty"><span>Tasty Crousty</span><span class="arrow">↗</span></a>
+          <a class="menu-link" href="/tacos"><span>Tacos</span><span class="arrow">↗</span></a>
+        </div>
+      </section>
+
+      <section class="menu-category" aria-labelledby="menu-batiment">
+        <h3 class="menu-category-title" id="menu-batiment">Bâtiment & maison</h3>
+        <div class="menu-category-links">
+          <a class="menu-link" href="/plombier"><span>Plombier</span><span class="arrow">↗</span></a>
+          <a class="menu-link" href="/electricien"><span>Électricien</span><span class="arrow">↗</span></a>
+          <a class="menu-link" href="/peintre-batiment"><span>Peintre bâtiment</span><span class="arrow">↗</span></a>
+          <a class="menu-link" href="/installateur-clim"><span>Installateur clim</span><span class="arrow">↗</span></a>
+        </div>
+      </section>
+
+      <section class="menu-category" aria-labelledby="menu-auto">
+        <h3 class="menu-category-title" id="menu-auto">Auto</h3>
+        <div class="menu-category-links">
+          <a class="menu-link" href="/garagiste"><span>Garagiste</span><span class="arrow">↗</span></a>
+        </div>
+      </section>
     </nav>
 
     <div class="menu-spacer"></div>
