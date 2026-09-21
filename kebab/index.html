@@ -24,9 +24,34 @@ radial-gradient(35% 18% at 50% 100%,rgba(255,152,39,.06),transparent 80%),#000;p
 .brand span{font-size:.7em;font-weight:400;letter-spacing:-.5px}
 .start{border:1px solid rgba(255,255,255,.13);background:rgba(255,255,255,.07);color:#fff;height:32px;min-width:108px;border-radius:999px;padding:0 14px;display:flex;align-items:center;justify-content:center;gap:9px;font-size:10.5px;font-weight:800;backdrop-filter:blur(12px)}
 .start b{font-size:20px;line-height:1;font-weight:400;margin-top:-2px}
-.menu{position:relative;width:20px;height:18px;border:0;background:transparent;padding:0}
-.menu i,.menu:before,.menu:after{content:"";position:absolute;left:0;width:20px;height:1.6px;border-radius:20px;background:#fff}
-.menu:before{top:1px}.menu i{top:8px}.menu:after{top:15px}
+.menu{position:relative;width:36px;height:36px;border:1px solid rgba(255,255,255,.12);border-radius:50%;background:rgba(255,255,255,.055);padding:0;backdrop-filter:blur(10px);transition:background .2s,border-color .2s}
+.menu:hover{background:rgba(255,255,255,.09);border-color:rgba(255,255,255,.2)}
+.menu i,.menu:before,.menu:after{content:"";position:absolute;left:9px;width:16px;height:1.5px;border-radius:20px;background:#fff;transition:transform .22s ease,top .22s ease,opacity .18s ease}
+.menu:before{top:10px}.menu i{top:16px}.menu:after{top:22px}
+.menu[aria-expanded="true"]:before{top:16px;transform:rotate(45deg)}
+.menu[aria-expanded="true"] i{opacity:0}
+.menu[aria-expanded="true"]:after{top:16px;transform:rotate(-45deg)}
+.site-menu{position:fixed;z-index:160;inset:0;background:rgba(0,0,0,.93);backdrop-filter:blur(20px);opacity:0;visibility:hidden;transition:opacity .2s ease,visibility .2s ease}
+.site-menu.open{opacity:1;visibility:visible}
+.menu-panel{width:min(100%,430px);min-height:100dvh;margin:0 auto;padding:calc(14px + env(safe-area-inset-top)) 22px calc(24px + env(safe-area-inset-bottom));display:flex;flex-direction:column;transform:translateY(-10px);transition:transform .24s ease}
+.site-menu.open .menu-panel{transform:translateY(0)}
+.menu-head{display:flex;align-items:center;justify-content:space-between;height:42px}
+.menu-brand{font-family:Georgia,"Times New Roman",serif;font-size:23px;font-weight:700;letter-spacing:-1.2px}
+.menu-brand span{font-size:.7em;font-weight:400}
+.menu-close{width:38px;height:38px;border:1px solid rgba(255,255,255,.12);border-radius:50%;background:#0b0b0d;color:#fff;font-size:22px;line-height:1}
+.menu-kicker{margin:42px 0 14px;color:#707078;font-size:8px;letter-spacing:.22em;font-weight:850;text-transform:uppercase}
+.menu-nav{display:grid;border-top:1px solid #202024}
+.menu-link{width:100%;min-height:69px;border:0;border-bottom:1px solid #202024;background:transparent;color:#fff;padding:0;display:flex;align-items:center;justify-content:space-between;text-decoration:none;text-align:left;font-family:Georgia,"Times New Roman",serif;font-size:28px;letter-spacing:-1px}
+.menu-link small{font-family:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#777780;font-size:9px;letter-spacing:0;font-weight:700}
+.menu-link .arrow{font-family:Inter,sans-serif;color:var(--orange);font-size:21px}
+.menu-spacer{flex:1;min-height:30px}
+.menu-offer{border:1px solid rgba(255,152,39,.24);border-radius:20px;background:radial-gradient(circle at 85% 0%,rgba(255,152,39,.13),transparent 38%),#09090b;padding:17px}
+.menu-offer-top{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
+.menu-offer-top b{font-family:Georgia,"Times New Roman",serif;font-size:20px}
+.menu-offer-top strong{font-family:Georgia,"Times New Roman",serif;font-size:28px;color:var(--orange)}
+.menu-offer p{margin:7px 0 14px;color:#8d8d96;font-size:9.5px;line-height:1.45}
+.menu-cta{width:100%;height:49px;border:0;border-radius:999px;background:#fff;color:#050505;font-size:11px;font-weight:900}
+.menu-foot{margin:14px 0 0;text-align:center;color:#5f5f68;font-size:8px}
 .copy{text-align:center;margin-top:22px}
 .eyebrow{width:max-content;max-width:100%;margin:0 auto 22px;padding:10px 18px;border:1px solid rgba(255,152,39,.32);border-radius:999px;color:#d6d6dc;background:rgba(12,12,14,.76);box-shadow:inset 0 0 0 1px rgba(255,255,255,.02),0 0 34px rgba(255,152,39,.05);font-size:8.1px;letter-spacing:3.8px;text-transform:uppercase;font-weight:850;display:flex;align-items:center;justify-content:center;gap:12px}
 .eyebrow:before{content:"";width:7px;height:7px;border-radius:50%;background:var(--orange);box-shadow:0 0 14px rgba(255,152,39,.9);flex:none}
@@ -146,7 +171,7 @@ h1 em{display:block;color:var(--orange);font-style:italic;font-weight:400;letter
       <header class="topbar">
         <div class="brand">clipfa<span>.st</span></div>
         <button class="start" data-onboard>Commencer <b>→</b></button>
-        <button class="menu" aria-label="Voir les vidéos" data-gallery><i></i></button>
+        <button class="menu" id="menuToggle" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="siteMenu"><i></i></button>
       </header>
 
       <div class="copy">
@@ -182,6 +207,32 @@ h1 em{display:block;color:var(--orange);font-style:italic;font-weight:400;letter
     </section>
   </section>
 </main>
+
+<div class="site-menu" id="siteMenu" aria-hidden="true">
+  <div class="menu-panel">
+    <div class="menu-head">
+      <div class="menu-brand">clipfa<span>.st</span></div>
+      <button class="menu-close" id="menuClose" aria-label="Fermer le menu">×</button>
+    </div>
+
+    <p class="menu-kicker">NAVIGATION</p>
+    <nav class="menu-nav" aria-label="Navigation principale">
+      <a class="menu-link" href="#top" data-menu-link><span>Accueil</span><span class="arrow">↗</span></a>
+      <a class="menu-link" href="#videos" data-menu-link><span>Vidéos</span><small>98 aperçus</small></a>
+      <a class="menu-link" href="#unlock" data-menu-link><span>Le pack</span><small>1 000 + 20 premium</small></a>
+      <button class="menu-link" type="button" data-menu-start><span>Comment ça marche</span><span class="arrow">→</span></button>
+    </nav>
+
+    <div class="menu-spacer"></div>
+
+    <div class="menu-offer">
+      <div class="menu-offer-top"><b>1 000 vidéos prêtes à poster</b><strong>129€</strong></div>
+      <p>Zéro tournage, zéro montage. TikTok, Instagram Reels, Facebook et YouTube Shorts.</p>
+      <button class="menu-cta" type="button" data-menu-start>Créer mes 1000 vidéos →</button>
+    </div>
+    <p class="menu-foot">Paiement unique · aucun abonnement</p>
+  </div>
+</div>
 
 <button class="sticky-cta hidden" id="stickyCta" data-onboard>Créer mes 1000 vidéos <span>→</span></button>
 
@@ -278,6 +329,46 @@ h1 em{display:block;color:var(--orange);font-style:italic;font-weight:400;letter
 <script src="/assets/kebab-gallery.js?v=20260921-1" defer></script>
 <script>
 (function(){
+  var siteMenu=document.getElementById('siteMenu');
+  var menuToggle=document.getElementById('menuToggle');
+  var menuClose=document.getElementById('menuClose');
+
+  function openMenu(){
+    siteMenu.classList.add('open');
+    siteMenu.setAttribute('aria-hidden','false');
+    menuToggle.setAttribute('aria-expanded','true');
+    menuToggle.setAttribute('aria-label','Fermer le menu');
+    document.body.style.overflow='hidden';
+    setTimeout(function(){menuClose.focus({preventScroll:true});},0);
+  }
+  function closeMenu(restoreFocus){
+    siteMenu.classList.remove('open');
+    siteMenu.setAttribute('aria-hidden','true');
+    menuToggle.setAttribute('aria-expanded','false');
+    menuToggle.setAttribute('aria-label','Ouvrir le menu');
+    document.body.style.overflow='';
+    if(restoreFocus!==false)menuToggle.focus({preventScroll:true});
+  }
+
+  menuToggle.addEventListener('click',function(){
+    if(siteMenu.classList.contains('open'))closeMenu();
+    else openMenu();
+  });
+  menuClose.addEventListener('click',function(){closeMenu();});
+  siteMenu.addEventListener('click',function(e){
+    if(e.target===siteMenu)closeMenu();
+  });
+  document.querySelectorAll('[data-menu-link]').forEach(function(link){
+    link.addEventListener('click',function(){closeMenu(false);});
+  });
+  document.addEventListener('keydown',function(e){
+    if(e.key==='Escape'&&siteMenu.classList.contains('open'))closeMenu();
+  });
+
+  window.closeKebabMenu=function(){closeMenu(false);};
+})();
+
+(function(){
   /* Onboarding */
   var onboarding=document.getElementById('onboarding');
   var obSteps=Array.from(document.querySelectorAll('.ob-step'));
@@ -319,6 +410,7 @@ h1 em{display:block;color:var(--orange);font-style:italic;font-weight:400;letter
     }catch(e){}
   }
   function openOnboarding(){
+    if(window.closeKebabMenu)window.closeKebabMenu();
     restoreDraft();
     onboarding.classList.add('open');
     onboarding.setAttribute('aria-hidden','false');
@@ -332,6 +424,7 @@ h1 em{display:block;color:var(--orange);font-style:italic;font-weight:400;letter
     document.body.style.overflow='';
   }
   document.querySelectorAll('[data-onboard]').forEach(function(b){b.addEventListener('click',openOnboarding);});
+  document.querySelectorAll('[data-menu-start]').forEach(function(b){b.addEventListener('click',openOnboarding);});
   document.getElementById('obClose').addEventListener('click',closeOnboarding);
   obBack.addEventListener('click',function(){if(obIndex>0)showObStep(obIndex-1);});
   document.querySelectorAll('[data-next]').forEach(function(btn){
