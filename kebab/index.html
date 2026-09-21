@@ -54,8 +54,6 @@ h1 em{display:block;color:var(--orange);font-style:italic;font-weight:400;letter
 .card{position:relative;aspect-ratio:9/16;overflow:hidden;border-radius:13px;border:1px solid #242429;background:linear-gradient(150deg,#17171a,#080809);padding:0;min-width:0;box-shadow:0 8px 26px rgba(0,0,0,.28);content-visibility:auto;contain-intrinsic-size:125px 222px}
 .card video{width:100%;height:100%;object-fit:cover;display:block;background:#111;opacity:0;transition:opacity .2s ease}
 .card.ready video{opacity:1}
-.featured-card video{opacity:1}
-.featured-card:after{display:none}
 .card:after{content:"";position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.82) 0%,rgba(0,0,0,.12) 45%,rgba(0,0,0,.18) 100%);pointer-events:none}
 .card-index{position:absolute;z-index:3;top:7px;left:7px;font-size:6.5px;font-weight:800;color:#e5e5e8;background:rgba(0,0,0,.62);border:1px solid rgba(255,255,255,.09);padding:3px 5px;border-radius:999px;backdrop-filter:blur(5px)}
 .card-play{position:absolute;z-index:3;top:7px;right:7px;width:20px;height:20px;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.9);color:#000;font-size:7px}
@@ -114,6 +112,16 @@ h1 em{display:block;color:var(--orange);font-style:italic;font-weight:400;letter
 .order-total{display:flex;justify-content:space-between;align-items:end;margin-top:18px}.order-total span{color:#83838c;font-size:9px}.order-total strong{font-family:Georgia,"Times New Roman",serif;font-size:45px;letter-spacing:-2px}
 .pay-btn{width:100%;height:54px;border:0;border-radius:16px;background:#fff;color:#050505;font-size:12px;font-weight:900;margin-top:14px}.pay-btn[disabled]{opacity:.55}.secure{margin:9px 0 0;text-align:center;color:#686872;font-size:8px}.ob-error{display:none;margin:10px 0 0;padding:10px;border:1px solid #512525;background:#1d0d0d;color:#ffb0b0;border-radius:12px;font-size:9px;line-height:1.4}.ob-error.show{display:block}
 .success-page{min-height:100dvh;display:grid;place-items:center;padding:24px;text-align:center}
+
+.card.has-poster video{opacity:1}
+.card.has-poster .skeleton,.card.failed .skeleton,.card.blocked .skeleton{display:none}
+.card.embedded-text:after{display:none}
+.card-status{display:none;position:absolute;z-index:6;inset:auto 6px 8px;padding:7px 4px;border-radius:8px;background:#171719e8;color:#fff;font-size:9px;line-height:1.3}
+.card.failed .card-status,.card.blocked .card-status{display:block}
+.card.failed .card-hook,.card.blocked .card-hook{visibility:hidden}
+.video-retry{position:absolute;z-index:8;left:50%;top:50%;transform:translate(-50%,-50%);border:1px solid #555;border-radius:14px;padding:14px;background:#151515;color:#fff}
+.video-retry[hidden]{display:none}
+.card:focus-visible,.modal button:focus-visible{outline:2px solid var(--orange);outline-offset:3px}
 </style>
 </head>
 <body>
@@ -150,7 +158,6 @@ h1 em{display:block;color:var(--orange);font-style:italic;font-weight:400;letter
 
   <section class="gallery" id="videos">
     <div class="video-grid" id="grid" aria-live="polite"></div>
-    <div class="sentinel" id="sentinel"></div>
     <div class="load-state" id="loadState">Chargement des 98 aperçus…</div>
     <section class="unlock-card" id="unlock">
       <div class="unlock-progress"><span>98 aperçus</span><span>1 000 vidéos finales</span></div>
@@ -167,12 +174,13 @@ h1 em{display:block;color:var(--orange);font-style:italic;font-weight:400;letter
 
 <button class="sticky-cta hidden" id="stickyCta" data-onboard>Créer mes 1000 vidéos <span>→</span></button>
 
-<div class="modal" id="modal" aria-hidden="true">
+<div class="modal" id="modal" role="dialog" aria-modal="true" aria-label="Aperçu vidéo" aria-hidden="true">
   <div class="modal-player" id="modalPlayer">
     <video id="modalVideo" playsinline muted loop preload="metadata"></video>
     <div class="modal-shade"></div>
     <button class="modal-close" id="modalClose" aria-label="Fermer">×</button>
     <div class="modal-count" id="modalCount"></div>
+    <button id="modalRetry" class="video-retry" hidden>Relancer la vidéo</button>
     <div class="modal-hook" id="modalHook"></div>
     <div class="modal-meta"><b>@votre.kebab</b><span>Vidéo prête à personnaliser et publier.</span></div>
     <div class="modal-nav">
@@ -256,286 +264,10 @@ h1 em{display:block;color:var(--orange);font-style:italic;font-weight:400;letter
 </div>
 
 <script src="/assets/demo-hooks.js"></script>
+<script src="/assets/kebab-gallery.js?v=20260921-1" defer></script>
 <script>
 (function(){
-  var grid=document.getElementById('grid');
-  var sentinel=document.getElementById('sentinel');
-  var loadState=document.getElementById('loadState');
-  var sticky=document.getElementById('stickyCta');
-  var hero=document.querySelector('.hero');
   var urlInput=document.getElementById('kebabUrl');
-  var modal=document.getElementById('modal');
-  var modalVideo=document.getElementById('modalVideo');
-  var modalHook=document.getElementById('modalHook');
-  var modalCount=document.getElementById('modalCount');
-  var activeIndex=-1;
-  var videos=[];
-  var filtered=[];
-  var rendered=0;
-  var batch=98;
-  var PREVIEW_LIMIT=98;
-  var wheelLock=false;
-  var touchStartY=0;
-  var hooksMeta=Array.isArray(window.VIDEOMA_DEMO_HOOKS)?window.VIDEOMA_DEMO_HOOKS:[];
-  var featuredCard=document.getElementById('featuredCard');
-  var featuredVideo=document.getElementById('kebabFeaturedVideo');
-  var featuredObjectUrl='';
-
-  function loadFeaturedVideo(){
-    var parts=[
-      '/kebab-video/part00.txt',
-      '/kebab-video/part01.txt',
-      '/kebab-video/part02.txt',
-      '/kebab-video/part03.txt'
-    ];
-    return Promise.all(parts.map(function(url){
-      return fetch(url,{cache:'force-cache'}).then(function(r){
-        if(!r.ok)throw new Error('KEBAB_VIDEO_PART_'+r.status);
-        return r.text();
-      });
-    })).then(function(chunks){
-      var base64=chunks.join('').replace(/\s+/g,'');
-      var binary=atob(base64);
-      var bytes=new Uint8Array(binary.length);
-      for(var i=0;i<binary.length;i++)bytes[i]=binary.charCodeAt(i);
-      featuredObjectUrl=URL.createObjectURL(new Blob([bytes],{type:'video/mp4'}));
-      featuredVideo.src=featuredObjectUrl;
-      featuredVideo.load();
-      featuredVideo.addEventListener('loadeddata',function(){featuredCard.classList.add('ready');},{once:true});
-      videoObserver.observe(featuredVideo);
-      var p=featuredVideo.play();if(p&&p.catch)p.catch(function(){});
-    }).catch(function(err){
-      console.error('kebab featured video',err);
-    });
-  }
-
-  function openFeatured(){
-    if(!featuredObjectUrl)return;
-    activeIndex=-1;
-    modalVideo.pause();
-    modalVideo.src=featuredObjectUrl;
-    modalVideo.load();
-    modalHook.textContent='';
-    modalHook.style.display='none';
-    modalCount.textContent='1 / '+(videos.length+1).toLocaleString('fr-FR');
-    modal.classList.add('open');
-    modal.setAttribute('aria-hidden','false');
-    document.body.style.overflow='hidden';
-    var p=modalVideo.play();if(p&&p.catch)p.catch(function(){});
-  }
-
-
-  var openers=[
-    'POV : tu viens de trouver',
-    'Quand tu découvres',
-    'Le kebab que',
-    'On m’a dit “teste-le”…',
-    'Personne ne parle assez de',
-    'Tu pensais commander normal… puis tu trouves',
-    'Ce kebab mérite',
-    'Le spot du quartier que',
-    'Si tu aimes les vrais kebabs, regarde',
-    'Je pensais connaître les bons kebabs… jusqu’à',
-    'Le genre d’adresse que tu gardes pour toi :'
-  ];
-  var middles=[
-    'ton nouveau kebab préféré',
-    'celui que tout le quartier devrait connaître',
-    'celui qui met tout le monde d’accord',
-    'un snack qui fait oublier les chaînes',
-    'une viande grillée qui change tout',
-    'un kebab qui mérite beaucoup plus de vues',
-    'l’adresse où tu reviens dès le lendemain',
-    'le kebab qui transforme une pause dej',
-    'le spot que tes potes vont te réclamer',
-    'un kebab qui ne ressemble pas aux autres'
-  ];
-  var endings=[
-    'Sauvegarde l’adresse.',
-    'Envoie ça à ton pote.',
-    'Tu testes quand ?',
-    'Ne dis pas qu’on ne t’avait pas prévenu.',
-    'Oui, ça existe vraiment.',
-    'Le quartier était déjà au courant.',
-    'À tester au moins une fois.',
-    'Tu connais mieux ?',
-    'On en reparle après la première bouchée.',
-    'La prochaine commande est déjà décidée.'
-  ];
-
-  function hookFor(i){
-    var a=i%openers.length;
-    var b=Math.floor(i/openers.length)%middles.length;
-    var c=Math.floor(i/(openers.length*middles.length))%endings.length;
-    return openers[a]+' '+middles[b]+'. '+endings[c];
-  }
-
-  function metaFor(i){
-    var m=hooksMeta[i]||{};
-    var placement=['top','upper','lower','bottom'].indexOf(m.placement)>=0?m.placement:(i%4===0?'top':'lower');
-    var design=m.design==='paper'?'paper':'outline';
-    return {placement:placement,design:design};
-  }
-
-  function focusUrl(){
-    document.getElementById('urlField').scrollIntoView({behavior:'smooth',block:'center'});
-    setTimeout(function(){urlInput.focus({preventScroll:true});},420);
-  }
-  document.querySelector('[data-gallery]').addEventListener('click',function(){document.getElementById('videos').scrollIntoView({behavior:'smooth'});});
-
-  var heroObserver=new IntersectionObserver(function(entries){
-    sticky.classList.toggle('hidden',entries[0].isIntersecting);
-  },{threshold:.15});
-  heroObserver.observe(hero);
-
-  var videoObserver=new IntersectionObserver(function(entries){
-    entries.forEach(function(entry){
-      var v=entry.target;
-      var card=v.closest('.card');
-      if(entry.isIntersecting){
-        if(!v.src){
-          v.src=v.dataset.src;
-          v.load();
-        }
-        var p=v.play();
-        if(p&&p.catch)p.catch(function(){});
-      }else{
-        v.pause();
-      }
-      if(v.readyState>=2)card.classList.add('ready');
-    });
-  },{rootMargin:'260px 0px',threshold:.15});
-
-  function cardFor(realIndex){
-    var card=document.createElement('button');
-    card.className='card';
-    card.type='button';
-    card.setAttribute('aria-label','Ouvrir la vidéo '+(realIndex+1));
-    var m=metaFor(realIndex);
-    var v=document.createElement('video');
-    v.muted=true;v.loop=true;v.playsInline=true;v.preload='none';v.dataset.src=videos[realIndex];
-    v.addEventListener('loadeddata',function(){card.classList.add('ready');});
-    var sk=document.createElement('span');sk.className='skeleton';
-    var n=document.createElement('span');n.className='card-index';n.textContent='#'+String(realIndex+1).padStart(4,'0');
-    var play=document.createElement('span');play.className='card-play';play.textContent='▶';
-    var h=document.createElement('span');h.className='card-hook '+m.placement+' '+m.design;h.textContent=hookFor(realIndex);
-    var brand=document.createElement('span');brand.className='card-brand';brand.textContent='@votre.kebab';
-    card.appendChild(v);card.appendChild(sk);card.appendChild(n);card.appendChild(play);card.appendChild(h);card.appendChild(brand);
-    card.addEventListener('click',function(){openVideo(realIndex);});
-    videoObserver.observe(v);
-    return card;
-  }
-
-  function updateCounter(){}
-
-  function renderMore(){
-    if(rendered>=filtered.length){
-      loadState.textContent=filtered.length?'Toutes les '+filtered.length.toLocaleString('fr-FR')+' vidéos sont chargées.':'';
-      updateCounter();
-      return;
-    }
-    var frag=document.createDocumentFragment();
-    var end=Math.min(rendered+batch,filtered.length);
-    for(var i=rendered;i<end;i++)frag.appendChild(cardFor(filtered[i]));
-    grid.appendChild(frag);
-    rendered=end;
-    updateCounter();
-    loadState.textContent=rendered<filtered.length?'Chargement progressif — '+rendered.toLocaleString('fr-FR')+' / '+filtered.length.toLocaleString('fr-FR'):'Toutes les '+filtered.length.toLocaleString('fr-FR')+' vidéos sont chargées.';
-  }
-
-  function resetFilter(q){
-    grid.querySelectorAll('video').forEach(function(v){videoObserver.unobserve(v);v.pause();});
-    grid.innerHTML='';
-    rendered=0;
-    q=(q||'').trim().toLowerCase();
-    filtered=[];
-    for(var i=0;i<videos.length;i++){
-      if(!q||hookFor(i).toLowerCase().indexOf(q)>=0)filtered.push(i);
-    }
-    loadState.style.display=filtered.length?'block':'none';
-    renderMore();
-  }
-
-  var sentinelObserver=new IntersectionObserver(function(entries){
-    if(entries[0].isIntersecting)renderMore();
-  },{rootMargin:'900px 0px'});
-  sentinelObserver.observe(sentinel);
-
-  function openVideo(index){
-    if(index<0||index>=videos.length)return;
-    activeIndex=index;
-    var m=metaFor(index);
-    modalHook.style.display='block';
-    modalVideo.pause();
-    modalVideo.src=videos[index];
-    modalVideo.load();
-    modalHook.className='modal-hook '+m.placement+' '+m.design;
-    modalHook.textContent=hookFor(index);
-    modalCount.textContent=(index+2).toLocaleString('fr-FR')+' / '+(videos.length+1).toLocaleString('fr-FR');
-    modal.classList.add('open');
-    modal.setAttribute('aria-hidden','false');
-    document.body.style.overflow='hidden';
-    var p=modalVideo.play();if(p&&p.catch)p.catch(function(){});
-  }
-  function closeModal(){
-    modal.classList.remove('open');
-    modal.setAttribute('aria-hidden','true');
-    document.body.style.overflow='';
-    modalVideo.pause();
-    modalVideo.removeAttribute('src');
-    modalVideo.load();
-  }
-  function step(dir){
-    if(activeIndex===-1){
-      if(!videos.length)return;
-      openVideo(dir>0?0:videos.length-1);
-      return;
-    }
-    if(!videos.length)return;
-    if(dir<0&&activeIndex===0){openFeatured();return;}
-    if(dir>0&&activeIndex===videos.length-1){openFeatured();return;}
-    var n=(activeIndex+dir+videos.length)%videos.length;
-    openVideo(n);
-  }
-  featuredCard.addEventListener('click',openFeatured);
-  featuredCard.addEventListener('keydown',function(e){
-    if(e.key==='Enter'||e.key===' '){e.preventDefault();openFeatured();}
-  });
-  document.getElementById('modalClose').addEventListener('click',closeModal);
-  document.getElementById('prev').addEventListener('click',function(){step(-1);});
-  document.getElementById('next').addEventListener('click',function(){step(1);});
-  document.addEventListener('keydown',function(e){
-    if(!modal.classList.contains('open'))return;
-    if(e.key==='Escape')closeModal();
-    if(e.key==='ArrowDown'||e.key==='ArrowRight')step(1);
-    if(e.key==='ArrowUp'||e.key==='ArrowLeft')step(-1);
-  });
-  modal.addEventListener('wheel',function(e){
-    if(wheelLock)return;
-    if(Math.abs(e.deltaY)<18)return;
-    wheelLock=true;step(e.deltaY>0?1:-1);
-    setTimeout(function(){wheelLock=false;},520);
-  },{passive:true});
-  modal.addEventListener('touchstart',function(e){touchStartY=e.changedTouches[0].clientY;},{passive:true});
-  modal.addEventListener('touchend',function(e){
-    var dy=e.changedTouches[0].clientY-touchStartY;
-    if(Math.abs(dy)>50)step(dy<0?1:-1);
-  },{passive:true});
-
-  loadFeaturedVideo();
-
-  fetch('/videos.txt',{cache:'force-cache'})
-    .then(function(r){if(!r.ok)throw new Error('VIDEOS_HTTP_'+r.status);return r.text();})
-    .then(function(text){
-      videos=text.split(/\r?\n/).map(function(x){return x.trim();}).filter(Boolean).slice(0,PREVIEW_LIMIT);
-      filtered=videos.map(function(_,i){return i;});
-      renderMore();
-      loadState.textContent='98 aperçus vidéo chargés.';
-    })
-    .catch(function(err){
-      console.error(err);
-      loadState.textContent='Impossible de charger la bibliothèque vidéo.';
-    });
   /* Onboarding */
   var onboarding=document.getElementById('onboarding');
   var obSteps=Array.from(document.querySelectorAll('.ob-step'));
