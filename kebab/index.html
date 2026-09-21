@@ -51,17 +51,17 @@ h1 em{display:block;color:var(--orange);font-style:italic;font-weight:400;letter
 .search:focus{border-color:#515159}
 .count{font-size:8px;color:#777780;white-space:nowrap;font-variant-numeric:tabular-nums}
 .video-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
-.card{position:relative;aspect-ratio:9/16;overflow:hidden;border-radius:13px;border:1px solid #242429;background:linear-gradient(150deg,#17171a,#080809);padding:0;min-width:0;box-shadow:0 8px 26px rgba(0,0,0,.28);content-visibility:auto;contain-intrinsic-size:125px 222px}
-.card video{width:100%;height:100%;object-fit:cover;display:block;background:#111;opacity:0;transition:opacity .2s ease}
+.card{position:relative;aspect-ratio:9/16;overflow:hidden;border-radius:13px;border:1px solid #242429;background:linear-gradient(150deg,#17171a,#080809);padding:0;min-width:0;box-shadow:0 8px 26px rgba(0,0,0,.28);isolation:isolate;content-visibility:visible}
+.card video{position:absolute;inset:0;z-index:0;pointer-events:none;width:100%;height:100%;object-fit:cover;display:block;background:#111;opacity:0;transition:opacity .2s ease}
 .card.ready video{opacity:1}
-.card:after{content:"";position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.82) 0%,rgba(0,0,0,.12) 45%,rgba(0,0,0,.18) 100%);pointer-events:none}
+.card:after{content:"";position:absolute;z-index:1;inset:0;background:linear-gradient(to top,rgba(0,0,0,.82) 0%,rgba(0,0,0,.12) 45%,rgba(0,0,0,.18) 100%);pointer-events:none}
 .card-index{position:absolute;z-index:3;top:7px;left:7px;font-size:6.5px;font-weight:800;color:#e5e5e8;background:rgba(0,0,0,.62);border:1px solid rgba(255,255,255,.09);padding:3px 5px;border-radius:999px;backdrop-filter:blur(5px)}
 .card-play{position:absolute;z-index:3;top:7px;right:7px;width:20px;height:20px;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.9);color:#000;font-size:7px}
 .card-hook{position:absolute;z-index:3;left:7px;right:7px;color:#fff;font-size:8.3px;line-height:1.05;font-weight:900;letter-spacing:-.22px;text-align:center;text-shadow:0 2px 7px #000,0 1px 2px #000;overflow:hidden;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:5}
 .card-hook.top{top:36px}.card-hook.upper{top:49px}.card-hook.lower{bottom:27px}.card-hook.bottom{bottom:15px}
 .card-hook.paper{background:rgba(255,255,255,.92);color:#060606;text-shadow:none;padding:4px 5px;border-radius:5px;left:9px;right:9px}
 .card-brand{position:absolute;z-index:3;left:7px;bottom:7px;font-size:6px;color:#f4f4f5;font-weight:750;text-shadow:0 1px 4px #000}
-.skeleton{position:absolute;inset:0;background:linear-gradient(110deg,#0d0d0f 8%,#1a1a1e 18%,#0d0d0f 33%);background-size:200% 100%;animation:shimmer 1.25s linear infinite}
+.skeleton{position:absolute;z-index:1;pointer-events:none;inset:0;background:linear-gradient(110deg,#0d0d0f 8%,#1a1a1e 18%,#0d0d0f 33%);background-size:200% 100%;animation:shimmer 1.25s linear infinite}
 @keyframes shimmer{to{background-position-x:-200%}}
 .card.ready .skeleton{display:none}
 .sentinel{height:3px}
@@ -70,12 +70,12 @@ h1 em{display:block;color:var(--orange);font-style:italic;font-weight:400;letter
 .sticky-cta.hidden{opacity:0;pointer-events:none;transform:translateX(-50%) translateY(12px)}
 .modal{position:fixed;z-index:100;inset:0;background:#000;display:none;align-items:center;justify-content:center;touch-action:none}
 .modal.open{display:flex}
-.modal-player{position:relative;width:min(100vw,430px);height:100dvh;background:#050505;overflow:hidden}
-.modal-player video{width:100%;height:100%;object-fit:contain;background:#000}
-.modal-shade{position:absolute;inset:0;pointer-events:none;background:linear-gradient(to top,rgba(0,0,0,.78),transparent 38%,rgba(0,0,0,.22) 100%)}
+.modal-player{position:relative;isolation:isolate;width:min(100vw,430px);height:100dvh;background:#050505;overflow:hidden}
+.modal-player video{position:absolute;inset:0;z-index:0;width:100%;height:100%;object-fit:contain;background:#000}
+.modal-shade{position:absolute;z-index:1;inset:0;pointer-events:none;background:linear-gradient(to top,rgba(0,0,0,.78),transparent 38%,rgba(0,0,0,.22) 100%)}
 .modal-close{position:absolute;z-index:4;top:calc(12px + env(safe-area-inset-top));right:12px;width:36px;height:36px;border:1px solid rgba(255,255,255,.15);border-radius:50%;background:rgba(0,0,0,.56);color:#fff;font-size:19px;backdrop-filter:blur(8px)}
 .modal-count{position:absolute;z-index:4;top:calc(20px + env(safe-area-inset-top));left:14px;color:#ddd;font-size:9px;font-weight:700}
-.modal-hook{position:absolute;z-index:4;left:18px;right:18px;top:14%;font-size:24px;line-height:.98;text-align:center;font-weight:950;letter-spacing:-1px;text-shadow:0 3px 16px #000,0 1px 3px #000}
+.modal-hook{transform:translateZ(0);-webkit-transform:translateZ(0);backface-visibility:hidden;pointer-events:none;position:absolute;z-index:4;left:18px;right:18px;top:14%;font-size:24px;line-height:.98;text-align:center;font-weight:950;letter-spacing:-1px;text-shadow:0 3px 16px #000,0 1px 3px #000}
 .modal-hook.paper{background:#fff;color:#050505;text-shadow:none;padding:9px 11px;border-radius:10px;top:15%;left:24px;right:24px}
 .modal-hook.lower{top:auto;bottom:18%}.modal-hook.bottom{top:auto;bottom:11%}.modal-hook.upper{top:21%}
 .modal-meta{position:absolute;z-index:4;left:16px;bottom:calc(18px + env(safe-area-inset-bottom));right:76px;font-size:10px;color:#fff}
@@ -118,7 +118,9 @@ h1 em{display:block;color:var(--orange);font-style:italic;font-weight:400;letter
 .card.embedded-text:after{display:none}
 .card-status{display:none;position:absolute;z-index:6;inset:auto 6px 8px;padding:7px 4px;border-radius:8px;background:#171719e8;color:#fff;font-size:9px;line-height:1.3}
 .card.failed .card-status,.card.blocked .card-status{display:block}
-.card.failed .card-hook,.card.blocked .card-hook{visibility:hidden}
+.card .card-hook,.card .card-index,.card .card-play,.card .card-brand{transform:translateZ(0);-webkit-transform:translateZ(0);backface-visibility:hidden;pointer-events:none}
+.card .card-hook{visibility:visible;opacity:1}
+.card.failed .card-status,.card.blocked .card-status{inset:45% 6px auto}
 .video-retry{position:absolute;z-index:8;left:50%;top:50%;transform:translate(-50%,-50%);border:1px solid #555;border-radius:14px;padding:14px;background:#151515;color:#fff}
 .video-retry[hidden]{display:none}
 .card:focus-visible,.modal button:focus-visible{outline:2px solid var(--orange);outline-offset:3px}
