@@ -14,23 +14,36 @@ body{margin:0;background:#000;color:#fff;font-family:Inter,ui-sans-serif,-apple-
 button,input{font:inherit}
 button{cursor:pointer}
 .page{width:100%;max-width:430px;margin:0 auto;background:#000;min-height:100vh;position:relative}
-.hero{position:relative;min-height:0;isolation:isolate;overflow:hidden;border-bottom:1px solid #171719;background:#000;padding-bottom:10px}
-.shell{padding:calc(9px + env(safe-area-inset-top)) 22px 0;position:relative}
-.topbar{height:38px;display:grid;grid-template-columns:1fr auto auto;align-items:center;gap:14px}
+.hero{position:relative;min-height:0;isolation:isolate;overflow:hidden;border-bottom:1px solid #171719;background:
+radial-gradient(65% 36% at 50% 56%,rgba(255,152,39,.085),transparent 72%),
+radial-gradient(35% 18% at 50% 100%,rgba(255,152,39,.06),transparent 80%),#000;padding-bottom:22px}
+.hero:before{content:"";position:absolute;z-index:-1;inset:0;pointer-events:none;background:linear-gradient(180deg,rgba(255,255,255,.012),transparent 22%,transparent 78%,rgba(255,152,39,.025))}
+.shell{padding:calc(10px + env(safe-area-inset-top)) 22px 0;position:relative}
+.topbar{height:40px;display:grid;grid-template-columns:1fr auto auto;align-items:center;gap:14px}
 .brand{font-family:Georgia,"Times New Roman",serif;font-size:23px;line-height:1;font-weight:700;letter-spacing:-1.35px}
 .brand span{font-size:.7em;font-weight:400;letter-spacing:-.5px}
-.start{border:0;background:#fff;color:#080808;height:31px;min-width:108px;border-radius:999px;padding:0 14px;display:flex;align-items:center;justify-content:center;gap:9px;font-size:10.5px;font-weight:800}
+.start{border:1px solid rgba(255,255,255,.13);background:rgba(255,255,255,.07);color:#fff;height:32px;min-width:108px;border-radius:999px;padding:0 14px;display:flex;align-items:center;justify-content:center;gap:9px;font-size:10.5px;font-weight:800;backdrop-filter:blur(12px)}
 .start b{font-size:20px;line-height:1;font-weight:400;margin-top:-2px}
 .menu{position:relative;width:20px;height:18px;border:0;background:transparent;padding:0}
 .menu i,.menu:before,.menu:after{content:"";position:absolute;left:0;width:20px;height:1.6px;border-radius:20px;background:#fff}
 .menu:before{top:1px}.menu i{top:8px}.menu:after{top:15px}
-.copy{text-align:center;margin-top:10px}
-.eyebrow{margin:0 0 9px;color:#9797a2;font-size:7.4px;letter-spacing:3.7px;text-transform:uppercase;font-weight:800}
-h1{margin:0 auto;max-width:365px;font-family:Georgia,"Times New Roman",serif;font-size:clamp(40px,10.8vw,46px);line-height:.89;font-weight:700;letter-spacing:-2.7px;text-wrap:balance}
-h1 em{display:block;color:var(--orange);font-style:italic;font-weight:400;letter-spacing:-2.2px;margin-top:2px}
-.sub{max-width:330px;margin:12px auto 0;color:#b6b6bd;font-size:11px;line-height:1.48}
-.primary-cta{width:100%;height:48px;border:0;border-radius:17px;margin-top:13px;background:var(--orange);color:#050505;font-size:12.2px;font-weight:850;display:flex;align-items:center;justify-content:center;gap:12px;box-shadow:0 12px 34px rgba(0,0,0,.34)}
-.primary-cta b{font-size:20px;line-height:1;font-weight:400}
+.copy{text-align:center;margin-top:22px}
+.eyebrow{width:max-content;max-width:100%;margin:0 auto 22px;padding:10px 18px;border:1px solid rgba(255,152,39,.32);border-radius:999px;color:#d6d6dc;background:rgba(12,12,14,.76);box-shadow:inset 0 0 0 1px rgba(255,255,255,.02),0 0 34px rgba(255,152,39,.05);font-size:8.1px;letter-spacing:3.8px;text-transform:uppercase;font-weight:850;display:flex;align-items:center;justify-content:center;gap:12px}
+.eyebrow:before{content:"";width:7px;height:7px;border-radius:50%;background:var(--orange);box-shadow:0 0 14px rgba(255,152,39,.9);flex:none}
+h1{margin:0 auto;max-width:390px;font-family:Georgia,"Times New Roman",serif;font-size:clamp(47px,12.8vw,57px);line-height:.86;font-weight:700;letter-spacing:-3.5px;text-wrap:balance}
+h1 .line{display:block}
+h1 em{display:block;color:var(--orange);font-style:italic;font-weight:400;letter-spacing:-3px;margin-top:5px}
+.hero-swoosh{width:46%;height:23px;display:block;margin:1px auto 0;overflow:visible}
+.hero-swoosh path{stroke:var(--orange);stroke-width:2;fill:none;stroke-linecap:round;opacity:.9}
+.sub{max-width:354px;margin:17px auto 0;color:#a8a8b1;font-size:12.5px;line-height:1.55;letter-spacing:-.08px}
+.primary-cta{position:relative;isolation:isolate;overflow:hidden;width:100%;height:59px;border:1px solid rgba(255,255,255,.86);border-radius:999px;margin-top:21px;background:#faf8f4;color:#080808;font-size:14px;font-weight:900;display:flex;align-items:center;justify-content:center;gap:14px;box-shadow:0 0 0 1px rgba(255,152,39,.06),0 0 30px rgba(255,152,39,.13),0 16px 50px rgba(0,0,0,.5);transition:transform .2s ease,box-shadow .2s ease}
+.primary-cta:before{content:"";position:absolute;z-index:-1;inset:-60% -40%;background:linear-gradient(115deg,transparent 36%,rgba(255,255,255,.95) 48%,rgba(255,184,102,.34) 52%,transparent 64%);transform:translateX(-65%) rotate(2deg);animation:ctaShine 3.4s ease-in-out infinite}
+.primary-cta:active{transform:scale(.985)}
+.primary-cta b{font-size:25px;line-height:1;font-weight:400;margin-top:-2px}
+.hero-proof{display:flex;align-items:center;justify-content:center;gap:8px;margin-top:13px;color:#777780;font-size:9.5px;font-weight:650}
+.hero-proof strong{color:#fff;font-size:14px;filter:drop-shadow(0 0 8px rgba(255,255,255,.22))}
+.hero-proof i{width:3px;height:3px;border-radius:50%;background:#4b4b52}
+@keyframes ctaShine{0%,68%{transform:translateX(-72%) rotate(2deg)}100%{transform:translateX(72%) rotate(2deg)}}
 .link-field{margin-top:8px;height:43px;border:1px solid #38383e;border-radius:15px;background:rgba(7,7,8,.78);backdrop-filter:blur(12px);display:flex;align-items:center;gap:12px;padding:0 14px;box-shadow:inset 0 1px 0 rgba(255,255,255,.025)}
 .link-field:focus-within{border-color:rgba(255,152,39,.7);box-shadow:0 0 0 3px rgba(255,152,39,.08)}
 .link-field svg{width:19px;height:19px;flex:none}
@@ -138,10 +151,17 @@ h1 em{display:block;color:var(--orange);font-style:italic;font-weight:400;letter
 
       <div class="copy">
         <p class="eyebrow">POUR LES KEBABS &amp; SNACKS</p>
-        <h1>1000 vidéos<br>pour votre kebab<br>en moins de<em>5 minutes.</em></h1>
-        <p class="sub">Aucun tournage. Aucun montage.<br>Des vidéos prêtes à publier sur TikTok, Instagram,<br>Facebook et YouTube.</p>
+        <h1>
+          <span class="line">1000 vidéos</span>
+          <span class="line">pour votre kebab</span>
+          <span class="line">en moins de</span>
+          <em>5 minutes.</em>
+        </h1>
+        <svg class="hero-swoosh" viewBox="0 0 180 24" aria-hidden="true"><path d="M4 18 C 50 6, 128 5, 176 16"/></svg>
+        <p class="sub">Zéro tournage. Zéro montage.<br>Des vidéos prêtes à publier sur TikTok, Instagram,<br>Facebook et YouTube.</p>
 
         <button class="primary-cta" data-onboard>Créer mes 1000 vidéos <b>→</b></button>
+        <div class="hero-proof"><strong>ϟ</strong><span>Prêtes en quelques minutes</span><i></i><span>aucun montage</span></div>
 
       </div>
      </div>
