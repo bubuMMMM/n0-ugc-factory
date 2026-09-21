@@ -28,6 +28,78 @@
       ]
     },
     {
+      "source": "/garagiste",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-store, max-age=0"
+        }
+      ]
+    },
+    {
+      "source": "/installateur-clim",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-store, max-age=0"
+        }
+      ]
+    },
+    {
+      "source": "/peintre-batiment",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-store, max-age=0"
+        }
+      ]
+    },
+    {
+      "source": "/tacos",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-store, max-age=0"
+        }
+      ]
+    },
+    {
+      "source": "/tasty-crousty",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-store, max-age=0"
+        }
+      ]
+    },
+    {
+      "source": "/pizzeria",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-store, max-age=0"
+        }
+      ]
+    },
+    {
+      "source": "/electricien",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-store, max-age=0"
+        }
+      ]
+    },
+    {
+      "source": "/plombier",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-store, max-age=0"
+        }
+      ]
+    },
+    {
       "source": "/videos.txt",
       "headers": [
         {
@@ -62,6 +134,38 @@
     {
       "source": "/kebab",
       "destination": "/kebab/index.html"
+    },
+    {
+      "source": "/plombier",
+      "destination": "/niche.html"
+    },
+    {
+      "source": "/electricien",
+      "destination": "/niche.html"
+    },
+    {
+      "source": "/pizzeria",
+      "destination": "/niche.html"
+    },
+    {
+      "source": "/tasty-crousty",
+      "destination": "/niche.html"
+    },
+    {
+      "source": "/tacos",
+      "destination": "/niche.html"
+    },
+    {
+      "source": "/peintre-batiment",
+      "destination": "/niche.html"
+    },
+    {
+      "source": "/installateur-clim",
+      "destination": "/niche.html"
+    },
+    {
+      "source": "/garagiste",
+      "destination": "/niche.html"
     }
   ],
   "functions": {
