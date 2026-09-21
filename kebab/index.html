@@ -124,9 +124,9 @@ h1 em{display:block;color:var(--orange);font-style:italic;font-weight:400;letter
 
   <section class="gallery" id="videos">
     <div class="video-grid" id="grid" aria-live="polite">
-      <article class="card featured-card" aria-label="Vidéo kebab">
-        <video src="/kebab-feature.mp4" autoplay muted loop playsinline preload="metadata"></video>
-      </article>
+      <button class="card featured-card" id="featuredCard" type="button" aria-label="Ouvrir la vidéo kebab">
+        <video id="kebabFeaturedVideo" autoplay muted loop playsinline preload="auto"></video>
+      </button>
     </div>
     <div class="sentinel" id="sentinel"></div>
     <div class="load-state" id="loadState">Chargement des vidéos…</div>
@@ -171,6 +171,53 @@ h1 em{display:block;color:var(--orange);font-style:italic;font-weight:400;letter
   var wheelLock=false;
   var touchStartY=0;
   var hooksMeta=Array.isArray(window.VIDEOMA_DEMO_HOOKS)?window.VIDEOMA_DEMO_HOOKS:[];
+  var featuredCard=document.getElementById('featuredCard');
+  var featuredVideo=document.getElementById('kebabFeaturedVideo');
+  var featuredObjectUrl='';
+
+  function loadFeaturedVideo(){
+    var parts=[
+      '/kebab-video/part00.txt',
+      '/kebab-video/part01.txt',
+      '/kebab-video/part02.txt',
+      '/kebab-video/part03.txt'
+    ];
+    return Promise.all(parts.map(function(url){
+      return fetch(url,{cache:'force-cache'}).then(function(r){
+        if(!r.ok)throw new Error('KEBAB_VIDEO_PART_'+r.status);
+        return r.text();
+      });
+    })).then(function(chunks){
+      var base64=chunks.join('').replace(/\s+/g,'');
+      var binary=atob(base64);
+      var bytes=new Uint8Array(binary.length);
+      for(var i=0;i<binary.length;i++)bytes[i]=binary.charCodeAt(i);
+      featuredObjectUrl=URL.createObjectURL(new Blob([bytes],{type:'video/mp4'}));
+      featuredVideo.src=featuredObjectUrl;
+      featuredVideo.load();
+      featuredVideo.addEventListener('loadeddata',function(){featuredCard.classList.add('ready');},{once:true});
+      videoObserver.observe(featuredVideo);
+      var p=featuredVideo.play();if(p&&p.catch)p.catch(function(){});
+    }).catch(function(err){
+      console.error('kebab featured video',err);
+    });
+  }
+
+  function openFeatured(){
+    if(!featuredObjectUrl)return;
+    activeIndex=-1;
+    modalVideo.pause();
+    modalVideo.src=featuredObjectUrl;
+    modalVideo.load();
+    modalHook.textContent='';
+    modalHook.style.display='none';
+    modalCount.textContent='1 / '+(videos.length+1).toLocaleString('fr-FR');
+    modal.classList.add('open');
+    modal.setAttribute('aria-hidden','false');
+    document.body.style.overflow='hidden';
+    var p=modalVideo.play();if(p&&p.catch)p.catch(function(){});
+  }
+
 
   var openers=[
     'POV : tu viens de trouver',
@@ -313,12 +360,13 @@ h1 em{display:block;color:var(--orange);font-style:italic;font-weight:400;letter
     if(index<0||index>=videos.length)return;
     activeIndex=index;
     var m=metaFor(index);
+    modalHook.style.display='block';
     modalVideo.pause();
     modalVideo.src=videos[index];
     modalVideo.load();
     modalHook.className='modal-hook '+m.placement+' '+m.design;
     modalHook.textContent=hookFor(index);
-    modalCount.textContent=(index+1).toLocaleString('fr-FR')+' / '+videos.length.toLocaleString('fr-FR');
+    modalCount.textContent=(index+2).toLocaleString('fr-FR')+' / '+(videos.length+1).toLocaleString('fr-FR');
     modal.classList.add('open');
     modal.setAttribute('aria-hidden','false');
     document.body.style.overflow='hidden';
@@ -333,10 +381,21 @@ h1 em{display:block;color:var(--orange);font-style:italic;font-weight:400;letter
     modalVideo.load();
   }
   function step(dir){
+    if(activeIndex===-1){
+      if(!videos.length)return;
+      openVideo(dir>0?0:videos.length-1);
+      return;
+    }
     if(!videos.length)return;
+    if(dir<0&&activeIndex===0){openFeatured();return;}
+    if(dir>0&&activeIndex===videos.length-1){openFeatured();return;}
     var n=(activeIndex+dir+videos.length)%videos.length;
     openVideo(n);
   }
+  featuredCard.addEventListener('click',openFeatured);
+  featuredCard.addEventListener('keydown',function(e){
+    if(e.key==='Enter'||e.key===' '){e.preventDefault();openFeatured();}
+  });
   document.getElementById('modalClose').addEventListener('click',closeModal);
   document.getElementById('prev').addEventListener('click',function(){step(-1);});
   document.getElementById('next').addEventListener('click',function(){step(1);});
@@ -357,6 +416,8 @@ h1 em{display:block;color:var(--orange);font-style:italic;font-weight:400;letter
     var dy=e.changedTouches[0].clientY-touchStartY;
     if(Math.abs(dy)>50)step(dy<0?1:-1);
   },{passive:true});
+
+  loadFeaturedVideo();
 
   fetch('/videos.txt',{cache:'force-cache'})
     .then(function(r){if(!r.ok)throw new Error('VIDEOS_HTTP_'+r.status);return r.text();})
