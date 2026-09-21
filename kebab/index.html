@@ -88,6 +88,32 @@ h1 em{display:block;color:var(--orange);font-style:italic;font-weight:400;letter
 .no-results.show{display:block}
 @media(max-width:350px){.shell{padding-left:16px;padding-right:16px}.video-grid{gap:4px}.gallery{padding-left:8px;padding-right:8px}.card-hook{font-size:7.6px}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.skeleton{animation:none}}
+.unlock-card{margin:20px 2px 0;padding:24px 18px 20px;border:1px solid #26262b;border-radius:22px;background:radial-gradient(circle at 80% 0%,rgba(255,152,39,.15),transparent 38%),#0a0a0c;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.35)}
+.unlock-progress{display:flex;justify-content:space-between;color:#85858f;font-size:8px;margin-bottom:8px}
+.unlock-bar{height:4px;border-radius:999px;background:#202024;overflow:hidden}.unlock-bar i{display:block;width:9.8%;height:100%;background:var(--orange);border-radius:inherit}
+.unlock-kicker{margin:18px 0 8px;color:var(--orange);font-size:8px;font-weight:900;letter-spacing:.18em}
+.unlock-card h2{margin:0;font-family:Georgia,"Times New Roman",serif;font-size:30px;line-height:.98;letter-spacing:-1.5px}
+.unlock-card h2 em{display:block;color:var(--orange);font-weight:400;font-style:italic;margin-top:3px}
+.unlock-copy{max-width:330px;margin:12px auto 0;color:#a0a0a9;font-size:10.5px;line-height:1.48}.unlock-copy b{color:#fff}
+.unlock-price{margin:18px 0 12px;display:flex;align-items:baseline;justify-content:center;gap:8px}.unlock-price strong{font-family:Georgia,"Times New Roman",serif;font-size:44px;letter-spacing:-2px}.unlock-price span{font-size:9px;color:#7f7f88}
+.unlock-btn{width:100%;height:50px;border:0;border-radius:16px;background:var(--orange);color:#050505;font-weight:900;font-size:12px}.unlock-btn b{font-size:18px;margin-left:8px}
+.unlock-note{margin:9px 0 0;color:#686872;font-size:8px}
+.onboarding{position:fixed;z-index:180;inset:0;background:#000;display:none;overflow:auto}.onboarding.open{display:block}
+.ob-shell{width:min(100%,430px);min-height:100dvh;margin:0 auto;padding:calc(14px + env(safe-area-inset-top)) 20px calc(24px + env(safe-area-inset-bottom));display:flex;flex-direction:column}
+.ob-top{display:flex;align-items:center;gap:12px}.ob-close,.ob-back{width:36px;height:36px;border:1px solid #2a2a2f;border-radius:50%;background:#0b0b0d;color:#fff;font-size:18px}.ob-brand{font-family:Georgia,"Times New Roman",serif;font-weight:700;font-size:20px;flex:1}.ob-brand span{font-size:.7em;font-weight:400}.ob-step-count{font-size:8px;color:#777780}
+.ob-progress{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin:18px 0 28px}.ob-progress i{height:3px;border-radius:99px;background:#232327}.ob-progress i.active{background:var(--orange)}
+.ob-step{display:none;flex:1}.ob-step.active{display:flex;flex-direction:column}
+.ob-kicker{margin:0 0 10px;color:var(--orange);font-size:8px;font-weight:900;letter-spacing:.18em;text-transform:uppercase}
+.ob-title{font-family:Georgia,"Times New Roman",serif;font-size:38px;line-height:.93;letter-spacing:-2px;margin:0;max-width:360px}.ob-title em{color:var(--orange);font-weight:400}
+.ob-copy{margin:13px 0 22px;color:#8e8e98;font-size:11px;line-height:1.5;max-width:350px}
+.ob-fields{display:grid;gap:10px}.ob-label{font-size:8px;color:#8a8a93;margin:0 0 5px 3px}.ob-input,.ob-textarea{width:100%;border:1px solid #2b2b30;background:#0b0b0d;color:#fff;border-radius:14px;padding:0 13px;outline:none;font-size:11px}.ob-input{height:48px}.ob-textarea{min-height:90px;padding-top:13px;resize:none}.ob-input:focus,.ob-textarea:focus{border-color:rgba(255,152,39,.75)}
+.choice-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.choice{min-height:54px;border:1px solid #29292e;border-radius:14px;background:#0b0b0d;color:#b3b3ba;text-align:left;padding:11px;font-size:10px;font-weight:750}.choice.selected{border-color:var(--orange);background:rgba(255,152,39,.09);color:#fff}.choice small{display:block;margin-top:3px;color:#686872;font-size:7.5px;font-weight:500}
+.ob-spacer{flex:1;min-height:24px}.ob-next{width:100%;height:52px;border:0;border-radius:16px;background:var(--orange);color:#050505;font-size:12px;font-weight:900;margin-top:20px}.ob-next:disabled{opacity:.45}
+.order-card{border:1px solid #29292e;border-radius:20px;background:#0b0b0d;padding:17px}.order-line{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;padding:10px 0;border-bottom:1px solid #1f1f23;font-size:10px}.order-line:last-child{border-bottom:0}.order-line b{font-size:11px}.order-line span{color:#92929b;text-align:right}
+.order-bonus{margin-top:12px;border:1px solid rgba(255,152,39,.35);background:rgba(255,152,39,.08);border-radius:14px;padding:12px;color:#fff;font-size:10px}.order-bonus b{color:var(--orange)}
+.order-total{display:flex;justify-content:space-between;align-items:end;margin-top:18px}.order-total span{color:#83838c;font-size:9px}.order-total strong{font-family:Georgia,"Times New Roman",serif;font-size:45px;letter-spacing:-2px}
+.pay-btn{width:100%;height:54px;border:0;border-radius:16px;background:#fff;color:#050505;font-size:12px;font-weight:900;margin-top:14px}.pay-btn[disabled]{opacity:.55}.secure{margin:9px 0 0;text-align:center;color:#686872;font-size:8px}.ob-error{display:none;margin:10px 0 0;padding:10px;border:1px solid #512525;background:#1d0d0d;color:#ffb0b0;border-radius:12px;font-size:9px;line-height:1.4}.ob-error.show{display:block}
+.success-page{min-height:100dvh;display:grid;place-items:center;padding:24px;text-align:center}
 </style>
 </head>
 <body>
@@ -96,7 +122,7 @@ h1 em{display:block;color:var(--orange);font-style:italic;font-weight:400;letter
     <div class="shell">
       <header class="topbar">
         <div class="brand">clipfa<span>.st</span></div>
-        <button class="start" data-focus-url>Commencer <b>→</b></button>
+        <button class="start" data-onboard>Commencer <b>→</b></button>
         <button class="menu" aria-label="Voir les vidéos" data-gallery><i></i></button>
       </header>
 
@@ -105,7 +131,7 @@ h1 em{display:block;color:var(--orange);font-style:italic;font-weight:400;letter
         <h1>1000 vidéos<br>pour votre kebab<br>en moins de<em>5 minutes.</em></h1>
         <p class="sub">Aucun tournage. Aucun montage.<br>Des vidéos prêtes à publier sur TikTok, Instagram,<br>Facebook et YouTube.</p>
 
-        <button class="primary-cta" data-focus-url>Créer mes 1000 vidéos <b>→</b></button>
+        <button class="primary-cta" data-onboard>Créer mes 1000 vidéos <b>→</b></button>
 
         <label class="link-field" id="urlField">
           <svg viewBox="0 0 24 24" fill="none" stroke="#a6a7b2" stroke-width="2" stroke-linecap="round" aria-hidden="true">
@@ -123,17 +149,23 @@ h1 em{display:block;color:var(--orange);font-style:italic;font-weight:400;letter
    </section>
 
   <section class="gallery" id="videos">
-    <div class="video-grid" id="grid" aria-live="polite">
-      <button class="card featured-card" id="featuredCard" type="button" aria-label="Ouvrir la vidéo kebab">
-        <video id="kebabFeaturedVideo" autoplay muted loop playsinline preload="auto"></video>
-      </button>
-    </div>
+    <div class="video-grid" id="grid" aria-live="polite"></div>
     <div class="sentinel" id="sentinel"></div>
-    <div class="load-state" id="loadState">Chargement des vidéos…</div>
+    <div class="load-state" id="loadState">Chargement des 98 aperçus…</div>
+    <section class="unlock-card" id="unlock">
+      <div class="unlock-progress"><span>98 aperçus</span><span>1 000 vidéos finales</span></div>
+      <div class="unlock-bar"><i></i></div>
+      <p class="unlock-kicker">TON PACK COMPLET</p>
+      <h2>Tu viens d’en voir 98.<br><em>Maintenant on crée les tiennes.</em></h2>
+      <p class="unlock-copy">1 000 vidéos personnalisées pour ton kebab, prêtes à poster + <b>20 vidéos premium offertes</b>.</p>
+      <div class="unlock-price"><strong>129€</strong><span>paiement unique</span></div>
+      <button class="unlock-btn" data-onboard>Démarrer mon pack <b>→</b></button>
+      <p class="unlock-note">≈ 0,13€ par vidéo · aucun abonnement</p>
+    </section>
   </section>
 </main>
 
-<button class="sticky-cta hidden" id="stickyCta" data-focus-url>Créer mes 1000 vidéos <span>→</span></button>
+<button class="sticky-cta hidden" id="stickyCta" data-onboard>Créer mes 1000 vidéos <span>→</span></button>
 
 <div class="modal" id="modal" aria-hidden="true">
   <div class="modal-player" id="modalPlayer">
@@ -147,6 +179,79 @@ h1 em{display:block;color:var(--orange);font-style:italic;font-weight:400;letter
       <button id="prev" aria-label="Vidéo précédente">↑</button>
       <button id="next" aria-label="Vidéo suivante">↓</button>
     </div>
+  </div>
+</div>
+
+<div class="onboarding" id="onboarding" aria-hidden="true">
+  <div class="ob-shell">
+    <div class="ob-top">
+      <button class="ob-back" id="obBack" aria-label="Retour">←</button>
+      <div class="ob-brand">clipfa<span>.st</span> / kebab</div>
+      <div class="ob-step-count" id="obCount">1 / 4</div>
+      <button class="ob-close" id="obClose" aria-label="Fermer">×</button>
+    </div>
+    <div class="ob-progress" id="obProgress"><i></i><i></i><i></i><i></i></div>
+
+    <section class="ob-step active" data-step="0">
+      <p class="ob-kicker">01 · TON KEBAB</p>
+      <h2 class="ob-title">On commence par <em>ton adresse.</em></h2>
+      <p class="ob-copy">Donne-nous ce qu’on doit connaître pour créer des hooks qui ressemblent vraiment à ton snack.</p>
+      <div class="ob-fields">
+        <div><p class="ob-label">Nom du kebab / snack</p><input class="ob-input" id="obName" placeholder="Ex. Le Bosphore"></div>
+        <div><p class="ob-label">Site, Instagram ou Google Maps</p><input class="ob-input" id="obUrl" placeholder="https://…"></div>
+        <div><p class="ob-label">Ville</p><input class="ob-input" id="obCity" placeholder="Ex. Nantes"></div>
+      </div>
+      <div class="ob-spacer"></div>
+      <button class="ob-next" data-next>Continuer →</button>
+    </section>
+
+    <section class="ob-step" data-step="1">
+      <p class="ob-kicker">02 · CE QU’ON DOIT VENDRE</p>
+      <h2 class="ob-title">Qu’est-ce qui fait venir <em>les gens chez toi ?</em></h2>
+      <p class="ob-copy">Une spécialité suffit. On s’en sert pour personnaliser les 1 000 accroches.</p>
+      <div class="ob-fields">
+        <div><p class="ob-label">Produit / spécialité à pousser</p><input class="ob-input" id="obProduct" placeholder="Ex. kebab maison, galette, maxi tacos…"></div>
+        <div><p class="ob-label">Offre ou différence</p><textarea class="ob-textarea" id="obOffer" placeholder="Ex. viande maison, ouvert tard, menu étudiant, livraison…"></textarea></div>
+      </div>
+      <div class="ob-spacer"></div>
+      <button class="ob-next" data-next>Continuer →</button>
+    </section>
+
+    <section class="ob-step" data-step="2">
+      <p class="ob-kicker">03 · TES RÉSEAUX</p>
+      <h2 class="ob-title">Où veux-tu prendre <em>plus de vues ?</em></h2>
+      <p class="ob-copy">Sélectionne autant de plateformes que tu veux. Les formats seront pensés pour du contenu vertical.</p>
+      <div class="choice-grid" id="platformChoices">
+        <button class="choice selected" data-value="TikTok">TikTok<small>hooks courts & réactions</small></button>
+        <button class="choice selected" data-value="Instagram">Instagram<small>Reels & stories</small></button>
+        <button class="choice" data-value="Facebook">Facebook<small>Reels locaux</small></button>
+        <button class="choice selected" data-value="YouTube Shorts">YouTube Shorts<small>vertical 9:16</small></button>
+      </div>
+      <div class="ob-fields" style="margin-top:16px">
+        <div><p class="ob-label">Ton objectif principal</p><input class="ob-input" id="obGoal" placeholder="Ex. plus de commandes le soir"></div>
+      </div>
+      <div class="ob-spacer"></div>
+      <button class="ob-next" data-next>Voir mon pack →</button>
+    </section>
+
+    <section class="ob-step" data-step="3">
+      <p class="ob-kicker">04 · TON PACK</p>
+      <h2 class="ob-title">1 000 vidéos.<br><em>129€ une fois.</em></h2>
+      <p class="ob-copy">On utilise tes réponses pour générer ton pack complet. Les 20 vidéos premium sont ajoutées en cadeau.</p>
+      <div class="order-card">
+        <div class="order-line"><b>1 000 vidéos personnalisées</b><span>hooks adaptés à ton kebab</span></div>
+        <div class="order-line"><b>Formats verticaux</b><span>TikTok · Reels · Shorts</span></div>
+        <div class="order-line"><b>Prêtes à publier</b><span>aucun tournage · aucun montage</span></div>
+        <div class="order-bonus">🎁 <b>+ 20 vidéos premium offertes</b><br><span style="color:#9d9da6">formats plus travaillés pour tes meilleures campagnes</span></div>
+      </div>
+      <div class="ob-fields" style="margin-top:14px">
+        <div><p class="ob-label">Email de livraison</p><input class="ob-input" id="obEmail" type="email" placeholder="vous@restaurant.fr"></div>
+      </div>
+      <div class="order-total"><span>paiement unique<br>aucun abonnement</span><strong>129€</strong></div>
+      <div class="ob-error" id="obError"></div>
+      <button class="pay-btn" id="payBtn">Payer 129€ et lancer la création →</button>
+      <p class="secure">Paiement sécurisé · livraison du pack après validation</p>
+    </section>
   </div>
 </div>
 
@@ -167,7 +272,8 @@ h1 em{display:block;color:var(--orange);font-style:italic;font-weight:400;letter
   var videos=[];
   var filtered=[];
   var rendered=0;
-  var batch=42;
+  var batch=98;
+  var PREVIEW_LIMIT=98;
   var wheelLock=false;
   var touchStartY=0;
   var hooksMeta=Array.isArray(window.VIDEOMA_DEMO_HOOKS)?window.VIDEOMA_DEMO_HOOKS:[];
@@ -275,7 +381,6 @@ h1 em{display:block;color:var(--orange);font-style:italic;font-weight:400;letter
     document.getElementById('urlField').scrollIntoView({behavior:'smooth',block:'center'});
     setTimeout(function(){urlInput.focus({preventScroll:true});},420);
   }
-  document.querySelectorAll('[data-focus-url]').forEach(function(b){b.addEventListener('click',focusUrl);});
   document.querySelector('[data-gallery]').addEventListener('click',function(){document.getElementById('videos').scrollIntoView({behavior:'smooth'});});
 
   var heroObserver=new IntersectionObserver(function(entries){
@@ -422,15 +527,105 @@ h1 em{display:block;color:var(--orange);font-style:italic;font-weight:400;letter
   fetch('/videos.txt',{cache:'force-cache'})
     .then(function(r){if(!r.ok)throw new Error('VIDEOS_HTTP_'+r.status);return r.text();})
     .then(function(text){
-      videos=text.split(/\r?\n/).map(function(x){return x.trim();}).filter(Boolean);
+      videos=text.split(/\r?\n/).map(function(x){return x.trim();}).filter(Boolean).slice(0,PREVIEW_LIMIT);
       filtered=videos.map(function(_,i){return i;});
       renderMore();
-      loadState.textContent='Chargement progressif — '+rendered.toLocaleString('fr-FR')+' / '+videos.length.toLocaleString('fr-FR');
+      loadState.textContent='98 aperçus vidéo chargés.';
     })
     .catch(function(err){
       console.error(err);
       loadState.textContent='Impossible de charger la bibliothèque vidéo.';
     });
+  /* Onboarding */
+  var onboarding=document.getElementById('onboarding');
+  var obSteps=Array.from(document.querySelectorAll('.ob-step'));
+  var obBars=Array.from(document.querySelectorAll('#obProgress i'));
+  var obIndex=0;
+  var obBack=document.getElementById('obBack');
+  var obCount=document.getElementById('obCount');
+  var obError=document.getElementById('obError');
+
+  function showObStep(i){
+    obIndex=Math.max(0,Math.min(obSteps.length-1,i));
+    obSteps.forEach(function(s,n){s.classList.toggle('active',n===obIndex);});
+    obBars.forEach(function(b,n){b.classList.toggle('active',n<=obIndex);});
+    obCount.textContent=(obIndex+1)+' / '+obSteps.length;
+    obBack.style.visibility=obIndex===0?'hidden':'visible';
+    onboarding.scrollTop=0;
+  }
+  function saveDraft(){
+    try{localStorage.setItem('clipfast_kebab_draft',JSON.stringify(collectOrder()));}catch(e){}
+  }
+  function collectOrder(){
+    return {
+      business:document.getElementById('obName').value.trim(),
+      source:document.getElementById('obUrl').value.trim(),
+      city:document.getElementById('obCity').value.trim(),
+      product:document.getElementById('obProduct').value.trim(),
+      offer:document.getElementById('obOffer').value.trim(),
+      goal:document.getElementById('obGoal').value.trim(),
+      email:document.getElementById('obEmail').value.trim(),
+      platforms:Array.from(document.querySelectorAll('#platformChoices .choice.selected')).map(function(x){return x.dataset.value;})
+    };
+  }
+  function restoreDraft(){
+    try{
+      var d=JSON.parse(localStorage.getItem('clipfast_kebab_draft')||'{}');
+      [['obName','business'],['obUrl','source'],['obCity','city'],['obProduct','product'],['obOffer','offer'],['obGoal','goal'],['obEmail','email']].forEach(function(p){
+        if(d[p[1]] && !document.getElementById(p[0]).value)document.getElementById(p[0]).value=d[p[1]];
+      });
+    }catch(e){}
+  }
+  function openOnboarding(){
+    restoreDraft();
+    if(urlInput.value.trim()&&!document.getElementById('obUrl').value)document.getElementById('obUrl').value=urlInput.value.trim();
+    onboarding.classList.add('open');
+    onboarding.setAttribute('aria-hidden','false');
+    document.body.style.overflow='hidden';
+    showObStep(0);
+  }
+  function closeOnboarding(){
+    saveDraft();
+    onboarding.classList.remove('open');
+    onboarding.setAttribute('aria-hidden','true');
+    document.body.style.overflow='';
+  }
+  document.querySelectorAll('[data-onboard]').forEach(function(b){b.addEventListener('click',openOnboarding);});
+  document.getElementById('obClose').addEventListener('click',closeOnboarding);
+  obBack.addEventListener('click',function(){if(obIndex>0)showObStep(obIndex-1);});
+  document.querySelectorAll('[data-next]').forEach(function(btn){
+    btn.addEventListener('click',function(){saveDraft();showObStep(obIndex+1);});
+  });
+  document.querySelectorAll('#platformChoices .choice').forEach(function(btn){
+    btn.addEventListener('click',function(){btn.classList.toggle('selected');saveDraft();});
+  });
+
+  document.getElementById('payBtn').addEventListener('click',async function(){
+    var btn=this,order=collectOrder();
+    obError.classList.remove('show');
+    if(!/^\S+@\S+\.\S+$/.test(order.email)){
+      obError.textContent='Ajoute un email valide pour recevoir ton pack.';
+      obError.classList.add('show');
+      document.getElementById('obEmail').focus();
+      return;
+    }
+    saveDraft();
+    btn.disabled=true;btn.textContent='Ouverture du paiement sécurisé…';
+    try{
+      var r=await fetch('/api/kebab-checkout',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(order)});
+      var data=await r.json().catch(function(){return {};});
+      if(!r.ok||!data.url)throw new Error(data.error||'CHECKOUT_UNAVAILABLE');
+      window.location.href=data.url;
+    }catch(e){
+      obError.textContent=e.message==='STRIPE_NOT_CONFIGURED'
+        ? 'Le paiement est prêt côté site, mais la clé Stripe doit encore être ajoutée dans Vercel.'
+        : 'Impossible d’ouvrir le paiement pour le moment. Réessaie dans quelques secondes.';
+      obError.classList.add('show');
+      btn.disabled=false;btn.textContent='Payer 129€ et lancer la création →';
+    }
+  });
+
+  if(new URLSearchParams(location.search).get('checkout')==='cancelled')openOnboarding();
 })();
 </script>
 </body>
