@@ -19,6 +19,15 @@
       ]
     },
     {
+      "source": "/kebab",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-store, max-age=0"
+        }
+      ]
+    },
+    {
       "source": "/videos.txt",
       "headers": [
         {
@@ -47,6 +56,12 @@
           "value": "camera=(), microphone=(), geolocation=()"
         }
       ]
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/kebab",
+      "destination": "/kebab/index.html"
     }
   ],
   "functions": {

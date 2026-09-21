@@ -1,0 +1,616 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>clipfa.st / kebab</title>
+<style>
+  :root {
+    --orange:#ff9827;
+    --muted:#aaaab3;
+    --line:#323238;
+  }
+
+  * { box-sizing:border-box; }
+
+  html, body {
+    margin:0;
+    background:#000;
+    color:#fff;
+  }
+
+  body {
+    font-family:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    overflow-x:hidden;
+  }
+
+  .page {
+    width:100%;
+    max-width:430px;
+    margin:0 auto;
+    background:#000;
+    min-height:100vh;
+  }
+
+  .hero {
+    position:relative;
+    min-height:100svh;
+    overflow:visible;
+    isolation:isolate;
+  }
+
+  .hero-bg {
+    position:absolute;
+    inset:0 0 auto 0;
+    height:100svh;
+    min-height:720px;
+    z-index:-3;
+    overflow:hidden;
+    pointer-events:none;
+  }
+
+  .hero-bg::before {
+    content:"";
+    position:absolute;
+    left:-26%;
+    width:154%;
+    top:36%;
+    height:48%;
+    background:url("/kebab-bg.jpeg") 40% 50% / cover no-repeat;
+    filter:saturate(1.05) contrast(1.08);
+  }
+
+  .hero-bg::after {
+    content:"";
+    position:absolute;
+    inset:0;
+    background:linear-gradient(
+      to bottom,
+      #000 0%,
+      #000 30%,
+      rgba(0,0,0,.95) 36%,
+      rgba(0,0,0,.58) 46%,
+      rgba(0,0,0,.08) 59%,
+      rgba(0,0,0,.2) 74%,
+      #000 92%
+    );
+  }
+
+  .shell {
+    position:relative;
+    padding:9px 22px 0;
+  }
+
+  .topbar {
+    height:38px;
+    display:grid;
+    grid-template-columns:1fr auto auto;
+    align-items:center;
+    gap:14px;
+  }
+
+  .brand {
+    font-family:Georgia,"Times New Roman",serif;
+    font-size:23px;
+    line-height:1;
+    font-weight:700;
+    letter-spacing:-1.35px;
+  }
+
+  .brand span {
+    font-size:.7em;
+    font-weight:400;
+    letter-spacing:-.5px;
+  }
+
+  .start {
+    border:0;
+    background:#fff;
+    color:#0a0a0a;
+    height:31px;
+    min-width:108px;
+    border-radius:999px;
+    padding:0 14px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:9px;
+    font-size:10.5px;
+    font-weight:800;
+    cursor:pointer;
+  }
+
+  .start b {
+    font-size:20px;
+    line-height:1;
+    font-weight:400;
+    margin-top:-2px;
+  }
+
+  .menu {
+    position:relative;
+    width:20px;
+    height:18px;
+    border:0;
+    background:transparent;
+    padding:0;
+    cursor:pointer;
+  }
+
+  .menu i,
+  .menu::before,
+  .menu::after {
+    content:"";
+    position:absolute;
+    left:0;
+    width:20px;
+    height:1.6px;
+    border-radius:20px;
+    background:#fff;
+  }
+
+  .menu::before { top:1px; }
+  .menu i { top:8px; }
+  .menu::after { top:15px; }
+
+  .copy {
+    text-align:center;
+    margin-top:10px;
+  }
+
+  .eyebrow {
+    margin:0 0 9px;
+    color:#9797a2;
+    font-size:7.4px;
+    letter-spacing:4.1px;
+    text-transform:uppercase;
+    font-weight:700;
+  }
+
+  h1 {
+    margin:0 auto;
+    max-width:360px;
+    font-family:Georgia,"Times New Roman",serif;
+    font-size:clamp(40px,10.8vw,46px);
+    line-height:.89;
+    font-weight:700;
+    letter-spacing:-2.7px;
+    text-wrap:balance;
+  }
+
+  h1 em {
+    display:block;
+    color:var(--orange);
+    font-style:italic;
+    font-weight:400;
+    letter-spacing:-2.2px;
+    margin-top:1px;
+  }
+
+  .sub {
+    max-width:320px;
+    margin:11px auto 0;
+    color:#b7b7bf;
+    font-size:11px;
+    line-height:1.45;
+  }
+
+  .primary-cta {
+    width:100%;
+    height:48px;
+    border:0;
+    border-radius:17px;
+    margin-top:12px;
+    background:var(--orange);
+    color:#050505;
+    font-size:12.2px;
+    font-weight:850;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:12px;
+    box-shadow:0 10px 28px rgba(0,0,0,.24);
+    cursor:pointer;
+  }
+
+  .primary-cta b {
+    font-size:20px;
+    line-height:1;
+    font-weight:400;
+  }
+
+  .link-field {
+    margin-top:8px;
+    height:43px;
+    border:1px solid #3a3a40;
+    border-radius:15px;
+    background:rgba(7,7,8,.76);
+    backdrop-filter:blur(8px);
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:0 14px;
+  }
+
+  .link-field svg {
+    width:19px;
+    height:19px;
+    flex:none;
+  }
+
+  .link-field input {
+    width:100%;
+    min-width:0;
+    border:0;
+    outline:0;
+    color:#fff;
+    background:transparent;
+    font-size:10.6px;
+  }
+
+  .link-field input::placeholder {
+    color:#898994;
+    opacity:1;
+  }
+
+  .visual-space {
+    height:300px;
+    pointer-events:none;
+  }
+
+  .examples {
+    position:relative;
+    padding:0 0 26px;
+    background:#000;
+    overflow:visible;
+  }
+
+  .examples-head {
+    padding:0 22px 10px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+  }
+
+  .examples-title {
+    margin:0;
+    font-size:9px;
+    font-weight:700;
+    color:#d8d8de;
+    letter-spacing:.3px;
+  }
+
+  .examples-hint {
+    font-size:8px;
+    color:#6f6f79;
+  }
+
+  .phones-viewport {
+    width:100%;
+    overflow-x:hidden;
+    overflow-y:visible;
+    padding:2px 0 18px;
+  }
+
+  .marquee {
+    display:flex;
+    width:max-content;
+    gap:12px;
+    padding:0 10px;
+    animation:move 28s linear infinite;
+    will-change:transform;
+  }
+
+  @keyframes move {
+    from { transform:translateX(0); }
+    to { transform:translateX(-50%); }
+  }
+
+  .phone {
+    width:108px;
+    height:220px;
+    flex:0 0 108px;
+    background:#080808;
+    border:1px solid #38383d;
+    border-radius:25px;
+    padding:4px;
+    position:relative;
+    box-shadow:
+      inset 0 0 0 1px rgba(255,255,255,.05),
+      0 14px 32px rgba(0,0,0,.54);
+  }
+
+  .phone::before {
+    content:"";
+    position:absolute;
+    z-index:4;
+    top:8px;
+    left:50%;
+    transform:translateX(-50%);
+    width:31px;
+    height:8px;
+    border-radius:999px;
+    background:#060606;
+  }
+
+  .screen {
+    position:relative;
+    width:100%;
+    height:100%;
+    overflow:hidden;
+    border-radius:21px;
+    background:#141414;
+  }
+
+  .pic {
+    position:absolute;
+    inset:0;
+    background-image:url("/kebab-bg.jpeg");
+    background-repeat:no-repeat;
+    filter:saturate(1.08) contrast(1.05);
+  }
+
+  .p1 .pic { background-position:17% 49%; background-size:340px 192px; }
+  .p2 .pic { background-position:51% 47%; background-size:325px 183px; }
+  .p3 .pic { background-position:92% 48%; background-size:348px 195px; }
+  .p4 .pic { background-position:30% 55%; background-size:370px 208px; }
+  .p5 .pic { background-position:76% 44%; background-size:312px 175px; }
+
+  .screen::after {
+    content:"";
+    position:absolute;
+    inset:0;
+    background:linear-gradient(to top,rgba(0,0,0,.78),transparent 58%);
+  }
+
+  .hook {
+    position:absolute;
+    z-index:2;
+    top:42px;
+    left:8px;
+    right:8px;
+    text-align:center;
+    font-size:8px;
+    line-height:1.05;
+    font-weight:900;
+    text-shadow:0 2px 8px #000;
+  }
+
+  .hook strong {
+    display:block;
+    color:#fff;
+    font-size:10px;
+  }
+
+  .hook .orange { color:var(--orange); }
+
+  .meta {
+    position:absolute;
+    z-index:2;
+    left:8px;
+    right:8px;
+    bottom:9px;
+    font-size:5.7px;
+    line-height:1.25;
+    color:#fff;
+    opacity:.96;
+  }
+
+  .meta b {
+    display:block;
+    font-size:6.5px;
+    margin-bottom:2px;
+  }
+
+  @media (prefers-reduced-motion:reduce) {
+    .marquee { animation:none; }
+  }
+</style>
+</head>
+<body>
+<main class="page">
+  <section class="hero">
+    <div class="hero-bg"></div>
+    <div class="shell">
+      <header class="topbar">
+        <div class="brand">clipfa<span>.st</span></div>
+        <button class="start">Commencer <b>→</b></button>
+        <button class="menu" aria-label="Menu"><i></i></button>
+      </header>
+
+      <div class="copy">
+        <p class="eyebrow">POUR LES KEBABS UNIQUEMENT</p>
+        <h1>
+          1000 vidéos
+          <br>
+          pour votre kebab
+          <br>
+          en moins de
+          <em>5 minutes.</em>
+        </h1>
+
+        <p class="sub">
+          Aucun tournage. Aucun montage.
+          <br>
+          Des vidéos prêtes à publier sur TikTok, Instagram,
+          <br>
+          Facebook et YouTube.
+        </p>
+
+        <button class="primary-cta">
+          Créer mes 1000 vidéos
+          <b>→</b>
+        </button>
+
+        <label class="link-field">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#a6a7b2" stroke-width="2" stroke-linecap="round">
+            <path d="M10 13a5 5 0 0 0 7.54.54l2-2a5 5 0 0 0-7.07-7.07l-1.15 1.15"/>
+            <path d="M14 11a5 5 0 0 0-7.54-.54l-2 2a5 5 0 0 0 7.07 7.07l1.15-1.15"/>
+          </svg>
+          <input type="url" placeholder="lien de votre kebab (site, Instagram, etc.)">
+        </label>
+      </div>
+
+      <div class="visual-space"></div>
+    </div>
+  </section>
+
+  <section class="examples">
+    <div class="examples-head">
+      <p class="examples-title">Exemples de vidéos générées</p>
+      <span class="examples-hint">défilement automatique</span>
+    </div>
+
+    <div class="phones-viewport">
+      <div class="marquee">
+        <article class="phone p1">
+          <div class="screen">
+            <div class="pic"></div>
+            <div class="hook">
+              <strong>POV :</strong>
+              tu viens de trouver
+              <span class="orange">ton nouveau kebab</span>
+            </div>
+            <div class="meta">
+              <b>@votre.kebab</b>
+              Une vidéo prête à poster. #kebab #foodtok
+            </div>
+          </div>
+        </article>
+
+        <article class="phone p2">
+          <div class="screen">
+            <div class="pic"></div>
+            <div class="hook">
+              Le kebab que
+              <strong>tout le quartier</strong>
+              devrait connaître
+            </div>
+            <div class="meta">
+              <b>@votre.kebab</b>
+              Une vidéo prête à poster. #kebab #foodtok
+            </div>
+          </div>
+        </article>
+
+        <article class="phone p3">
+          <div class="screen">
+            <div class="pic"></div>
+            <div class="hook">
+              Quand tu veux
+              <strong>un vrai kebab</strong>
+              et pas juste un sandwich
+            </div>
+            <div class="meta">
+              <b>@votre.kebab</b>
+              Une vidéo prête à poster. #kebab #foodtok
+            </div>
+          </div>
+        </article>
+
+        <article class="phone p4">
+          <div class="screen">
+            <div class="pic"></div>
+            <div class="hook">
+              On m’a dit “teste-le”…
+              <strong class="orange">j’ai compris pourquoi</strong>
+            </div>
+            <div class="meta">
+              <b>@votre.kebab</b>
+              Une vidéo prête à poster. #kebab #foodtok
+            </div>
+          </div>
+        </article>
+
+        <article class="phone p5">
+          <div class="screen">
+            <div class="pic"></div>
+            <div class="hook">
+              Ce kebab mérite
+              <strong>beaucoup plus de vues</strong>
+            </div>
+            <div class="meta">
+              <b>@votre.kebab</b>
+              Une vidéo prête à poster. #kebab #foodtok
+            </div>
+          </div>
+        </article>
+
+        <article class="phone p1">
+          <div class="screen">
+            <div class="pic"></div>
+            <div class="hook">
+              <strong>POV :</strong>
+              tu viens de trouver
+              <span class="orange">ton nouveau kebab</span>
+            </div>
+            <div class="meta">
+              <b>@votre.kebab</b>
+              Une vidéo prête à poster. #kebab #foodtok
+            </div>
+          </div>
+        </article>
+
+        <article class="phone p2">
+          <div class="screen">
+            <div class="pic"></div>
+            <div class="hook">
+              Le kebab que
+              <strong>tout le quartier</strong>
+              devrait connaître
+            </div>
+            <div class="meta">
+              <b>@votre.kebab</b>
+              Une vidéo prête à poster. #kebab #foodtok
+            </div>
+          </div>
+        </article>
+
+        <article class="phone p3">
+          <div class="screen">
+            <div class="pic"></div>
+            <div class="hook">
+              Quand tu veux
+              <strong>un vrai kebab</strong>
+              et pas juste un sandwich
+            </div>
+            <div class="meta">
+              <b>@votre.kebab</b>
+              Une vidéo prête à poster. #kebab #foodtok
+            </div>
+          </div>
+        </article>
+
+        <article class="phone p4">
+          <div class="screen">
+            <div class="pic"></div>
+            <div class="hook">
+              On m’a dit “teste-le”…
+              <strong class="orange">j’ai compris pourquoi</strong>
+            </div>
+            <div class="meta">
+              <b>@votre.kebab</b>
+              Une vidéo prête à poster. #kebab #foodtok
+            </div>
+          </div>
+        </article>
+
+        <article class="phone p5">
+          <div class="screen">
+            <div class="pic"></div>
+            <div class="hook">
+              Ce kebab mérite
+              <strong>beaucoup plus de vues</strong>
+            </div>
+            <div class="meta">
+              <b>@votre.kebab</b>
+              Une vidéo prête à poster. #kebab #foodtok
+            </div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+</main>
+</body>
+</html>
