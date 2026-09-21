@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#000000">
+<title>clipfa.st — 1000 vidéos en moins de 5 minutes</title>
+<meta name="description" content="1000 vidéos verticales prêtes à publier pour votre activité, à partir de votre site ou d'une simple description.">
+<style>
+:root{--orange:#ff9827;--bg:#000;--fg:#fff;--muted:#9b9ba4;--line:#25252a}
+*{box-sizing:border-box}
+html{background:#000;color:#fff}
+body{margin:0;background:radial-gradient(60% 36% at 50% 45%,rgba(255,152,39,.09),transparent 72%),#000;color:#fff;font-family:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+button,a{font:inherit}
+.page{width:min(100%,430px);min-height:100dvh;margin:0 auto;padding:calc(12px + env(safe-area-inset-top)) 22px calc(28px + env(safe-area-inset-bottom));display:flex;flex-direction:column}
+.topbar{height:42px;display:flex;align-items:center;justify-content:space-between}
+.brand{font-family:Georgia,"Times New Roman",serif;font-size:23px;font-weight:700;letter-spacing:-1.2px}.brand span{font-size:.7em;font-weight:400}
+.back{color:#b7b7bf;text-decoration:none;font-size:10px;border:1px solid #27272d;border-radius:999px;padding:8px 11px;background:#09090b}
+.hero{flex:1;display:flex;flex-direction:column;justify-content:center;text-align:center;padding:28px 0 42px}
+.eyebrow{width:max-content;max-width:100%;margin:0 auto 22px;padding:10px 17px;border:1px solid rgba(255,152,39,.32);border-radius:999px;color:#d6d6dc;background:rgba(12,12,14,.76);font-size:8px;letter-spacing:3px;text-transform:uppercase;font-weight:850;display:flex;align-items:center;justify-content:center;gap:11px}
+.eyebrow:before{content:"";width:7px;height:7px;border-radius:50%;background:var(--orange);box-shadow:0 0 14px rgba(255,152,39,.9)}
+h1{margin:0 auto;max-width:390px;font-family:Georgia,"Times New Roman",serif;font-size:clamp(46px,12.5vw,58px);line-height:.87;font-weight:700;letter-spacing:-3.5px;text-wrap:balance}
+h1 em{display:block;color:var(--orange);font-style:italic;font-weight:400;letter-spacing:-3px;margin-top:5px}
+.swoosh{width:46%;height:23px;display:block;margin:2px auto 0}.swoosh path{stroke:var(--orange);stroke-width:2;fill:none;stroke-linecap:round}
+.copy{max-width:350px;margin:17px auto 0;color:#a8a8b1;font-size:12px;line-height:1.55}
+.cta{position:relative;overflow:hidden;width:100%;height:59px;border:1px solid rgba(255,255,255,.86);border-radius:999px;margin-top:22px;background:#faf8f4;color:#080808;font-size:14px;font-weight:900;display:flex;align-items:center;justify-content:center;gap:14px;text-decoration:none;box-shadow:0 0 30px rgba(255,152,39,.13),0 16px 50px rgba(0,0,0,.5)}
+.cta:before{content:"";position:absolute;inset:-60% -40%;background:linear-gradient(115deg,transparent 36%,rgba(255,255,255,.95) 48%,rgba(255,184,102,.34) 52%,transparent 64%);transform:translateX(-65%) rotate(2deg);animation:shine 3.4s ease-in-out infinite}
+.cta span{position:relative;z-index:1}.cta b{position:relative;z-index:1;font-size:24px;font-weight:400}
+@keyframes shine{0%,68%{transform:translateX(-72%) rotate(2deg)}100%{transform:translateX(72%) rotate(2deg)}}
+.proof{display:flex;justify-content:center;gap:8px;margin-top:13px;color:#777780;font-size:9.5px}.proof i{width:3px;height:3px;border-radius:50%;background:#4b4b52;align-self:center}
+.examples{margin-top:28px;display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
+.example{aspect-ratio:9/16;border:1px solid #25252a;border-radius:14px;background:linear-gradient(160deg,#1a1a1e,#080809);position:relative;overflow:hidden}
+.example:after{content:"";position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.72),transparent 50%)}
+.example span{position:absolute;z-index:2;left:7px;right:7px;bottom:8px;font-size:7px;line-height:1.15;font-weight:800}
+.foot{border-top:1px solid #171719;padding-top:18px;color:#5f5f68;font-size:8px;text-align:center}
+</style>
+</head>
+<body>
+<main class="page">
+  <header class="topbar">
+    <div class="brand">clipfa<span>.st</span></div>
+    <a class="back" href="/#analyser">Analyser mon activité →</a>
+  </header>
+
+  <section class="hero">
+    <p class="eyebrow" id="eyebrow">POUR VOTRE ACTIVITÉ</p>
+    <h1><span id="headline">1000 vidéos pour votre activité</span><em>en moins de 5 minutes.</em></h1>
+    <svg class="swoosh" viewBox="0 0 180 24" aria-hidden="true"><path d="M4 18 C 50 6, 128 5, 176 16"/></svg>
+    <p class="copy" id="copy">À partir de votre site web, Instagram, Google Maps ou d'une simple description. Zéro tournage. Zéro montage.</p>
+
+    <a class="cta" id="cta" href="/#analyser"><span>Analyser mon activité</span><b>→</b></a>
+    <div class="proof"><span>1 000 vidéos prêtes à poster</span><i></i><span>TikTok · Reels · Shorts</span></div>
+
+    <div class="examples" aria-hidden="true">
+      <div class="example"><span id="ex1">Attirez plus de clients locaux</span></div>
+      <div class="example"><span id="ex2">Transformez vos réalisations en contenu</span></div>
+      <div class="example"><span id="ex3">Publiez toute l'année sans tourner</span></div>
+    </div>
+  </section>
+
+  <footer class="foot">clipfa.st · contenu social pour artisans, restaurants et PME</footer>
+</main>
+
+<script>
+(function(){
+  const configs={
+    '/plombier':{label:'POUR LES PLOMBIERS',headline:'1000 vidéos pour votre plomberie',copy:'Montrez vos dépannages, rénovations, chauffe-eau et interventions locales sans passer vos journées à filmer.',examples:['Une fuite ? Voilà qui appeler.','Avant / après salle de bain.','Le plombier local qu’on recommande.']},
+    '/electricien':{label:'POUR LES ÉLECTRICIENS',headline:'1000 vidéos pour votre entreprise d’électricité',copy:'Transformez vos installations, dépannages et chantiers en contenu local prêt à publier.',examples:['Ce tableau électrique avait besoin de ça.','L’erreur électrique qu’on voit partout.','Intervention propre, rapide, locale.']},
+    '/pizzeria':{label:'POUR LES PIZZERIAS',headline:'1000 vidéos pour votre pizzeria',copy:'Mettez vos pizzas, votre four et vos meilleures recettes au centre de vidéos qui donnent faim.',examples:['La pizza qui fait changer de programme.','Regarde cette pâte avant cuisson.','Ce soir, on sait où commander.']},
+    '/tasty-crousty':{label:'POUR LES TASTY CROUSTY',headline:'1000 vidéos pour votre Tasty Crousty',copy:'Créez des vidéos courtes autour du croustillant, des sauces, des portions et des réactions clients.',examples:['Le croustillant qu’on entend avant de goûter.','Cette sauce change tout.','Tu pensais partager ? Mauvaise idée.']},
+    '/tacos':{label:'POUR LES TACOS',headline:'1000 vidéos pour votre tacos',copy:'Mettez vos recettes, tailles, sauces et cheese en vidéos verticales prêtes pour TikTok et Reels.',examples:['Ce tacos ne rentre presque plus dans la boîte.','La sauce fromagère qu’on vient chercher.','Le repas léger… enfin presque.']},
+    '/peintre-batiment':{label:'POUR LES PEINTRES EN BÂTIMENT',headline:'1000 vidéos pour votre activité de peinture',copy:'Transformez vos avant/après, rénovations et finitions en preuve visuelle pour trouver plus de chantiers.',examples:['Avant / après en une seule pièce.','La finition qui change tout.','Ce mur avait besoin de nous.']},
+    '/installateur-clim':{label:'POUR LES INSTALLATEURS DE CLIM',headline:'1000 vidéos pour vos installations de clim',copy:'Expliquez vos installations, entretiens et économies d’énergie avec du contenu local simple à publier.',examples:['Avant l’été, vérifiez ça.','Installation propre en quelques heures.','La clim qui change cette pièce.']},
+    '/garagiste':{label:'POUR LES GARAGISTES',headline:'1000 vidéos pour votre garage',copy:'Montrez diagnostics, réparations et conseils auto pour rester visible auprès des automobilistes de votre zone.',examples:['Ce bruit moteur n’était pas normal.','La pièce qu’il fallait remplacer.','Avant de partir en vacances, vérifiez ça.']}
+  };
+  const path=location.pathname.replace(/\/$/,'')||'/';
+  const c=configs[path]||configs['/plombier'];
+  document.title='clipfa.st — '+c.label.toLowerCase();
+  document.getElementById('eyebrow').textContent=c.label;
+  document.getElementById('headline').textContent=c.headline;
+  document.getElementById('copy').textContent=c.copy+' À partir de votre site, Instagram, Google Maps ou d’une simple description.';
+  document.getElementById('ex1').textContent=c.examples[0];
+  document.getElementById('ex2').textContent=c.examples[1];
+  document.getElementById('ex3').textContent=c.examples[2];
+  const target='/#analyser';
+  document.getElementById('cta').href=target;
+})();
+</script>
+</body>
+</html>
