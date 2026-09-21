@@ -4,12 +4,15 @@ const db=require('./_db');
 const {isAdmin}=require('./admin/_auth');
 const {VIDEO_INTELLIGENCE_VERSION,LAYOUT_VERSION,RENDER_VERSION}=require('./_versions');
 const {hasUsableGeometry}=require('./_layout');
+const offlineCatalogue=require('../data/video-review-summary.json');
 
 module.exports=async function handler(req,res){
   res.setHeader('Cache-Control','no-store');
   if(req.method!=='GET')return res.status(405).json({error:'METHOD_NOT_ALLOWED'});
   const result={
     ok:true,
+    offlineCatalogue,
+    preanalysis:{mode:"offline",apiEnabled:false,active:false,blocked:false},
     aiGatewayConfigured:Boolean(credential()),
     directOpenAIConfigured:Boolean(canDirect()),
     aiConfigured:Boolean(credential()||canDirect()),
@@ -55,12 +58,12 @@ module.exports=async function handler(req,res){
       result.functional={
         ai:Boolean(credential()||canDirect()),
         database:true,
-        preanalysisBlocked:Boolean(job&&!job.active&&/INSUFFICIENT_FUNDS|AUTH_ERROR|NOT_CONFIGURED/.test(String(job.last_error||'')))
+        preanalysisBlocked:false
       };
       result.preanalysis={
-        active:Boolean(job&&job.active),
-        blocked:Boolean(job&&!job.active&&job.last_error),
-        lastErrorCode:job&&job.last_error?String(job.last_error):null,
+        mode:"offline",apiEnabled:false,active:false,blocked:false,
+        legacyJobActive:Boolean(job&&job.active),
+        legacyLastErrorCode:job&&job.last_error?String(job.last_error):null,
         updatedAt:job&&job.updated_at||null
       };
       if(isAdmin(req)){

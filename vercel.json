@@ -99,18 +99,5 @@
       "maxDuration": 300
     }
   },
-  "crons": [
-    {
-      "path": "/api/admin/cron-preanalysis-a7f3c9",
-      "schedule": "* * * * *"
-    },
-    {
-      "path": "/api/admin/cron-preanalysis-b4e812",
-      "schedule": "* * * * *"
-    },
-    {
-      "path": "/api/admin/cron-preanalysis-c91d57",
-      "schedule": "* * * * *"
-    }
-  ]
+  "crons": []
 }

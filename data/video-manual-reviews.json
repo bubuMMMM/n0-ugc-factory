@@ -1,0 +1,1254 @@
+{
+  "version": "manual-review-v1",
+  "reviewedAt": "2026-09-21",
+  "videos": [
+    {
+      "index": 1,
+      "sourceHash": "581d06f83f9a6c815c72bc536144ef500e232844eb1f96b579e2ab3eb412ff74",
+      "sourceEtag": "\"0x8DF10571E0500C1\"",
+      "reviewStatus": "sampled-frames-reviewed",
+      "reviewMethod": "Direct assistant inspection of four frames; no model API; not a full-motion or audio review",
+      "durationSeconds": 10.041667,
+      "sampleTimestampsSeconds": [
+        0.803,
+        3.414,
+        6.427,
+        9.038
+      ],
+      "frameSha256": [
+        "79194be31c7892a9d19b6874da47948999bfd89cbb8f984c1f2e12ddc2f4d081",
+        "ae9781d8e28de288a9a82f3faab94a90fd093d975d3bfbd938ee7c12e9e57c90",
+        "e06b8fc2bceb4991f4a325490f375155ea5064d9df6b7d1fe2e4172d7b62c573",
+        "c117473fca15047110810a79e1ec8aba851e955ae0bb48527eb67ecaa63355d6"
+      ],
+      "reaction": "sourire",
+      "observation": "Sourire large et stable, assise devant des machines à laver.",
+      "hook": "Mon sourire quand je copie mon lien de site : 1000 vidéos en 5 minutes, même pendant ma lessive.",
+      "placement": "top",
+      "design": "outline",
+      "safeForAutoApproval": false
+    },
+    {
+      "index": 2,
+      "sourceHash": "52f079434bd6bc702eee3c583bc4b530ffefb7b10f70b6d37cdcb76356a64563",
+      "sourceEtag": "\"0x8DF105721DD9E22\"",
+      "reviewStatus": "sampled-frames-reviewed",
+      "reviewMethod": "Direct assistant inspection of four frames; no model API; not a full-motion or audio review",
+      "durationSeconds": 5.041667,
+      "sampleTimestampsSeconds": [
+        0.403,
+        1.714,
+        3.227,
+        4.538
+      ],
+      "frameSha256": [
+        "41e55cc589d6cf67c0bcc75654c79fc098be307e3084e9d779473aeae2a37387",
+        "061c936df10a2e4eb736ed3e338911624c1e1684798dc50da2b418c2bf49961b",
+        "35ac8bfafc4976acc4a654f0cb1987043de67b78ff68ac7315790e4d89670da6",
+        "679337bdc3f923dce8a1af9e7d30c0704d89426bd6c21ea7c5e8452dbacc162e"
+      ],
+      "reaction": "confiance",
+      "observation": "Sourire discret, assise dans un fauteuil, cadrage buste et jambes.",
+      "hook": "Ce petit sourire quand ton lien de site te donne 1000 vidéos en 5 minutes.",
+      "placement": "lower",
+      "design": "paper",
+      "safeForAutoApproval": false
+    },
+    {
+      "index": 3,
+      "sourceHash": "50f54246f8754795a111f69be69be55c15484f27810390d1fb39f9fb462768c4",
+      "sourceEtag": "\"0x8DF10571F465675\"",
+      "reviewStatus": "sampled-frames-reviewed",
+      "reviewMethod": "Direct assistant inspection of four frames; no model API; not a full-motion or audio review",
+      "durationSeconds": 10.041667,
+      "sampleTimestampsSeconds": [
+        0.803,
+        3.414,
+        6.427,
+        9.038
+      ],
+      "frameSha256": [
+        "c3d48c7f3a323d5b7730f39108929bb0dbd8fbd8708030cedb4f411895ea5048",
+        "9345e21accb1b260efe22155d4ee8697de2fefbb3cb28e742754ac1cba754341",
+        "2b9bf4b4e916fd0f078c7daef8a90edde2fd685c95575c27be65018765068ec7",
+        "901d8e775b6f917b7d06673214ed0f8b52b36748e6522abcb36a10e231515095"
+      ],
+      "reaction": "calme",
+      "observation": "Regard caméra calme, debout en intérieur, léger sourire final.",
+      "hook": "Moi, très calme, après avoir obtenu 1000 vidéos en 5 minutes avec le lien de mon site.",
+      "placement": "lower",
+      "design": "outline",
+      "safeForAutoApproval": false
+    },
+    {
+      "index": 4,
+      "sourceHash": "bbe764aba6e005e3a37d9ed004b85a34d0af875f90cb026fe37a97e914eb9cb6",
+      "sourceEtag": "\"0x8DF10571DA308D0\"",
+      "reviewStatus": "sampled-frames-reviewed",
+      "reviewMethod": "Direct assistant inspection of four frames; no model API; not a full-motion or audio review",
+      "durationSeconds": 10.041667,
+      "sampleTimestampsSeconds": [
+        0.803,
+        3.414,
+        6.427,
+        9.038
+      ],
+      "frameSha256": [
+        "9b612f547e48b4994049d4e36c370d91fbd0813a8178db5b17ae16c2c2beb7e2",
+        "c235695741fce555d168062e685e7199e079ac221d49f4538ef5304a98809e15",
+        "5c8b71e4c84fabf69f923083c4bcf9a13aabab3a43908f638b7c8eb1111004e8",
+        "781ec238e907275df1a738ff0172a15208d181fdd97a23c137292b4ce5315a18"
+      ],
+      "reaction": "calme",
+      "observation": "Selfie en blouse blanche, expression posée, décor de cabinet.",
+      "hook": "Ma tête quand créer 1000 vidéos en 5 minutes demande juste le lien de mon site.",
+      "placement": "lower",
+      "design": "outline",
+      "safeForAutoApproval": false
+    },
+    {
+      "index": 5,
+      "sourceHash": "792c580e634ba3c133a290d66c0b6f363c5922aa98de70b18614a000cc57fc5a",
+      "sourceEtag": "\"0x8DF105721FB8BCC\"",
+      "reviewStatus": "sampled-frames-reviewed",
+      "reviewMethod": "Direct assistant inspection of four frames; no model API; not a full-motion or audio review",
+      "durationSeconds": 10.041667,
+      "sampleTimestampsSeconds": [
+        0.803,
+        3.414,
+        6.427,
+        9.038
+      ],
+      "frameSha256": [
+        "fefe05acef0c2cfc02894fee75a54969058c0af29f30dbda88bcd9fbe3b574ee",
+        "9693f39a9cb285599626af5590ce5c0e6a253b6c51d4de8d9d2269db1c0c2e0c",
+        "0320a5c9190703b2ccbd417d2c0249593b10d0c5792ea91266c951077710fb8a",
+        "a84baff9b2bee3d58e39528912bdcfa01de7585d63d493716c30eb195972646d"
+      ],
+      "reaction": "confiance",
+      "observation": "Blouse blanche et stéthoscope, sourire discret puis regard neutre.",
+      "hook": "Ce regard quand ton site fait déjà le brief : un lien, 1000 vidéos en 5 minutes.",
+      "placement": "lower",
+      "design": "paper",
+      "safeForAutoApproval": false
+    },
+    {
+      "index": 6,
+      "sourceHash": "e76ae2b0a25ca80bf262f9e6daee1f31f00875c75463a37a433d6b589fd556bc",
+      "sourceEtag": "\"0x8DF10571F297906\"",
+      "reviewStatus": "sampled-frames-reviewed",
+      "reviewMethod": "Direct assistant inspection of four frames; no model API; not a full-motion or audio review",
+      "durationSeconds": 5.041667,
+      "sampleTimestampsSeconds": [
+        0.403,
+        1.714,
+        3.227,
+        4.538
+      ],
+      "frameSha256": [
+        "f686cd4c522acf28d2007da9fc5a7e94d9112d3b37447bb694c02d9d3d08e676",
+        "a8630e6e03524799dddfec569c9594d9561bb36fc1dbd4e4aa5fdcde06aebf53",
+        "6e04b6b5d276c6af677dbaff8ceb7886756f3d1d498206118370c6cdef5dc6b0",
+        "c53391a5fbb83c338fc35cae2794f49283512ae0fb1d898cf611fdd1db599a8f"
+      ],
+      "reaction": "repos",
+      "observation": "Assise sur un lit, masque de sommeil relevé, petit sourire puis regard caméra.",
+      "hook": "Moi déjà en pyjama quand mon lien de site lance 1000 vidéos en 5 minutes.",
+      "placement": "lower",
+      "design": "outline",
+      "safeForAutoApproval": false
+    },
+    {
+      "index": 7,
+      "sourceHash": "75bad1a914d3d79e9614fb219288ee23d870c22757718ea0e482168a6a9c1c9b",
+      "sourceEtag": "\"0x8DF105720BA4901\"",
+      "reviewStatus": "sampled-frames-reviewed",
+      "reviewMethod": "Direct assistant inspection of four frames; no model API; not a full-motion or audio review",
+      "durationSeconds": 10.041667,
+      "sampleTimestampsSeconds": [
+        0.803,
+        3.414,
+        6.427,
+        9.038
+      ],
+      "frameSha256": [
+        "350f39db0ee9b0b126fb7908719500b4954a78a5851acd7223db15966229e0d4",
+        "a666abfb59a6613c94977e79b9048589f2eb7bdfaf0f113b9703debae4267380",
+        "e4428b53b54b5d02c1f8688a4c0939283edae0edc0071ea7e6a846ee2a752ed1",
+        "97bff8d0ad5b9e9de7728457b1030922ab5d37f32f2cf25a2f472e7ee4ead0a2"
+      ],
+      "reaction": "doute",
+      "observation": "Homme barbu en cuisine, regard caméra sérieux, expression stable.",
+      "hook": "Mon regard quand on me dit : colle ton lien de site, obtiens 1000 vidéos en 5 minutes.",
+      "placement": "lower",
+      "design": "outline",
+      "safeForAutoApproval": false
+    },
+    {
+      "index": 8,
+      "sourceHash": "de74f0774f1d7c77756b43bc096ec0044c1730e6081f89a75c551def039a204d",
+      "sourceEtag": "\"0x8DF105724038742\"",
+      "reviewStatus": "sampled-frames-reviewed",
+      "reviewMethod": "Direct assistant inspection of four frames; no model API; not a full-motion or audio review",
+      "durationSeconds": 5.041667,
+      "sampleTimestampsSeconds": [
+        0.403,
+        1.714,
+        3.227,
+        4.538
+      ],
+      "frameSha256": [
+        "eb68145e5617573fe9f757437ca70cc261d7cbffa3a19480944fc827e76f0517",
+        "6e612ac62ef985e80e3f8acfb22dfef5a110a54fefa03db3926ceca84f9358e2",
+        "e6b974ed0a90ee7e85fb0f9370bfe31956453a08789e0d2a2b3985f01c4bf188",
+        "b5d8c43b5ba840c720c5f8f70a8743abd5c691f0759f7c2b09e9c57535849268"
+      ],
+      "reaction": "surprise",
+      "observation": "Main sur la bouche et yeux écarquillés, pull gris, lumière tamisée.",
+      "hook": "Ma réaction quand un simple lien de site déclenche 1000 vidéos en 5 minutes. Attends, c’est tout ?",
+      "placement": "lower",
+      "design": "outline",
+      "safeForAutoApproval": false
+    },
+    {
+      "index": 9,
+      "sourceHash": "a13539fdf65e359509cbdc4de37ab45d982ea81b3219a1245fb9085e23d5c6df",
+      "sourceEtag": "\"0x8DF10571C1297C7\"",
+      "reviewStatus": "sampled-frames-reviewed",
+      "reviewMethod": "Direct assistant inspection of four frames; no model API; not a full-motion or audio review",
+      "durationSeconds": 5.041667,
+      "sampleTimestampsSeconds": [
+        0.403,
+        1.714,
+        3.227,
+        4.538
+      ],
+      "frameSha256": [
+        "8945f84e5ca43b3a3270ce6ff2289b30655c1a64167cefdc50f3027b55e07e5f",
+        "01eb9267e976fb8904e51ee60113c5bb8207674b3fdd6a2a1e940ba9221f92dd",
+        "ed3ff8584b8a2d2c28ed37703afbd0fa7fe14fa9e3257fe013ca632b602e3cbe",
+        "fe5d3e01598fd666be37b05c9220f69813142bd332276ad470c73109c972d0ec"
+      ],
+      "reaction": "surprise",
+      "observation": "Dans une pièce sombre, main sur la bouche puis yeux écarquillés.",
+      "hook": "Attends… 1000 vidéos en 5 minutes ? J’ai seulement collé le lien de mon site.",
+      "placement": "lower",
+      "design": "outline",
+      "safeForAutoApproval": false
+    },
+    {
+      "index": 10,
+      "sourceHash": "756dcada985012064d5a58a92dc7e2a52494143a1dc66ff17636d79491a3ed85",
+      "sourceEtag": "\"0x8DF105723B35077\"",
+      "reviewStatus": "sampled-frames-reviewed",
+      "reviewMethod": "Direct assistant inspection of four frames; no model API; not a full-motion or audio review",
+      "durationSeconds": 5.041667,
+      "sampleTimestampsSeconds": [
+        0.403,
+        1.714,
+        3.227,
+        4.538
+      ],
+      "frameSha256": [
+        "7b65c605b525bdf5709a747c07daf5314bbbad9357ac2702b274de4e000a6eb5",
+        "f706d508771986bbcf2e6a955a4d0c49b3d1fa9d8c735758d37766edf82ccf1d",
+        "61e474ea7afacd5282b0466f70881fbf04cfbbca710aac18e7bfa7f93c55866f",
+        "7e8490581f6ebf3e3ebdf3222829ae7182ecbadb67c4754dacb2ac55f3eb67e7"
+      ],
+      "reaction": "surprise",
+      "observation": "Bouche ouverte puis main sur la bouche, regard qui se détourne.",
+      "hook": "Moi qui pensais créer UNE vidéo avec mon lien de site. Résultat : 1000 vidéos en 5 minutes.",
+      "placement": "lower",
+      "design": "paper",
+      "safeForAutoApproval": false
+    },
+    {
+      "index": 11,
+      "sourceHash": "c8630df7e1a6c5350d6a1b4ea31a12bca7f3fa89f9155a739c4fd9fb0515b464",
+      "sourceEtag": "\"0x8DF1057253D5EA8\"",
+      "reviewStatus": "sampled-frames-reviewed",
+      "reviewMethod": "Direct assistant inspection of four frames; no model API; not a full-motion or audio review",
+      "durationSeconds": 10.041667,
+      "sampleTimestampsSeconds": [
+        0.803,
+        3.414,
+        6.427,
+        9.038
+      ],
+      "frameSha256": [
+        "e0de531d7a5cc227bb8bfe3740db3352ef19461cd0f43b1a2e977c8264395811",
+        "99fe3d98e65e7691e379a8e4c6215b8b3161b84d279f6ca37ef950443cd933eb",
+        "6885e9f250dca4664d1e1719deb4cefa9744892b7461973966a4e90d6931488b",
+        "c30042660a66d0337721c760be1bfe89639d2dc1f7d80096e879cf01daea38b6"
+      ],
+      "reaction": "calme",
+      "observation": "Assise, regard baissé puis regard caméra neutre, fond clair.",
+      "hook": "Quand tu réalises que ton lien de site suffit : 1000 vidéos en 5 minutes, sans refaire ton brief.",
+      "placement": "lower",
+      "design": "outline",
+      "safeForAutoApproval": false
+    },
+    {
+      "index": 12,
+      "sourceHash": "36168fc88323d440517e305f87a56a108b723e933d986f8950853832fc9b0354",
+      "sourceEtag": "\"0x8DF10572110A813\"",
+      "reviewStatus": "sampled-frames-reviewed",
+      "reviewMethod": "Direct assistant inspection of four frames; no model API; not a full-motion or audio review",
+      "durationSeconds": 12.1,
+      "sampleTimestampsSeconds": [
+        0.968,
+        4.114,
+        7.744,
+        10.89
+      ],
+      "frameSha256": [
+        "586a7c8af50b468e68f8db681c6e4ee48ed5c398562363d52fd38755aed4cf80",
+        "56c63cd8cd1c498e57d7f3abe0e378c8d6526549c87f0ff10b6e45d035743244",
+        "48f2f6aae1b1582f8e4d2fd494528fa6d4afb398910bc42daa8adb6e8826d5da",
+        "68dc6bf56a7c97d88f4bb051056619a9d80bcab2bdd2ab544ed64137cb53843e"
+      ],
+      "reaction": "rire",
+      "observation": "Grand sourire et rire, selfie en marchant dans une rue de nuit.",
+      "hook": "Moi qui ris en pensant à mes heures de montage : mon lien de site crée 1000 vidéos en 5 minutes.",
+      "placement": "lower",
+      "design": "outline",
+      "safeForAutoApproval": false
+    },
+    {
+      "index": 13,
+      "sourceHash": "1bf421558edd58b9d2aaa4e71306394be6d76fd534db9ab4c73b0623e9e8f4c4",
+      "sourceEtag": "\"0x8DF10571D58BEC7\"",
+      "reviewStatus": "sampled-frames-reviewed",
+      "reviewMethod": "Direct assistant inspection of four frames; no model API; not a full-motion or audio review",
+      "durationSeconds": 5.041667,
+      "sampleTimestampsSeconds": [
+        0.403,
+        1.714,
+        3.227,
+        4.538
+      ],
+      "frameSha256": [
+        "514b1621aaca2efe6ef02d8a73abf6edc6a90cf9331ae0f939f59b3b51d30aca",
+        "42586d62491519250cde492394f0cfa19c34996807ea763b45744201e4847302",
+        "43c3f497234a233349d8a958732a838e465ee46f61557e0d201c861a4ebd1dbf",
+        "6bd9e684ef98abbde0df8cfbb6917ffed0db42c21273c7bd8b0944f9dbe3d3a6"
+      ],
+      "reaction": "surprise-joie",
+      "observation": "Bouche ouverte, main sur la bouche puis sourire, selfie intérieur.",
+      "hook": "Le choc, puis le sourire : j’ai collé mon lien de site et obtenu 1000 vidéos en 5 minutes.",
+      "placement": "lower",
+      "design": "outline",
+      "safeForAutoApproval": false
+    },
+    {
+      "index": 14,
+      "sourceHash": "3fcc2c75e59023290508c2a40fd1affbea694ee8ee99fd4d83b3d0000ee07934",
+      "sourceEtag": "\"0x8DF10571B93E412\"",
+      "reviewStatus": "sampled-frames-reviewed",
+      "reviewMethod": "Direct assistant inspection of four frames; no model API; not a full-motion or audio review",
+      "durationSeconds": 10.041667,
+      "sampleTimestampsSeconds": [
+        0.803,
+        3.414,
+        6.427,
+        9.038
+      ],
+      "frameSha256": [
+        "7e42adede3f7ffca78d8dbc37fda0b2c0bef520be977589b384870ab686f5ba7",
+        "23066fba59e701457effbc9d275627e3dac63d1523a589bd1708edde13649dea",
+        "dfced13784fb21fb9e1467c5f906c1f325b9f4634f54187e8ef29c2fdb1b6cb3",
+        "7aa0cb5b5bb4059d82b54da683e159b1fa08548c4d903f2ec0b3e2c873cb9c77"
+      ],
+      "reaction": "joie",
+      "observation": "Sourire large continu, pull sombre, portrait intérieur.",
+      "hook": "Le sourire de celle qui vient de créer 1000 vidéos en 5 minutes avec son lien de site.",
+      "placement": "lower",
+      "design": "paper",
+      "safeForAutoApproval": false
+    },
+    {
+      "index": 15,
+      "sourceHash": "d0f8f764d6b56bdfb37986415b763eb3c5df295083c1b52003448ae281c2a304",
+      "sourceEtag": "\"0x8DF10572288C46E\"",
+      "reviewStatus": "sampled-frames-reviewed",
+      "reviewMethod": "Direct assistant inspection of four frames; no model API; not a full-motion or audio review",
+      "durationSeconds": 10.041667,
+      "sampleTimestampsSeconds": [
+        0.803,
+        3.414,
+        6.427,
+        9.038
+      ],
+      "frameSha256": [
+        "b51ad3dbe6e8af39b4fe410af0eb0f91b81320f950afe2f07a3401b80cb5531b",
+        "c42ea478b7b9df62edfc9ee801cc07b650b4f31b4311b311b4201beb73d11db7",
+        "7e3729a22348e5524c74f565025dc022b0fda21f1ebfcd72aa6cbeb772a5cd10",
+        "dad2190bd272bf0528666f736427100aa8067dd6edd72bc0bfc407b645685eb6"
+      ],
+      "reaction": "frustration",
+      "observation": "Homme dehors, sourcils froncés puis main sur le front et grimace.",
+      "hook": "Moi après des heures de montage, découvrant que mon lien de site pouvait créer 1000 vidéos en 5 minutes.",
+      "placement": "lower",
+      "design": "outline",
+      "safeForAutoApproval": false
+    },
+    {
+      "index": 16,
+      "sourceHash": "ef3bf89e981b1f2d64730a10379e99d1a33a7cbcbccd01ec71096eeee4a40e3c",
+      "sourceEtag": "\"0x8DF10571FFC83C0\"",
+      "reviewStatus": "sampled-frames-reviewed",
+      "reviewMethod": "Direct assistant inspection of four frames; no model API; not a full-motion or audio review",
+      "durationSeconds": 5.041667,
+      "sampleTimestampsSeconds": [
+        0.403,
+        1.714,
+        3.227,
+        4.538
+      ],
+      "frameSha256": [
+        "df19bc82df34c3a0d7f6eee8332435191c634d9a8588026359e73e52ac034caa",
+        "a63c035947c72220b4e19b1cbea69f627a016aa57989ff1d5b41b282abe6e6ce",
+        "ef9a7765ef0f8da0ba7cdd642c9405274b20451bcc9cfa1e9c7e4c13d7a4e79c",
+        "99beee5546585fc10136ba12bddbbdb8b39bd1e5f05a56aa66466fa339a2fac9"
+      ],
+      "reaction": "surprise",
+      "observation": "Main au front, puis yeux écarquillés et main sur la bouche.",
+      "hook": "J’ai relu trois fois : 1000 vidéos en 5 minutes, juste en copiant le lien de mon site.",
+      "placement": "lower",
+      "design": "outline",
+      "safeForAutoApproval": false
+    },
+    {
+      "index": 17,
+      "sourceHash": "4dcaf5796df6a59e9de75333f5814ce90b60a17a3aed92cf3f62acd6327b1d93",
+      "sourceEtag": "\"0x8DF10572464DD89\"",
+      "reviewStatus": "sampled-frames-reviewed",
+      "reviewMethod": "Direct assistant inspection of four frames; no model API; not a full-motion or audio review",
+      "durationSeconds": 10.041667,
+      "sampleTimestampsSeconds": [
+        0.803,
+        3.414,
+        6.427,
+        9.038
+      ],
+      "frameSha256": [
+        "e92ecb956f2adc161ce853b61a773e489d0afc1aa5e346a55b2dad044d575add",
+        "85556722cc2642db2c2289717c28cd1f509af380a7954598f2a44de3b810f6d0",
+        "16ed55ce4d1569e8fcc7c0e48e1b776ce57c0c7269aaa38f436eb659862cf0d9",
+        "9764ffae75667b809e3afa6926ab754dd3bbb58fb13ea79dba9e9495e7218384"
+      ],
+      "reaction": "assurance",
+      "observation": "Selfie debout, lunettes de soleil, petit sourire, fond clair.",
+      "hook": "Moi qui garde mon calme alors que mon lien de site vient de créer 1000 vidéos en 5 minutes.",
+      "placement": "lower",
+      "design": "editorial",
+      "safeForAutoApproval": false
+    },
+    {
+      "index": 18,
+      "sourceHash": "27057d9f5613f5248c68c2e93bad251c35db249033e60761e703b5584a6ef11d",
+      "sourceEtag": "\"0x8DF105722BDF083\"",
+      "reviewStatus": "sampled-frames-reviewed",
+      "reviewMethod": "Direct assistant inspection of four frames; no model API; not a full-motion or audio review",
+      "durationSeconds": 5.041667,
+      "sampleTimestampsSeconds": [
+        0.403,
+        1.714,
+        3.227,
+        4.538
+      ],
+      "frameSha256": [
+        "6436e67f8a40b977b2017895b267af332154aecda7ef16b13938d659fd8ba9d3",
+        "f71c8fdac91bd7f6ee5950b90d5659481a20bc9b9a2e2d3b42a9d3355f985bc4",
+        "fadaed5345f2cc55eb91f1c90dcde279af7721ca0ddbb3a49e0cac381fe9a5d0",
+        "fb356510e6308e5e6a209e5bcd00c7a61a5ba1c335ad56cbbb92a33d60567c7f"
+      ],
+      "reaction": "fatigue",
+      "observation": "Main au front puis sous le menton, regard de côté, yeux fermés.",
+      "hook": "Ma tête après un énième montage… alors qu’un lien de site suffit pour 1000 vidéos en 5 minutes.",
+      "placement": "lower",
+      "design": "outline",
+      "safeForAutoApproval": false
+    },
+    {
+      "index": 19,
+      "sourceHash": "03db9f6b3ea7b16907eb24a048da0fb0c054ef62e1511c409e7714176630e7dd",
+      "sourceEtag": "\"0x8DF1057213DC6F1\"",
+      "reviewStatus": "sampled-frames-reviewed",
+      "reviewMethod": "Direct assistant inspection of four frames; no model API; not a full-motion or audio review",
+      "durationSeconds": 10.041667,
+      "sampleTimestampsSeconds": [
+        0.803,
+        3.414,
+        6.427,
+        9.038
+      ],
+      "frameSha256": [
+        "a1a9a7e9d2dacd6d9a04e307c4537dbe9f87834c64b937c00ee76b657701b374",
+        "b59fe71b4da235f7b665885a4cd9d7332e4bdc240e28c1ce6776c2618bc041ab",
+        "62cab8eaef873af596eb08c739e694a1e42245e8cbfca08479cade183c5385de",
+        "2ee21d091ebb3a929de6ef3cf72c0b6076bee5d3c49f79221bd69746c5208549"
+      ],
+      "reaction": "doute",
+      "observation": "Expression calme puis sourcils froncés et bouche ouverte interrogative.",
+      "hook": "Pardon, pourquoi je faisais tout à la main ? Mon lien de site peut créer 1000 vidéos en 5 minutes.",
+      "placement": "lower",
+      "design": "paper",
+      "safeForAutoApproval": false
+    },
+    {
+      "index": 20,
+      "sourceHash": "108da0fec34727fb297cb2c67638df15e6e3d41e5149ac96988138146426aead",
+      "sourceEtag": "\"0x8DF105722513AC2\"",
+      "reviewStatus": "sampled-frames-reviewed",
+      "reviewMethod": "Direct assistant inspection of four frames; no model API; not a full-motion or audio review",
+      "durationSeconds": 10.041667,
+      "sampleTimestampsSeconds": [
+        0.803,
+        3.414,
+        6.427,
+        9.038
+      ],
+      "frameSha256": [
+        "f3ea6a25937e0b363a6f6259e1b9184a18d78617778aeba0bf421dd2ee55c1e5",
+        "b8349bce26327ca5a8c49d8ec27e221c5958c26df0b81044b9439e8d922358a7",
+        "4acb14693c22c3f2380a9ab466883a5b34e4e66b13929c3e37b32f2c368a7167",
+        "92715008af9bf833b7b8dd071f9080ad52af76baf01acaeaab523447f840c9bb"
+      ],
+      "reaction": "fatigue",
+      "observation": "Allongée, tête dans la main, regard fatigué sous une lumière orange.",
+      "hook": "Moi épuisée par le contenu, puis je découvre : un lien de site, 1000 vidéos en 5 minutes.",
+      "placement": "top",
+      "design": "outline",
+      "safeForAutoApproval": false
+    },
+    {
+      "index": 21,
+      "sourceHash": "c46d4aaa178bd99bf2eca31eeb9bdcb4716d1f28de5aba031b8360d6b0eae1ed",
+      "sourceEtag": "\"0x8DF105722E93CB8\"",
+      "reviewStatus": "sampled-frames-reviewed",
+      "reviewMethod": "Direct assistant inspection of four frames; no model API; not a full-motion or audio review",
+      "durationSeconds": 5.041667,
+      "sampleTimestampsSeconds": [
+        0.403,
+        1.714,
+        3.227,
+        4.538
+      ],
+      "frameSha256": [
+        "123bf972eea65b00e51293e68d4ec58d632b463bb1e4f58f6fd6ee425a44969a",
+        "d92a5afd0e0bcd6ff2937466d16553ee240c9e7c3d95e0940a2884726b244633",
+        "b365ebed28f3dc8a53ca2a04df04ab38c2d6c1c5b3223c81498c862e7a79881c",
+        "0c2c1a15ac7324f1703ef836e0bd0ef96c0dcc491706aabec80f0e84222e298e"
+      ],
+      "reaction": "surprise",
+      "observation": "Portrait sombre, main sur la bouche et yeux écarquillés.",
+      "hook": "Ma réaction au compteur : 1000 vidéos en 5 minutes. Je n’ai donné que le lien de mon site.",
+      "placement": "lower",
+      "design": "outline",
+      "safeForAutoApproval": false
+    },
+    {
+      "index": 22,
+      "sourceHash": "4fc67cd242ec8c77753fc5459a68cce456080baa0e1862be8253b9882aa8bc2a",
+      "sourceEtag": "\"0x8DF10571E6EE446\"",
+      "reviewStatus": "sampled-frames-reviewed",
+      "reviewMethod": "Direct assistant inspection of four frames; no model API; not a full-motion or audio review",
+      "durationSeconds": 8.3,
+      "sampleTimestampsSeconds": [
+        0.664,
+        2.822,
+        5.312,
+        7.47
+      ],
+      "frameSha256": [
+        "494f8eb39e78d446df9d2fff96cfdc0f6dbe13c32268ab438c641103e639c241",
+        "f3c7ef77c7f2079d104938a53366f5dba8397a4a8a0e0943f502ae4f5027f9bd",
+        "b147e7d078afea0bd37966ef865579b39257c88c4b1252e0a716eb513cc23f72",
+        "8e90afbc00b2e6e1f6e65f507b77f17dcecbf93002f97c14a29e650e3a6a2946"
+      ],
+      "reaction": "confiance",
+      "observation": "Léger sourire, tête inclinée, haut noir, intérieur de nuit.",
+      "hook": "Ce sourire quand ton équipe demande ton secret : un lien de site, 1000 vidéos en 5 minutes.",
+      "placement": "lower",
+      "design": "paper",
+      "safeForAutoApproval": false
+    },
+    {
+      "index": 23,
+      "sourceHash": "4606e3220c1176bf105ada4a35fd64c4ded78da39a0fe11e034d32daff98585b",
+      "sourceEtag": "\"0x8DF10571FFCD187\"",
+      "reviewStatus": "sampled-frames-reviewed",
+      "reviewMethod": "Direct assistant inspection of four frames; no model API; not a full-motion or audio review",
+      "durationSeconds": 10.041667,
+      "sampleTimestampsSeconds": [
+        0.803,
+        3.414,
+        6.427,
+        9.038
+      ],
+      "frameSha256": [
+        "28b5535887be40ff49fc5b8fa7a20ca7f2efaef14a52ebfeb2b545efa4ba2045",
+        "a8f79fb2638e0777980f3c6f0bc3b8a95d2bbfe794f269b684994e4ff6da777e",
+        "92928cc7710fc1e322abb94ca7a5635849266de00ab8c5080392a5713512a8af",
+        "31ddbd59c539bf8813304a0d2548459386cec7b6ea7a72a8d2caf0e224c68b40"
+      ],
+      "reaction": "repos",
+      "observation": "Allongée sous une couverture, yeux fermés puis sourire et regard de côté.",
+      "hook": "Moi encore sous la couette, pendant que mon lien de site prépare 1000 vidéos en 5 minutes.",
+      "placement": "top",
+      "design": "outline",
+      "safeForAutoApproval": false
+    },
+    {
+      "index": 24,
+      "sourceHash": "39f4ed53430d54f234c4a5ea6722646177d54d2a761c1ca19e1183c1fe823101",
+      "sourceEtag": "\"0x8DF10571FDEBCFA\"",
+      "reviewStatus": "sampled-frames-reviewed",
+      "reviewMethod": "Direct assistant inspection of four frames; no model API; not a full-motion or audio review",
+      "durationSeconds": 10.041667,
+      "sampleTimestampsSeconds": [
+        0.803,
+        3.414,
+        6.427,
+        9.038
+      ],
+      "frameSha256": [
+        "6f41cfffe34e6dc99ef5a1fd5884763f27e1ae590ff71b00665f74a04887fae6",
+        "339f28e96fbdb889e5308fe380ca970b77a2765abb0ebbe3b48341bbf79cea27",
+        "86ce2622d093a26ea93d495f7225f2e8a9f4adc42242c577638bd94f83127b9f",
+        "c362097c0a2d7f7de53fada8f8bbf078dc4280941a2a6f1b529f95ccf27131e6"
+      ],
+      "reaction": "joie",
+      "observation": "Allongée sur un lit, menton dans la main puis rire et geste de la main.",
+      "hook": "Quand tu peux enfin souffler : ton lien de site te donne 1000 vidéos en 5 minutes.",
+      "placement": "top",
+      "design": "outline",
+      "safeForAutoApproval": false
+    },
+    {
+      "index": 25,
+      "sourceHash": "2c8146bbaa134e5c8f77ef997fd33b371909ea66a8c816b63e1eac2ea318722a",
+      "sourceEtag": "\"0x8DF1057211A8811\"",
+      "reviewStatus": "sampled-frames-reviewed",
+      "reviewMethod": "Direct assistant inspection of four frames; no model API; not a full-motion or audio review",
+      "durationSeconds": 10.041667,
+      "sampleTimestampsSeconds": [
+        0.803,
+        3.414,
+        6.427,
+        9.038
+      ],
+      "frameSha256": [
+        "a0ad018c19c1f958a8a3ed738e6a70e5e55172023df6828d232a94fb38be8364",
+        "c53d0c8afd570f4c9e901613f22f782791437223e10424705642af8cf754275f",
+        "95f59e0350457253403131527d470e52d6684eec6647ab3bcfa8f21e08af6ba7",
+        "c11002c974bd36b331122337583971fbb642d126f7c05a2eb767c6c67dced93a"
+      ],
+      "reaction": "transformation",
+      "observation": "Trois personnes devant un miroir, main devant la caméra puis tenues de soirée.",
+      "hook": "Ton contenu avant et après le copier-coller : un lien de site, 1000 vidéos en 5 minutes.",
+      "placement": "lower",
+      "design": "outline",
+      "safeForAutoApproval": false
+    },
+    {
+      "index": 26,
+      "sourceHash": "3aceb12c00833fea9a97f960e7d30d68d3a90a9153ff9fb25109c923c849dab7",
+      "sourceEtag": "\"0x8DF1057248F4050\"",
+      "reviewStatus": "sampled-frames-reviewed",
+      "reviewMethod": "Direct assistant inspection of four frames; no model API; not a full-motion or audio review",
+      "durationSeconds": 5.041667,
+      "sampleTimestampsSeconds": [
+        0.403,
+        1.714,
+        3.227,
+        4.538
+      ],
+      "frameSha256": [
+        "651b5dab4c61e431cdfb3e84913b3369ff686c08d5e0772a698e0dd80f5934d1",
+        "78f7e3befc9928c420a45e6b5633a8eefcd188260ae97cf7374fe04faaf3e67e",
+        "e81b0c9869cf15884818916e6fc5f5037c9a6c96e91b3c07256d478dc9afe818",
+        "44698a2e33da851ad50c16a4e1a0bf3cfc5f9b89f79a927f7eb529b79170116b"
+      ],
+      "reaction": "doute",
+      "observation": "Portrait sous lumière chaude, regard sceptique stable et léger mouvement de tête.",
+      "hook": "Moi qui pensais que « 1000 vidéos en 5 minutes avec ton lien de site » était une blague.",
+      "placement": "lower",
+      "design": "paper",
+      "safeForAutoApproval": false
+    },
+    {
+      "index": 27,
+      "sourceHash": "c2003ccb64f5f77402b6b4243ec4aa400f8e7d6561dca3b43c6baf966c94e923",
+      "sourceEtag": "\"0x8DF10571C1A573E\"",
+      "reviewStatus": "sampled-frames-reviewed",
+      "reviewMethod": "Direct assistant inspection of four frames; no model API; not a full-motion or audio review",
+      "durationSeconds": 5.041667,
+      "sampleTimestampsSeconds": [
+        0.403,
+        1.714,
+        3.227,
+        4.538
+      ],
+      "frameSha256": [
+        "e4b8e44b89c8984b93c2b46768a0e6dc1913dd2636058fff06a4bd1f8f0fdd55",
+        "0de30867e4179091917883e34a5a8c7ace2d011e5c27faf5dab175246142d08b",
+        "5de3109db45f0b06fd1c4a322058ccf4410e50f6e394e6344b98aab855683d14",
+        "df2c41b2ba24ba34f8190f18d90887db97a75d554b503f269c53a705b78fd2b2"
+      ],
+      "reaction": "surprise",
+      "observation": "Main sur la bouche, yeux grands ouverts puis regard latéral, fond sombre.",
+      "hook": "Ce silence quand tu comprends : ton lien de site suffit pour obtenir 1000 vidéos en 5 minutes.",
+      "placement": "lower",
+      "design": "outline",
+      "safeForAutoApproval": false
+    },
+    {
+      "index": 28,
+      "sourceHash": "b2e8df4f69c1cf3f32d2b0f25933769bce9bc7db50fd6d9dcdc0edba439f301c",
+      "sourceEtag": "\"0x8DF10572288C46E\"",
+      "reviewStatus": "sampled-frames-reviewed",
+      "reviewMethod": "Direct assistant inspection of four frames; no model API; not a full-motion or audio review",
+      "durationSeconds": 5.041667,
+      "sampleTimestampsSeconds": [
+        0.403,
+        1.714,
+        3.227,
+        4.538
+      ],
+      "frameSha256": [
+        "9766a2ab45f76da44dd2ecb82869f5e1bbd33ac18fef731fc77472386b93f95a",
+        "d962de59645120bdfae8bbadb90a384aaa3fd89840ba0c17f024988a2df5a19d",
+        "f945938dde14c2bc8845f96add23c530c35156897ce4efdec4a59de120f80701",
+        "3d96db4da357818f4f228fdeb788c4d501834635e8b6fc6fa819fce399222263"
+      ],
+      "reaction": "surprise-joie",
+      "observation": "Homme devant un ordinateur, se rapproche, bouche ouverte puis sourire.",
+      "hook": "Moi devant mon écran : j’ai collé mon lien de site… et voilà 1000 vidéos en 5 minutes.",
+      "placement": "lower",
+      "design": "outline",
+      "safeForAutoApproval": false
+    },
+    {
+      "index": 29,
+      "sourceHash": "00682f0fbf73139e795b1b22a8833bf6ffe5be771cb55270edc5bf92852cc4b7",
+      "sourceEtag": "\"0x8DF105721F80D48\"",
+      "reviewStatus": "sampled-frames-reviewed",
+      "reviewMethod": "Direct assistant inspection of four frames; no model API; not a full-motion or audio review",
+      "durationSeconds": 10.041667,
+      "sampleTimestampsSeconds": [
+        0.803,
+        3.414,
+        6.427,
+        9.038
+      ],
+      "frameSha256": [
+        "05c791dd79f1c61595c215ec8c94d829b40066ed96fb474f13f2e2337162b6e1",
+        "fa13cd7e83e54143c0c7982f81aecf2056319619548696a2860bcd231d63a95b",
+        "6536a238fa53a6c968f37a65494af5f18d7658395996299bd009908c73d34c96",
+        "2a069fac81201b1d10861944cd1d7bce53be3002edb0f68862239aee187d629d"
+      ],
+      "reaction": "confiance",
+      "observation": "Portrait en pull beige, expression neutre puis sourire discret.",
+      "hook": "Quand tu connais déjà l’astuce : copier ton lien de site pour créer 1000 vidéos en 5 minutes.",
+      "placement": "lower",
+      "design": "paper",
+      "safeForAutoApproval": false
+    },
+    {
+      "index": 30,
+      "sourceHash": "25ba833f8f3122491b9b42799ca1e035b38ac834413d18ce13750d1c14a7e7bd",
+      "sourceEtag": "\"0x8DF10571F817575\"",
+      "reviewStatus": "sampled-frames-reviewed",
+      "reviewMethod": "Direct assistant inspection of four frames; no model API; not a full-motion or audio review",
+      "durationSeconds": 8.0,
+      "sampleTimestampsSeconds": [
+        0.64,
+        2.72,
+        5.12,
+        7.2
+      ],
+      "frameSha256": [
+        "12a9662cc9f93c11332367d1c2681060be10dcbb84d75a39ffbc9a7cdc5522ff",
+        "27fe1f8516b2869e37c3ea86ab00d2a3588f4e16624f4f991237eba230edd283",
+        "b509792aaa3ad4e3d6ec8d938b0f692a81975a64741ec074725ad50733adc340",
+        "cb3f4396edff61bac45592bfe402716bcde353626342a16a80675e389b989751"
+      ],
+      "reaction": "regret",
+      "observation": "Gros plan sombre, yeux humides, traces de maquillage sous les yeux.",
+      "hook": "Moi en repensant aux soirées de montage : mon lien de site pouvait créer 1000 vidéos en 5 minutes.",
+      "placement": "lower",
+      "design": "outline",
+      "safeForAutoApproval": false
+    },
+    {
+      "index": 31,
+      "sourceHash": "1b21a6c3fd9ee4f5359f35c5ac80835a13091f880aef830337240b3b00058568",
+      "sourceEtag": "\"0x8DF105722A8D28F\"",
+      "reviewStatus": "sampled-frames-reviewed",
+      "reviewMethod": "Direct assistant inspection of four frames; no model API; not a full-motion or audio review",
+      "durationSeconds": 10.041667,
+      "sampleTimestampsSeconds": [
+        0.803,
+        3.414,
+        6.427,
+        9.038
+      ],
+      "frameSha256": [
+        "eeb51d82319b4dd842f204943e04cf8fdc318620a1ea3d5a50bfe3a3a0d6eb22",
+        "01cfa0cc80a66506320f2fba08615a883f4412c277167bcadd5c390dd4978e04",
+        "b925293b61697b4063d66b2c9170b34c0026366a01d9f227dd0328b799f152fd",
+        "0cacfb2bc024590fcb4317ad37548de1c0b3674851058ab2fc48e839201a48ce"
+      ],
+      "reaction": "confiance",
+      "observation": "Portrait intérieur, regard de côté puis petit sourire en coin.",
+      "hook": "Ce sourire en coin quand on découvre que ton lien de site a créé 1000 vidéos en 5 minutes.",
+      "placement": "lower",
+      "design": "paper",
+      "safeForAutoApproval": false
+    },
+    {
+      "index": 32,
+      "sourceHash": "73f62ed29de6ad79508f809059307ef5281414266606dd3e062754ae705942ed",
+      "sourceEtag": "\"0x8DF10571BD7A5C7\"",
+      "reviewStatus": "sampled-frames-reviewed",
+      "reviewMethod": "Direct assistant inspection of four frames; no model API; not a full-motion or audio review",
+      "durationSeconds": 10.041667,
+      "sampleTimestampsSeconds": [
+        0.803,
+        3.414,
+        6.427,
+        9.038
+      ],
+      "frameSha256": [
+        "e8462b20fdad59bd600aea0c334af9c72aa1770ef7403011aab5c51c1908c3e2",
+        "0b588e0745f47c8a546fa2b474d37a41eb334350c438615166eef127218699e4",
+        "c8edb259957a08f19e675bb39f79511bbe197c55cbf501245c2971c585912974",
+        "1cc6384266a951de5d7b291ffec9313b13f3967222c4bec7ce45fbcae20f90d2"
+      ],
+      "reaction": "confiance",
+      "observation": "Portrait sombre, haut clair à col montant, sourire fermé et tête inclinée.",
+      "hook": "Moi après avoir copié mon lien de site : 1000 vidéos en 5 minutes, et ce petit sourire.",
+      "placement": "lower",
+      "design": "outline",
+      "safeForAutoApproval": false
+    },
+    {
+      "index": 33,
+      "sourceHash": "91bd6ee8993e0e1f0c18f2e1035e81d563e5214ecccaa1ac57c05d825006e379",
+      "sourceEtag": "\"0x8DF10571BD0A8C2\"",
+      "reviewStatus": "sampled-frames-reviewed",
+      "reviewMethod": "Direct assistant inspection of four frames; no model API; not a full-motion or audio review",
+      "durationSeconds": 5.041667,
+      "sampleTimestampsSeconds": [
+        0.403,
+        1.714,
+        3.227,
+        4.538
+      ],
+      "frameSha256": [
+        "c7ef15de2d56e64233d0508655ef7a2160ace376012027713acfd4cf6a8afb0e",
+        "2cb1f01f9928bee7884b9f5c8dd53203ce3ad100cc2134611e45e436cc0f7116",
+        "13df6a39c48ad02d54446993854f4d98a45f76cb2320aa76afd95a68096c7258",
+        "ce6df4edb382562100ca13e9503d12a8a5fcc6513903b61c0f201224c05a8d49"
+      ],
+      "reaction": "surprise",
+      "observation": "Main sur la tête puis main sur la bouche, regard latéral étonné.",
+      "hook": "Mon cerveau qui bloque : un copier-coller du lien de mon site, 1000 vidéos en 5 minutes.",
+      "placement": "lower",
+      "design": "outline",
+      "safeForAutoApproval": false
+    },
+    {
+      "index": 34,
+      "sourceHash": "49d10b6f53f562ed4ca33475b0a86a4d7be5c534fa1ecb1b714d931486dfa36a",
+      "sourceEtag": "\"0x8DF10571FF8B773\"",
+      "reviewStatus": "sampled-frames-reviewed",
+      "reviewMethod": "Direct assistant inspection of four frames; no model API; not a full-motion or audio review",
+      "durationSeconds": 5.041667,
+      "sampleTimestampsSeconds": [
+        0.403,
+        1.714,
+        3.227,
+        4.538
+      ],
+      "frameSha256": [
+        "c9a89701da615d4e187903e8803f56fa946cb0e9d3657959ec8fe7e55a5ae0d2",
+        "ff14cbe5a3f2b93cc2773c490081f87e2b70595c9b7e63d1d6ec1f9fd28c1887",
+        "ee2fdfdbe95150bd78fdebbc29690baf2976035846ef4e13f063a1b2ebf1e4c0",
+        "330b95837105cd00cb6da85d90b5f2b559cb090814c2f372e163f0c4ce28efe8"
+      ],
+      "reaction": "surprise",
+      "observation": "Main sur le front, yeux écarquillés, bouche ouverte puis main sur la bouche.",
+      "hook": "Attends, je rêve ou mon lien de site vient vraiment de lancer 1000 vidéos en 5 minutes ?",
+      "placement": "lower",
+      "design": "paper",
+      "safeForAutoApproval": false
+    },
+    {
+      "index": 35,
+      "sourceHash": "45240904d47e27cfcad05a5dae78382c021962d85014ac3354e8cd40039cdf5b",
+      "sourceEtag": "\"0x8DF10571E20325F\"",
+      "reviewStatus": "sampled-frames-reviewed",
+      "reviewMethod": "Direct assistant inspection of four frames; no model API; not a full-motion or audio review",
+      "durationSeconds": 5.041667,
+      "sampleTimestampsSeconds": [
+        0.403,
+        1.714,
+        3.227,
+        4.538
+      ],
+      "frameSha256": [
+        "915dcdf20a60bf3ae6b472a890f845e700b5ad8228db909039814c9a41fda92b",
+        "bd961c65dc287f6fa2d64164633f32730027c066e651a5f9c7cafe4338f23a02",
+        "e7121a0bfaf6fd84d1d0cda234de172283e464d3b61c01d674762a67f7bd6ae7",
+        "fce8dad0ba3736bf0b402d5d06c37ba1268945bdee58d99e7318b6d7dc4c878d"
+      ],
+      "reaction": "assurance",
+      "observation": "Debout dans la rue, bras levé devant des taxis, pose assurée.",
+      "hook": "Moi qui reprends ma journée : mon lien de site s’occupe des 1000 vidéos en 5 minutes.",
+      "placement": "lower",
+      "design": "outline",
+      "safeForAutoApproval": false
+    },
+    {
+      "index": 36,
+      "sourceHash": "d0815d313b0c46d725774a48b3bb5d74bcfc0b1095c9c2af260a4629622ac1b8",
+      "sourceEtag": "\"0x8DF10571C80B1D4\"",
+      "reviewStatus": "sampled-frames-reviewed",
+      "reviewMethod": "Direct assistant inspection of four frames; no model API; not a full-motion or audio review",
+      "durationSeconds": 10.041667,
+      "sampleTimestampsSeconds": [
+        0.803,
+        3.414,
+        6.427,
+        9.038
+      ],
+      "frameSha256": [
+        "37d9c8b48332d4d66d50729f3676b3540acb2dfd3c7e048455878e1668f26356",
+        "c66867a38d2a35769f7015a2865f9f802d0e7c5f8b3bf78f73bc86f7d979a8f8",
+        "f123f1a6247a165181c54dd923a31db5866eb1727063f7c6987dd579cdb17197",
+        "9eaede6d0ad853f2fb1bd7b0d43bfcfb4803167eb469a92d5597b568c2e29285"
+      ],
+      "reaction": "confiance",
+      "observation": "Assis dans une voiture avec ceinture, expression neutre puis sourire discret.",
+      "hook": "Le sourire quand tu réalises : ton site est déjà prêt, son lien suffit pour 1000 vidéos en 5 minutes.",
+      "placement": "lower",
+      "design": "paper",
+      "safeForAutoApproval": false
+    },
+    {
+      "index": 37,
+      "sourceHash": "b39c1295b9c275ed70f0eb59505105d6ea86a958263166ec0a29a0f3d00f2812",
+      "sourceEtag": "\"0x8DF10572195BD4A\"",
+      "reviewStatus": "sampled-frames-reviewed",
+      "reviewMethod": "Direct assistant inspection of four frames; no model API; not a full-motion or audio review",
+      "durationSeconds": 10.041667,
+      "sampleTimestampsSeconds": [
+        0.803,
+        3.414,
+        6.427,
+        9.038
+      ],
+      "frameSha256": [
+        "6435feda7e7b49f576eed7c606f9c6b00565adbbd89843a6efc991547645442c",
+        "54cd25a8fdf7c2b5c6865984457d8777863bd3230ed321b6cdf164926dbcf371",
+        "e37c0919ab1cd9297c013ec96c3e3bae8866c9a0dec0eb6e848d6ed107a07531",
+        "38b738f6f7bc9823776586484332024f6abec203d50c5cb4103d72745cd619ee"
+      ],
+      "reaction": "calme",
+      "observation": "Selfie intérieur en lumière tamisée, sourire discret puis expression neutre.",
+      "hook": "Moi qui laisse videoma travailler : le lien de mon site, 1000 vidéos en 5 minutes.",
+      "placement": "lower",
+      "design": "outline",
+      "safeForAutoApproval": false
+    },
+    {
+      "index": 38,
+      "sourceHash": "ccb6f9c9137fadc67fe2dbe5e3e5db48eb99372810ecda7f9631d6d0b1594170",
+      "sourceEtag": "\"0x8DF10572053486D\"",
+      "reviewStatus": "sampled-frames-reviewed",
+      "reviewMethod": "Direct assistant inspection of four frames; no model API; not a full-motion or audio review",
+      "durationSeconds": 5.041667,
+      "sampleTimestampsSeconds": [
+        0.403,
+        1.714,
+        3.227,
+        4.538
+      ],
+      "frameSha256": [
+        "a6cfa65b163e8c7121237fe81f73a63e0772b73ce750e2089dc4104ad97174cb",
+        "bba05b0add72d73042e677aeeba38d68c09741196de2a9d9de2ce4fd85f1a9b1",
+        "8708b87eca749e175108ebc014488de46550984c6690cc313f5a7ddec86039af",
+        "eecc31e24991271bc17d6fc352e95d5d9599475b795daa34d795fd2463519ab1"
+      ],
+      "reaction": "calme",
+      "observation": "Pull clair, lumière orange, regard baissé puis caméra, petit sourire.",
+      "hook": "Ce petit moment où tu vois le résultat : ton lien de site, 1000 vidéos en 5 minutes.",
+      "placement": "lower",
+      "design": "outline",
+      "safeForAutoApproval": false
+    },
+    {
+      "index": 39,
+      "sourceHash": "79decbf519784745fd3c038581856e65f8207cf964e766efdc9c4d21d9c29116",
+      "sourceEtag": "\"0x8DF10572313788D\"",
+      "reviewStatus": "sampled-frames-reviewed",
+      "reviewMethod": "Direct assistant inspection of four frames; no model API; not a full-motion or audio review",
+      "durationSeconds": 5.041667,
+      "sampleTimestampsSeconds": [
+        0.403,
+        1.714,
+        3.227,
+        4.538
+      ],
+      "frameSha256": [
+        "6545f84ca31dac18190df362c7d84a706e800969f583c1941c037a27bbcf8163",
+        "305d76f263e8db69e98187be90b3688bb1c0ce401d6cc7decd7c803619354ef9",
+        "2cdc4e0525066ad5947580a7d4eb583a2448d045d5e6da27c7308e31b523b642",
+        "f1241614973bb549a993b9983daf2af8cf739bfa34653dce7dce03892cffc7b2"
+      ],
+      "reaction": "surprise-joie",
+      "observation": "Main devant la bouche, yeux ouverts puis rire les yeux plissés.",
+      "hook": "Moi qui passe du choc au fou rire : mon lien de site a créé 1000 vidéos en 5 minutes.",
+      "placement": "lower",
+      "design": "paper",
+      "safeForAutoApproval": false
+    },
+    {
+      "index": 40,
+      "sourceHash": "df8c8f65a1f3178357444a4f567b5aeafb4637ee7ddb4ab008de645d85ef61f5",
+      "sourceEtag": "\"0x8DF1057247B329F\"",
+      "reviewStatus": "sampled-frames-reviewed",
+      "reviewMethod": "Direct assistant inspection of four frames; no model API; not a full-motion or audio review",
+      "durationSeconds": 10.041667,
+      "sampleTimestampsSeconds": [
+        0.803,
+        3.414,
+        6.427,
+        9.038
+      ],
+      "frameSha256": [
+        "69904b5da27b7d3adcf0ce1b58653daf62c7522c5f85779a683b4af262906a02",
+        "cb2f267d11e92ea27701ef32d001dc58a16d29f11e6fdbb4ba7750f6cf33856d",
+        "3fba30832a8723dcbcbaf9b1cc78113f07f821f974c721cf9b8e6240fa8a8862",
+        "1629db4e9723f05376ccdf42a422c4919d89367fb934a237f17375e999183c72"
+      ],
+      "reaction": "confiance",
+      "observation": "Regard baissé puis tête inclinée et sourire, chemise claire, intérieur lumineux.",
+      "hook": "Quand on te demande comment tu fais : je copie mon lien de site, 1000 vidéos en 5 minutes.",
+      "placement": "lower",
+      "design": "outline",
+      "safeForAutoApproval": false
+    },
+    {
+      "index": 41,
+      "sourceHash": "f5a6bbb1f74403a7c5915d2b91a14affa5aca658f6818e49b6e7d35d5a50e245",
+      "sourceEtag": "\"0x8DF10572232B180\"",
+      "reviewStatus": "sampled-frames-reviewed",
+      "reviewMethod": "Direct assistant inspection of four frames; no model API; not a full-motion or audio review",
+      "durationSeconds": 12.1,
+      "sampleTimestampsSeconds": [
+        0.968,
+        4.114,
+        7.744,
+        10.89
+      ],
+      "frameSha256": [
+        "4ac675d3e9e602d2c30beb060535a6e67cda630a224163c914ab5a0af4fd69ca",
+        "799cfc30625ac78c8793e1aeca70c96655e6f6185564212bf514bcd11df06722",
+        "1da47259c5572fc721708026030c058ceaf8ab037cc8c94b8e125ee847623a6a",
+        "98236c1e00f8f533f6cd01cef88e040eef3dd3781b76646fd3ad1105dd7d593d"
+      ],
+      "reaction": "surprise",
+      "observation": "Gros plan, sourcils froncés, bouche ouverte et regard vers le bas.",
+      "hook": "Moi qui vérifie le chiffre : oui, 1000 vidéos en 5 minutes, avec juste le lien de mon site.",
+      "placement": "lower",
+      "design": "outline",
+      "safeForAutoApproval": false
+    },
+    {
+      "index": 42,
+      "sourceHash": "62f68f7440b6f7b67e632a7e04bf3fc9ce68b31d658b7403ed04cdc1e1a51f92",
+      "sourceEtag": "\"0x8DF1057235A70C1\"",
+      "reviewStatus": "sampled-frames-reviewed",
+      "reviewMethod": "Direct assistant inspection of four frames; no model API; not a full-motion or audio review",
+      "durationSeconds": 5.041667,
+      "sampleTimestampsSeconds": [
+        0.403,
+        1.714,
+        3.227,
+        4.538
+      ],
+      "frameSha256": [
+        "a39b77aeeec571ef5615ddc84bc26df8b49755e604c25ed9bb95388d824c238c",
+        "5ff16958241de7ecf5d09d95eb8f692195b08f1a48c5266317975166045d3ddc",
+        "7775729fb267440a2493afe310a3a0e22cb6f03780935487ba2894c0df30b7ab",
+        "4d820398817c90e3901ae7b19efff6feb304b2f858b7ec92a1a31aa7eeac3e27"
+      ],
+      "reaction": "surprise",
+      "observation": "Haut gris, main sur la bouche puis regard de côté, pièce sombre.",
+      "hook": "Ma tête quand je vois 1000 vidéos en 5 minutes après avoir seulement copié mon lien de site.",
+      "placement": "lower",
+      "design": "paper",
+      "safeForAutoApproval": false
+    },
+    {
+      "index": 43,
+      "sourceHash": "d718fd474c2f056d49b8ec3a3a810376ee3c1ee259af8c39aaea54ceda5a402a",
+      "sourceEtag": "\"0x8DF10571D0887F2\"",
+      "reviewStatus": "sampled-frames-reviewed",
+      "reviewMethod": "Direct assistant inspection of four frames; no model API; not a full-motion or audio review",
+      "durationSeconds": 10.041667,
+      "sampleTimestampsSeconds": [
+        0.803,
+        3.414,
+        6.427,
+        9.038
+      ],
+      "frameSha256": [
+        "acd61bc9052a2bf7c2dac082ef18a289e39f7c6b514a5c171565cfcb9d218450",
+        "faec1c8fb0ee9495f1ca958b030644be3718db84643d49a21457701192d8d40a",
+        "4823cc310431302d58a4dbfbd3643ed7af807cf2596f711ba1e6f97f5c838a5d",
+        "7b31e54b8b211ef17a0f437c0c58122198807fb3327de3b58bfe83b0f3ea41be"
+      ],
+      "reaction": "joie",
+      "observation": "Homme souriant, portrait serré et expression stable, intérieur clair.",
+      "hook": "Mon sourire quand la création devient simple : un lien de site pour 1000 vidéos en 5 minutes.",
+      "placement": "lower",
+      "design": "outline",
+      "safeForAutoApproval": false
+    },
+    {
+      "index": 44,
+      "sourceHash": "b00ec34ec6b6a77ab672406a6121f639e7bc15b8a9c64a2ff158bc6aadb5a6d9",
+      "sourceEtag": "\"0x8DF10571E609C74\"",
+      "reviewStatus": "sampled-frames-reviewed",
+      "reviewMethod": "Direct assistant inspection of four frames; no model API; not a full-motion or audio review",
+      "durationSeconds": 10.041667,
+      "sampleTimestampsSeconds": [
+        0.803,
+        3.414,
+        6.427,
+        9.038
+      ],
+      "frameSha256": [
+        "d7ea57c92a246d90e36199d5fc9df18b4a5ae60977c32f3cb3380207b80d1ff3",
+        "8c3f911586f78f8dccf21d6e6632112efccae54c3280cb93e9a4f1a6bba4a407",
+        "ad7dd8c259daf16aedc6d6bb4a310b15d2aea81d901f7d84c2f032cddf309632",
+        "cac2164d041e4d6ff169af07e7e01b6cd7b5b94fe3d9e25a6df88a2cb7aa5d8b"
+      ],
+      "reaction": "calme",
+      "observation": "Homme en haut bleu, sourire discret puis expression posée, intérieur.",
+      "hook": "Moi qui fais comme si c’était normal : mon lien de site, 1000 vidéos en 5 minutes.",
+      "placement": "lower",
+      "design": "paper",
+      "safeForAutoApproval": false
+    },
+    {
+      "index": 45,
+      "sourceHash": "f662327c1f961d027ef5edf2305ded89fbe099561aa2da5476dc14bb9a4484ec",
+      "sourceEtag": "\"0x8DF105724F6BA05\"",
+      "reviewStatus": "sampled-frames-reviewed",
+      "reviewMethod": "Direct assistant inspection of four frames; no model API; not a full-motion or audio review",
+      "durationSeconds": 10.041667,
+      "sampleTimestampsSeconds": [
+        0.803,
+        3.414,
+        6.427,
+        9.038
+      ],
+      "frameSha256": [
+        "0ae257596ad6bdfad9349f71bcc9f3bdfce5723503a33ac85057213e43b6dd63",
+        "6a9f20ad0052f504e3b3b9d22881d56458d7b65bef3ecad471901e5e043d1386",
+        "7395a0bf8f0f922fa4a285f234bd3ca555ffef6db4075234f0c0479d17e7a64c",
+        "43854f95c97a3dff5859c8412c81fa5e714310fe5e7ff423066de656fbb18550"
+      ],
+      "reaction": "joie",
+      "observation": "Grand sourire et tête légèrement inclinée, pull bordeaux, intérieur.",
+      "hook": "Quand le copier-coller le plus simple de ta journée transforme ton lien de site en 1000 vidéos en 5 minutes.",
+      "placement": "lower",
+      "design": "outline",
+      "safeForAutoApproval": false
+    },
+    {
+      "index": 46,
+      "sourceHash": "45748a6102e2349f03f782a569cf16b9b56271534ba9afef151f391d0916d051",
+      "sourceEtag": "\"0x8DF1057213D5244\"",
+      "reviewStatus": "sampled-frames-reviewed",
+      "reviewMethod": "Direct assistant inspection of four frames; no model API; not a full-motion or audio review",
+      "durationSeconds": 10.041667,
+      "sampleTimestampsSeconds": [
+        0.803,
+        3.414,
+        6.427,
+        9.038
+      ],
+      "frameSha256": [
+        "5e77b04ff6b0802b99e8122e0b93e9e24855e294d85e85fc65bcbb918c2989f3",
+        "f4cdf184d31edef38a739bab1d9efce11b2405d3bb5805dc80a6898fd0bb8eac",
+        "c69d685beba033ccd7e93ec4c821e322f47df0a50145522c46d223e1646d5e39",
+        "49579ed0284ea603641307db0b4f71025df8bacc4d9e66709eada48caf79fe73"
+      ],
+      "reaction": "calme",
+      "observation": "Vidéo horizontale, portrait dans une pièce sombre, regard neutre puis sourcils levés.",
+      "hook": "Ce regard quand tout part de ton site : copie son lien, obtiens 1000 vidéos en 5 minutes.",
+      "placement": "top",
+      "design": "outline",
+      "safeForAutoApproval": false
+    },
+    {
+      "index": 47,
+      "sourceHash": "89d5c578ca31af79a57ae283f349aab6efc087ef6bf43716ad7f1bb1112f555c",
+      "sourceEtag": "\"0x8DF10571E599F70\"",
+      "reviewStatus": "sampled-frames-reviewed",
+      "reviewMethod": "Direct assistant inspection of four frames; no model API; not a full-motion or audio review",
+      "durationSeconds": 12.1,
+      "sampleTimestampsSeconds": [
+        0.968,
+        4.114,
+        7.744,
+        10.89
+      ],
+      "frameSha256": [
+        "6a100bf9d8082e4d01c932c1dafe30c81033f417520a7272b3f89d771455590c",
+        "5d94f0e8ce5a7a9aefdb5f217eda1b7b3bf36c38af3ee1d95a4f038dff6d7d63",
+        "02b08e627b139a4eb929b70de96f7608ef90b5eee169fde6a8140f486b55bc91",
+        "d027765465ba826681fa4752da5b18297ea136232cc36f034769b34500c7cbce"
+      ],
+      "reaction": "rire",
+      "observation": "Selfie en marchant de nuit, grand sourire et rire, arrière-plan éclairé.",
+      "hook": "Moi qui retrouve mes soirées : mon lien de site prépare 1000 vidéos en 5 minutes.",
+      "placement": "lower",
+      "design": "outline",
+      "safeForAutoApproval": false
+    },
+    {
+      "index": 48,
+      "sourceHash": "aeec35d6e3b9bcd609cf1bd3f91c07821b91bbefb12c921541dace7a8da02ffd",
+      "sourceEtag": "\"0x8DF10571BCA9517\"",
+      "reviewStatus": "sampled-frames-reviewed",
+      "reviewMethod": "Direct assistant inspection of four frames; no model API; not a full-motion or audio review",
+      "durationSeconds": 5.041667,
+      "sampleTimestampsSeconds": [
+        0.403,
+        1.714,
+        3.227,
+        4.538
+      ],
+      "frameSha256": [
+        "16f739801a053608b5b93def43add18b68062ea0e5e2c858165d7dc330d4eb70",
+        "4d43f45bc5c39abc04d936479cb8e79cc6a058e83f11bff34c78d4936c04348c",
+        "2ca171a660ad10dd73c7845e2a67c6a02669d9c7e9d9c75e88f813f4495272bb",
+        "92cfed26c8933c168f4376d8349a40e9facca19e07d44f4f9aaf156edd01e0e3"
+      ],
+      "reaction": "surprise",
+      "observation": "Allongée, main sur la bouche, sourcils levés et regard de côté.",
+      "hook": "J’étais censée juste tester… mon lien de site a lancé 1000 vidéos en 5 minutes.",
+      "placement": "lower",
+      "design": "paper",
+      "safeForAutoApproval": false
+    }
+  ]
+}

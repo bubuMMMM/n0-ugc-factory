@@ -1,0 +1,12 @@
+{
+  "mode": "offline",
+  "modelApiCalls": 0,
+  "total": 1017,
+  "sourceMetadataAvailable": 1017,
+  "sourcePromptsAvailable": 1017,
+  "sampledVideosReviewed": 48,
+  "framesReviewed": 192,
+  "pendingVisualReview": 969,
+  "fullMotionReviewComplete": false,
+  "updatedAt": "2026-09-21"
+}

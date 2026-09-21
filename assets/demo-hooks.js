@@ -1,292 +1,388 @@
-/* 1,017 promotional reaction variations (32 framings x 32 formulations, minus 7). Product promise requested by the owner, not a measured performance claim. */
+/* Promotional hooks. Individually reviewed rows carry reviewStatus; remaining rows are editorial variations, not visual analyses. */
 window.VIDEOMA_DEMO_HOOKS=[
   {
     "index": 1,
-    "hook": "Ma tête quand un lien de site suffit pour obtenir 1000 vidéos en 5 minutes.",
+    "hook": "Mon sourire quand je copie mon lien de site : 1000 vidéos en 5 minutes, même pendant ma lessive.",
     "design": "outline",
-    "placement": "top"
+    "placement": "top",
+    "reaction": "sourire",
+    "reviewStatus": "sampled-frames-reviewed"
   },
   {
     "index": 2,
-    "hook": "Ma réaction quand 1000 vidéos en 5 minutes tiennent à un copier-coller de ton site.",
+    "hook": "Ce petit sourire quand ton lien de site te donne 1000 vidéos en 5 minutes.",
     "design": "paper",
-    "placement": "top"
+    "placement": "lower",
+    "reaction": "confiance",
+    "reviewStatus": "sampled-frames-reviewed"
   },
   {
     "index": 3,
-    "hook": "Moi quand le lien de ton offre sert à créer 1000 vidéos en 5 minutes.",
-    "design": "editorial",
-    "placement": "top"
+    "hook": "Moi, très calme, après avoir obtenu 1000 vidéos en 5 minutes avec le lien de mon site.",
+    "design": "outline",
+    "placement": "lower",
+    "reaction": "calme",
+    "reviewStatus": "sampled-frames-reviewed"
   },
   {
     "index": 4,
-    "hook": "Le moment où 1000 vidéos en 5 minutes commencent par un simple lien de site.",
+    "hook": "Ma tête quand créer 1000 vidéos en 5 minutes demande juste le lien de mon site.",
     "design": "outline",
-    "placement": "lower"
+    "placement": "lower",
+    "reaction": "calme",
+    "reviewStatus": "sampled-frames-reviewed"
   },
   {
     "index": 5,
-    "hook": "Ce regard quand tu donnes le lien de ton activité pour créer 1000 vidéos en 5 minutes.",
+    "hook": "Ce regard quand ton site fait déjà le brief : un lien, 1000 vidéos en 5 minutes.",
     "design": "paper",
-    "placement": "lower"
+    "placement": "lower",
+    "reaction": "confiance",
+    "reviewStatus": "sampled-frames-reviewed"
   },
   {
     "index": 6,
-    "hook": "Le déclic quand tu copies ton lien de site et tu obtiens 1000 vidéos en 5 minutes.",
-    "design": "editorial",
-    "placement": "lower"
+    "hook": "Moi déjà en pyjama quand mon lien de site lance 1000 vidéos en 5 minutes.",
+    "design": "outline",
+    "placement": "lower",
+    "reaction": "repos",
+    "reviewStatus": "sampled-frames-reviewed"
   },
   {
     "index": 7,
-    "hook": "Cette seconde où tu transformes le lien de ton site en 1000 vidéos en 5 minutes.",
+    "hook": "Mon regard quand on me dit : colle ton lien de site, obtiens 1000 vidéos en 5 minutes.",
     "design": "outline",
-    "placement": "upper"
+    "placement": "lower",
+    "reaction": "doute",
+    "reviewStatus": "sampled-frames-reviewed"
   },
   {
     "index": 8,
-    "hook": "La tête que tu fais quand tu essaies videoma avec ton URL pour créer 1000 vidéos en 5 minutes.",
-    "design": "paper",
-    "placement": "upper"
+    "hook": "Ma réaction quand un simple lien de site déclenche 1000 vidéos en 5 minutes. Attends, c’est tout ?",
+    "design": "outline",
+    "placement": "lower",
+    "reaction": "surprise",
+    "reviewStatus": "sampled-frames-reviewed"
   },
   {
     "index": 9,
-    "hook": "Le sourire qui arrive quand tu peux créer 1000 vidéos en 5 minutes juste en copiant ton URL.",
-    "design": "editorial",
-    "placement": "upper"
+    "hook": "Attends… 1000 vidéos en 5 minutes ? J’ai seulement collé le lien de mon site.",
+    "design": "outline",
+    "placement": "lower",
+    "reaction": "surprise",
+    "reviewStatus": "sampled-frames-reviewed"
   },
   {
     "index": 10,
-    "hook": "Le regard de ton associé quand ton site devient la matière première de 1000 vidéos en 5 minutes.",
-    "design": "outline",
-    "placement": "top"
+    "hook": "Moi qui pensais créer UNE vidéo avec mon lien de site. Résultat : 1000 vidéos en 5 minutes.",
+    "design": "paper",
+    "placement": "lower",
+    "reaction": "surprise",
+    "reviewStatus": "sampled-frames-reviewed"
   },
   {
     "index": 11,
-    "hook": "Moi qui réalise que ton URL devient le point de départ de 1000 vidéos en 5 minutes.",
-    "design": "paper",
-    "placement": "top"
+    "hook": "Quand tu réalises que ton lien de site suffit : 1000 vidéos en 5 minutes, sans refaire ton brief.",
+    "design": "outline",
+    "placement": "lower",
+    "reaction": "calme",
+    "reviewStatus": "sampled-frames-reviewed"
   },
   {
     "index": 12,
-    "hook": "Moi qui découvre que tu copies simplement ton site pour obtenir 1000 vidéos en 5 minutes.",
-    "design": "editorial",
-    "placement": "top"
+    "hook": "Moi qui ris en pensant à mes heures de montage : mon lien de site crée 1000 vidéos en 5 minutes.",
+    "design": "outline",
+    "placement": "lower",
+    "reaction": "rire",
+    "reviewStatus": "sampled-frames-reviewed"
   },
   {
     "index": 13,
-    "hook": "Ce petit silence quand tu colles le lien de ton site pour lancer 1000 vidéos en 5 minutes.",
+    "hook": "Le choc, puis le sourire : j’ai collé mon lien de site et obtenu 1000 vidéos en 5 minutes.",
     "design": "outline",
-    "placement": "lower"
+    "placement": "lower",
+    "reaction": "surprise-joie",
+    "reviewStatus": "sampled-frames-reviewed"
   },
   {
     "index": 14,
-    "hook": "La surprise quand le lien de ta boutique permet de créer 1000 vidéos en 5 minutes.",
+    "hook": "Le sourire de celle qui vient de créer 1000 vidéos en 5 minutes avec son lien de site.",
     "design": "paper",
-    "placement": "lower"
+    "placement": "lower",
+    "reaction": "joie",
+    "reviewStatus": "sampled-frames-reviewed"
   },
   {
     "index": 15,
-    "hook": "Ton cerveau quand tu peux obtenir 1000 vidéos en 5 minutes avec le lien de ta marque.",
-    "design": "editorial",
-    "placement": "lower"
+    "hook": "Moi après des heures de montage, découvrant que mon lien de site pouvait créer 1000 vidéos en 5 minutes.",
+    "design": "outline",
+    "placement": "lower",
+    "reaction": "frustration",
+    "reviewStatus": "sampled-frames-reviewed"
   },
   {
     "index": 16,
-    "hook": "Ce moment de soulagement quand tu passes d’un lien de site à 1000 vidéos en 5 minutes.",
+    "hook": "J’ai relu trois fois : 1000 vidéos en 5 minutes, juste en copiant le lien de mon site.",
     "design": "outline",
-    "placement": "upper"
+    "placement": "lower",
+    "reaction": "surprise",
+    "reviewStatus": "sampled-frames-reviewed"
   },
   {
     "index": 17,
-    "hook": "Le patron qui découvre que ton prochain lot de 1000 vidéos en 5 minutes commence par le lien de ton site.",
-    "design": "paper",
-    "placement": "upper"
+    "hook": "Moi qui garde mon calme alors que mon lien de site vient de créer 1000 vidéos en 5 minutes.",
+    "design": "editorial",
+    "placement": "lower",
+    "reaction": "assurance",
+    "reviewStatus": "sampled-frames-reviewed"
   },
   {
     "index": 18,
-    "hook": "Ton équipe qui réalise que 1000 vidéos en 5 minutes démarrent avec l’URL de ton entreprise.",
-    "design": "editorial",
-    "placement": "upper"
+    "hook": "Ma tête après un énième montage… alors qu’un lien de site suffit pour 1000 vidéos en 5 minutes.",
+    "design": "outline",
+    "placement": "lower",
+    "reaction": "fatigue",
+    "reviewStatus": "sampled-frames-reviewed"
   },
   {
     "index": 19,
-    "hook": "Le regard qui change quand le lien de ton entreprise devient 1000 vidéos en 5 minutes.",
-    "design": "outline",
-    "placement": "top"
+    "hook": "Pardon, pourquoi je faisais tout à la main ? Mon lien de site peut créer 1000 vidéos en 5 minutes.",
+    "design": "paper",
+    "placement": "lower",
+    "reaction": "doute",
+    "reviewStatus": "sampled-frames-reviewed"
   },
   {
     "index": 20,
-    "hook": "Moi qui relis parce que tu colles le lien de ton commerce et tu obtiens 1000 vidéos en 5 minutes.",
-    "design": "paper",
-    "placement": "top"
+    "hook": "Moi épuisée par le contenu, puis je découvre : un lien de site, 1000 vidéos en 5 minutes.",
+    "design": "outline",
+    "placement": "top",
+    "reaction": "fatigue",
+    "reviewStatus": "sampled-frames-reviewed"
   },
   {
     "index": 21,
-    "hook": "Le sourire du lundi quand copier le lien de ton site permet de créer 1000 vidéos en 5 minutes.",
-    "design": "editorial",
-    "placement": "top"
+    "hook": "Ma réaction au compteur : 1000 vidéos en 5 minutes. Je n’ai donné que le lien de mon site.",
+    "design": "outline",
+    "placement": "lower",
+    "reaction": "surprise",
+    "reviewStatus": "sampled-frames-reviewed"
   },
   {
     "index": 22,
-    "hook": "Ce moment où tu vois que videoma part de ton URL pour créer 1000 vidéos en 5 minutes.",
-    "design": "outline",
-    "placement": "lower"
+    "hook": "Ce sourire quand ton équipe demande ton secret : un lien de site, 1000 vidéos en 5 minutes.",
+    "design": "paper",
+    "placement": "lower",
+    "reaction": "confiance",
+    "reviewStatus": "sampled-frames-reviewed"
   },
   {
     "index": 23,
-    "hook": "La réaction devant ton écran quand tu passes du lien de ta marque à 1000 vidéos en 5 minutes.",
-    "design": "paper",
-    "placement": "lower"
+    "hook": "Moi encore sous la couette, pendant que mon lien de site prépare 1000 vidéos en 5 minutes.",
+    "design": "outline",
+    "placement": "top",
+    "reaction": "repos",
+    "reviewStatus": "sampled-frames-reviewed"
   },
   {
     "index": 24,
-    "hook": "Moi qui vérifie parce que tu copies ton site et videoma prépare 1000 vidéos en 5 minutes.",
-    "design": "editorial",
-    "placement": "lower"
+    "hook": "Quand tu peux enfin souffler : ton lien de site te donne 1000 vidéos en 5 minutes.",
+    "design": "outline",
+    "placement": "top",
+    "reaction": "joie",
+    "reviewStatus": "sampled-frames-reviewed"
   },
   {
     "index": 25,
-    "hook": "Le moment où tu comprends que copier ton URL devient le début de 1000 vidéos en 5 minutes.",
+    "hook": "Ton contenu avant et après le copier-coller : un lien de site, 1000 vidéos en 5 minutes.",
     "design": "outline",
-    "placement": "upper"
+    "placement": "lower",
+    "reaction": "transformation",
+    "reviewStatus": "sampled-frames-reviewed"
   },
   {
     "index": 26,
-    "hook": "Cette tête de « attends, quoi ? » quand tu colles ton site dans videoma pour créer 1000 vidéos en 5 minutes.",
+    "hook": "Moi qui pensais que « 1000 vidéos en 5 minutes avec ton lien de site » était une blague.",
     "design": "paper",
-    "placement": "upper"
+    "placement": "lower",
+    "reaction": "doute",
+    "reviewStatus": "sampled-frames-reviewed"
   },
   {
     "index": 27,
-    "hook": "Moi qui montre à mon associé que tu obtiens 1000 vidéos en 5 minutes sans donner autre chose que ton URL.",
-    "design": "editorial",
-    "placement": "upper"
+    "hook": "Ce silence quand tu comprends : ton lien de site suffit pour obtenir 1000 vidéos en 5 minutes.",
+    "design": "outline",
+    "placement": "lower",
+    "reaction": "surprise",
+    "reviewStatus": "sampled-frames-reviewed"
   },
   {
     "index": 28,
-    "hook": "La réaction dans le bureau quand le copier-coller de ton site ouvre la voie à 1000 vidéos en 5 minutes.",
+    "hook": "Moi devant mon écran : j’ai collé mon lien de site… et voilà 1000 vidéos en 5 minutes.",
     "design": "outline",
-    "placement": "top"
+    "placement": "lower",
+    "reaction": "surprise-joie",
+    "reviewStatus": "sampled-frames-reviewed"
   },
   {
     "index": 29,
-    "hook": "Ce petit sourire en coin quand tu colles une URL pour obtenir 1000 vidéos en 5 minutes.",
+    "hook": "Quand tu connais déjà l’astuce : copier ton lien de site pour créer 1000 vidéos en 5 minutes.",
     "design": "paper",
-    "placement": "top"
+    "placement": "lower",
+    "reaction": "confiance",
+    "reviewStatus": "sampled-frames-reviewed"
   },
   {
     "index": 30,
-    "hook": "Le regard de ton collègue quand tu crées 1000 vidéos en 5 minutes avec le site que tu as déjà.",
-    "design": "editorial",
-    "placement": "top"
+    "hook": "Moi en repensant aux soirées de montage : mon lien de site pouvait créer 1000 vidéos en 5 minutes.",
+    "design": "outline",
+    "placement": "lower",
+    "reaction": "regret",
+    "reviewStatus": "sampled-frames-reviewed"
   },
   {
     "index": 31,
-    "hook": "Moi qui n’avais pas compris que tu obtiens 1000 vidéos en 5 minutes à partir du lien de ton site.",
-    "design": "outline",
-    "placement": "lower"
+    "hook": "Ce sourire en coin quand on découvre que ton lien de site a créé 1000 vidéos en 5 minutes.",
+    "design": "paper",
+    "placement": "lower",
+    "reaction": "confiance",
+    "reviewStatus": "sampled-frames-reviewed"
   },
   {
     "index": 32,
-    "hook": "Le moment où ça devient concret : un copier-coller de ton site lance la création de 1000 vidéos en 5 minutes.",
-    "design": "paper",
-    "placement": "lower"
+    "hook": "Moi après avoir copié mon lien de site : 1000 vidéos en 5 minutes, et ce petit sourire.",
+    "design": "outline",
+    "placement": "lower",
+    "reaction": "confiance",
+    "reviewStatus": "sampled-frames-reviewed"
   },
   {
     "index": 33,
-    "hook": "Ma tête quand tu copies ton lien de site et tu obtiens 1000 vidéos en 5 minutes.",
-    "design": "editorial",
-    "placement": "lower"
+    "hook": "Mon cerveau qui bloque : un copier-coller du lien de mon site, 1000 vidéos en 5 minutes.",
+    "design": "outline",
+    "placement": "lower",
+    "reaction": "surprise",
+    "reviewStatus": "sampled-frames-reviewed"
   },
   {
     "index": 34,
-    "hook": "Ma réaction quand tu transformes le lien de ton site en 1000 vidéos en 5 minutes.",
-    "design": "outline",
-    "placement": "upper"
+    "hook": "Attends, je rêve ou mon lien de site vient vraiment de lancer 1000 vidéos en 5 minutes ?",
+    "design": "paper",
+    "placement": "lower",
+    "reaction": "surprise",
+    "reviewStatus": "sampled-frames-reviewed"
   },
   {
     "index": 35,
-    "hook": "Moi quand tu essaies videoma avec ton URL pour créer 1000 vidéos en 5 minutes.",
-    "design": "paper",
-    "placement": "upper"
+    "hook": "Moi qui reprends ma journée : mon lien de site s’occupe des 1000 vidéos en 5 minutes.",
+    "design": "outline",
+    "placement": "lower",
+    "reaction": "assurance",
+    "reviewStatus": "sampled-frames-reviewed"
   },
   {
     "index": 36,
-    "hook": "Le moment où tu peux créer 1000 vidéos en 5 minutes juste en copiant ton URL.",
-    "design": "editorial",
-    "placement": "upper"
+    "hook": "Le sourire quand tu réalises : ton site est déjà prêt, son lien suffit pour 1000 vidéos en 5 minutes.",
+    "design": "paper",
+    "placement": "lower",
+    "reaction": "confiance",
+    "reviewStatus": "sampled-frames-reviewed"
   },
   {
     "index": 37,
-    "hook": "Ce regard quand ton site devient la matière première de 1000 vidéos en 5 minutes.",
+    "hook": "Moi qui laisse videoma travailler : le lien de mon site, 1000 vidéos en 5 minutes.",
     "design": "outline",
-    "placement": "top"
+    "placement": "lower",
+    "reaction": "calme",
+    "reviewStatus": "sampled-frames-reviewed"
   },
   {
     "index": 38,
-    "hook": "Le déclic quand ton URL devient le point de départ de 1000 vidéos en 5 minutes.",
-    "design": "paper",
-    "placement": "top"
+    "hook": "Ce petit moment où tu vois le résultat : ton lien de site, 1000 vidéos en 5 minutes.",
+    "design": "outline",
+    "placement": "lower",
+    "reaction": "calme",
+    "reviewStatus": "sampled-frames-reviewed"
   },
   {
     "index": 39,
-    "hook": "Cette seconde où tu copies simplement ton site pour obtenir 1000 vidéos en 5 minutes.",
-    "design": "editorial",
-    "placement": "top"
+    "hook": "Moi qui passe du choc au fou rire : mon lien de site a créé 1000 vidéos en 5 minutes.",
+    "design": "paper",
+    "placement": "lower",
+    "reaction": "surprise-joie",
+    "reviewStatus": "sampled-frames-reviewed"
   },
   {
     "index": 40,
-    "hook": "La tête que tu fais quand tu colles le lien de ton site pour lancer 1000 vidéos en 5 minutes.",
+    "hook": "Quand on te demande comment tu fais : je copie mon lien de site, 1000 vidéos en 5 minutes.",
     "design": "outline",
-    "placement": "lower"
+    "placement": "lower",
+    "reaction": "confiance",
+    "reviewStatus": "sampled-frames-reviewed"
   },
   {
     "index": 41,
-    "hook": "Le sourire qui arrive quand le lien de ta boutique permet de créer 1000 vidéos en 5 minutes.",
-    "design": "paper",
-    "placement": "lower"
+    "hook": "Moi qui vérifie le chiffre : oui, 1000 vidéos en 5 minutes, avec juste le lien de mon site.",
+    "design": "outline",
+    "placement": "lower",
+    "reaction": "surprise",
+    "reviewStatus": "sampled-frames-reviewed"
   },
   {
     "index": 42,
-    "hook": "Le regard de ton associé quand tu peux obtenir 1000 vidéos en 5 minutes avec le lien de ta marque.",
-    "design": "editorial",
-    "placement": "lower"
+    "hook": "Ma tête quand je vois 1000 vidéos en 5 minutes après avoir seulement copié mon lien de site.",
+    "design": "paper",
+    "placement": "lower",
+    "reaction": "surprise",
+    "reviewStatus": "sampled-frames-reviewed"
   },
   {
     "index": 43,
-    "hook": "Moi qui réalise que tu passes d’un lien de site à 1000 vidéos en 5 minutes.",
+    "hook": "Mon sourire quand la création devient simple : un lien de site pour 1000 vidéos en 5 minutes.",
     "design": "outline",
-    "placement": "upper"
+    "placement": "lower",
+    "reaction": "joie",
+    "reviewStatus": "sampled-frames-reviewed"
   },
   {
     "index": 44,
-    "hook": "Moi qui découvre que ton prochain lot de 1000 vidéos en 5 minutes commence par le lien de ton site.",
+    "hook": "Moi qui fais comme si c’était normal : mon lien de site, 1000 vidéos en 5 minutes.",
     "design": "paper",
-    "placement": "upper"
+    "placement": "lower",
+    "reaction": "calme",
+    "reviewStatus": "sampled-frames-reviewed"
   },
   {
     "index": 45,
-    "hook": "Ce petit silence quand 1000 vidéos en 5 minutes démarrent avec l’URL de ton entreprise.",
-    "design": "editorial",
-    "placement": "upper"
+    "hook": "Quand le copier-coller le plus simple de ta journée transforme ton lien de site en 1000 vidéos en 5 minutes.",
+    "design": "outline",
+    "placement": "lower",
+    "reaction": "joie",
+    "reviewStatus": "sampled-frames-reviewed"
   },
   {
     "index": 46,
-    "hook": "La surprise quand le lien de ton entreprise devient 1000 vidéos en 5 minutes.",
+    "hook": "Ce regard quand tout part de ton site : copie son lien, obtiens 1000 vidéos en 5 minutes.",
     "design": "outline",
-    "placement": "top"
+    "placement": "top",
+    "reaction": "calme",
+    "reviewStatus": "sampled-frames-reviewed"
   },
   {
     "index": 47,
-    "hook": "Ton cerveau quand tu colles le lien de ton commerce et tu obtiens 1000 vidéos en 5 minutes.",
-    "design": "paper",
-    "placement": "top"
+    "hook": "Moi qui retrouve mes soirées : mon lien de site prépare 1000 vidéos en 5 minutes.",
+    "design": "outline",
+    "placement": "lower",
+    "reaction": "rire",
+    "reviewStatus": "sampled-frames-reviewed"
   },
   {
     "index": 48,
-    "hook": "Ce moment de soulagement quand copier le lien de ton site permet de créer 1000 vidéos en 5 minutes.",
-    "design": "editorial",
-    "placement": "top"
+    "hook": "J’étais censée juste tester… mon lien de site a lancé 1000 vidéos en 5 minutes.",
+    "design": "paper",
+    "placement": "lower",
+    "reaction": "surprise",
+    "reviewStatus": "sampled-frames-reviewed"
   },
   {
     "index": 49,
