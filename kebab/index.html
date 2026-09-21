@@ -54,6 +54,8 @@ h1 em{display:block;color:var(--orange);font-style:italic;font-weight:400;letter
 .card{position:relative;aspect-ratio:9/16;overflow:hidden;border-radius:13px;border:1px solid #242429;background:linear-gradient(150deg,#17171a,#080809);padding:0;min-width:0;box-shadow:0 8px 26px rgba(0,0,0,.28);content-visibility:auto;contain-intrinsic-size:125px 222px}
 .card video{width:100%;height:100%;object-fit:cover;display:block;background:#111;opacity:0;transition:opacity .2s ease}
 .card.ready video{opacity:1}
+.featured-card video{opacity:1}
+.featured-card:after{display:none}
 .card:after{content:"";position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.82) 0%,rgba(0,0,0,.12) 45%,rgba(0,0,0,.18) 100%);pointer-events:none}
 .card-index{position:absolute;z-index:3;top:7px;left:7px;font-size:6.5px;font-weight:800;color:#e5e5e8;background:rgba(0,0,0,.62);border:1px solid rgba(255,255,255,.09);padding:3px 5px;border-radius:999px;backdrop-filter:blur(5px)}
 .card-play{position:absolute;z-index:3;top:7px;right:7px;width:20px;height:20px;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.9);color:#000;font-size:7px}
@@ -121,7 +123,11 @@ h1 em{display:block;color:var(--orange);font-style:italic;font-weight:400;letter
    </section>
 
   <section class="gallery" id="videos">
-    <div class="video-grid" id="grid" aria-live="polite"></div>
+    <div class="video-grid" id="grid" aria-live="polite">
+      <article class="card featured-card" aria-label="Vidéo kebab">
+        <video src="/kebab-feature.mp4" autoplay muted loop playsinline preload="metadata"></video>
+      </article>
+    </div>
     <div class="sentinel" id="sentinel"></div>
     <div class="load-state" id="loadState">Chargement des vidéos…</div>
   </section>
