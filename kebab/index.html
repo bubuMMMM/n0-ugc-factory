@@ -45,7 +45,7 @@ h1 em{display:block;color:var(--orange);font-style:italic;font-weight:400;letter
 .visual-space{height:308px;pointer-events:none}
 .scroll-cue{position:absolute;left:50%;bottom:16px;transform:translateX(-50%);font-size:7px;color:#6e6e76;letter-spacing:.12em;text-transform:uppercase;display:flex;align-items:center;gap:7px}
 .scroll-cue:after{content:"↓";font-size:11px;color:#aaa}
-.gallery{position:relative;background:#000;padding:22px 12px 92px}
+.gallery{position:relative;background:#000;padding:6px 12px 92px}
 .gallery-head{padding:0 10px 16px}
 .gallery-kicker{margin:0 0 7px;color:var(--orange);font-size:8px;font-weight:850;letter-spacing:.16em;text-transform:uppercase}
 .gallery-title{font-family:Georgia,"Times New Roman",serif;font-size:29px;line-height:.95;letter-spacing:-1.5px;margin:0;max-width:380px;font-weight:700}
@@ -136,20 +136,9 @@ h1 em{display:block;color:var(--orange);font-style:italic;font-weight:400;letter
   </section>
 
   <section class="gallery" id="videos">
-    <div class="gallery-head">
-      <p class="gallery-kicker">LA BIBLIOTHÈQUE COMPLÈTE</p>
-      <h2 class="gallery-title"><span id="videoTotal">1 017</span> vidéos.<br><em>Un hook pour chacune.</em></h2>
-      <p class="gallery-copy">Parcours la même bibliothèque de 1 017 vidéos que sur la page principale, ici présentée avec des accroches pensées pour un kebab ou un snack.</p>
-      <div class="gallery-toolbar">
-        <input class="search" id="search" type="search" placeholder="Rechercher un hook…">
-        <span class="count" id="counter">0 / 1 017</span>
-      </div>
-    </div>
-
     <div class="video-grid" id="grid" aria-live="polite"></div>
     <div class="sentinel" id="sentinel"></div>
     <div class="load-state" id="loadState">Chargement des vidéos…</div>
-    <div class="no-results" id="noResults">Aucune vidéo ne correspond à cette recherche.</div>
   </section>
 </main>
 
@@ -175,11 +164,7 @@ h1 em{display:block;color:var(--orange);font-style:italic;font-weight:400;letter
 (function(){
   var grid=document.getElementById('grid');
   var sentinel=document.getElementById('sentinel');
-  var counter=document.getElementById('counter');
-  var totalEl=document.getElementById('videoTotal');
   var loadState=document.getElementById('loadState');
-  var noResults=document.getElementById('noResults');
-  var search=document.getElementById('search');
   var sticky=document.getElementById('stickyCta');
   var hero=document.querySelector('.hero');
   var urlInput=document.getElementById('kebabUrl');
@@ -298,9 +283,7 @@ h1 em{display:block;color:var(--orange);font-style:italic;font-weight:400;letter
     return card;
   }
 
-  function updateCounter(){
-    counter.textContent=Math.min(rendered,filtered.length).toLocaleString('fr-FR')+' / '+filtered.length.toLocaleString('fr-FR');
-  }
+  function updateCounter(){}
 
   function renderMore(){
     if(rendered>=filtered.length){
@@ -326,7 +309,6 @@ h1 em{display:block;color:var(--orange);font-style:italic;font-weight:400;letter
     for(var i=0;i<videos.length;i++){
       if(!q||hookFor(i).toLowerCase().indexOf(q)>=0)filtered.push(i);
     }
-    noResults.classList.toggle('show',filtered.length===0);
     loadState.style.display=filtered.length?'block':'none';
     renderMore();
   }
@@ -335,8 +317,6 @@ h1 em{display:block;color:var(--orange);font-style:italic;font-weight:400;letter
     if(entries[0].isIntersecting)renderMore();
   },{rootMargin:'900px 0px'});
   sentinelObserver.observe(sentinel);
-
-  search.addEventListener('input',function(){resetFilter(search.value);});
 
   function openVideo(index){
     if(index<0||index>=videos.length)return;
@@ -391,7 +371,6 @@ h1 em{display:block;color:var(--orange);font-style:italic;font-weight:400;letter
     .then(function(r){if(!r.ok)throw new Error('VIDEOS_HTTP_'+r.status);return r.text();})
     .then(function(text){
       videos=text.split(/\r?\n/).map(function(x){return x.trim();}).filter(Boolean);
-      totalEl.textContent=videos.length.toLocaleString('fr-FR');
       filtered=videos.map(function(_,i){return i;});
       renderMore();
       loadState.textContent='Chargement progressif — '+rendered.toLocaleString('fr-FR')+' / '+videos.length.toLocaleString('fr-FR');
