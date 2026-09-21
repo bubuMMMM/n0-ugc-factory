@@ -3,87 +3,145 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#000000">
-<title>clipfa.st — 1000 vidéos en moins de 5 minutes</title>
-<meta name="description" content="1000 vidéos verticales prêtes à publier pour votre activité, à partir de votre site ou d'une simple description.">
+<meta name="theme-color" content="#f7f7f5">
+<title>clipfa.st — 1000 vidéos UGC</title>
+<meta name="description" content="1000 vidéos UGC verticales prêtes à publier pour votre activité. Aucun tournage. Aucun montage.">
 <style>
-:root{--orange:#ff9827;--bg:#000;--fg:#fff;--muted:#9b9ba4;--line:#25252a}
+:root{--paper:#f7f7f5;--ink:#090909;--muted:#898989;--orange:#ff9827}
 *{box-sizing:border-box}
-html{background:#000;color:#fff}
-body{margin:0;background:radial-gradient(60% 36% at 50% 45%,rgba(255,152,39,.09),transparent 72%),#000;color:#fff;font-family:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+html{background:var(--paper);color:var(--ink);scroll-behavior:smooth}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;overflow-x:hidden}
 button,a{font:inherit}
-.page{width:min(100%,430px);min-height:100dvh;margin:0 auto;padding:calc(12px + env(safe-area-inset-top)) 22px calc(28px + env(safe-area-inset-bottom));display:flex;flex-direction:column}
-.topbar{height:42px;display:flex;align-items:center;justify-content:space-between}
-.brand{font-family:Georgia,"Times New Roman",serif;font-size:23px;font-weight:700;letter-spacing:-1.2px}.brand span{font-size:.7em;font-weight:400}
-.back{color:#b7b7bf;text-decoration:none;font-size:10px;border:1px solid #27272d;border-radius:999px;padding:8px 11px;background:#09090b}
-.hero{flex:1;display:flex;flex-direction:column;justify-content:center;text-align:center;padding:28px 0 42px}
-.eyebrow{width:max-content;max-width:100%;margin:0 auto 22px;padding:10px 17px;border:1px solid rgba(255,152,39,.32);border-radius:999px;color:#d6d6dc;background:rgba(12,12,14,.76);font-size:8px;letter-spacing:3px;text-transform:uppercase;font-weight:850;display:flex;align-items:center;justify-content:center;gap:11px}
-.eyebrow:before{content:"";width:7px;height:7px;border-radius:50%;background:var(--orange);box-shadow:0 0 14px rgba(255,152,39,.9)}
-h1{margin:0 auto;max-width:390px;font-family:Georgia,"Times New Roman",serif;font-size:clamp(46px,12.5vw,58px);line-height:.87;font-weight:700;letter-spacing:-3.5px;text-wrap:balance}
-h1 em{display:block;color:var(--orange);font-style:italic;font-weight:400;letter-spacing:-3px;margin-top:5px}
-.swoosh{width:46%;height:23px;display:block;margin:2px auto 0}.swoosh path{stroke:var(--orange);stroke-width:2;fill:none;stroke-linecap:round}
-.copy{max-width:350px;margin:17px auto 0;color:#a8a8b1;font-size:12px;line-height:1.55}
-.cta{position:relative;overflow:hidden;width:100%;height:59px;border:1px solid rgba(255,255,255,.86);border-radius:999px;margin-top:22px;background:#faf8f4;color:#080808;font-size:14px;font-weight:900;display:flex;align-items:center;justify-content:center;gap:14px;text-decoration:none;box-shadow:0 0 30px rgba(255,152,39,.13),0 16px 50px rgba(0,0,0,.5)}
-.cta:before{content:"";position:absolute;inset:-60% -40%;background:linear-gradient(115deg,transparent 36%,rgba(255,255,255,.95) 48%,rgba(255,184,102,.34) 52%,transparent 64%);transform:translateX(-65%) rotate(2deg);animation:shine 3.4s ease-in-out infinite}
-.cta span{position:relative;z-index:1}.cta b{position:relative;z-index:1;font-size:24px;font-weight:400}
-@keyframes shine{0%,68%{transform:translateX(-72%) rotate(2deg)}100%{transform:translateX(72%) rotate(2deg)}}
-.proof{display:flex;justify-content:center;gap:8px;margin-top:13px;color:#777780;font-size:9.5px}.proof i{width:3px;height:3px;border-radius:50%;background:#4b4b52;align-self:center}
-.examples{margin-top:28px;display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
-.example{aspect-ratio:9/16;border:1px solid #25252a;border-radius:14px;background:linear-gradient(160deg,#1a1a1e,#080809);position:relative;overflow:hidden}
-.example:after{content:"";position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.72),transparent 50%)}
-.example span{position:absolute;z-index:2;left:7px;right:7px;bottom:8px;font-size:7px;line-height:1.15;font-weight:800}
-.foot{border-top:1px solid #171719;padding-top:18px;color:#5f5f68;font-size:8px;text-align:center}
+button{cursor:pointer}
+.page{width:100%;max-width:430px;min-height:100dvh;margin:0 auto;background:var(--paper)}
+.hero{min-height:100svh;padding:calc(14px + env(safe-area-inset-top)) 14px 22px;display:flex;flex-direction:column;overflow:hidden}
+.topbar{height:58px;display:grid;grid-template-columns:1fr auto auto;align-items:center;gap:10px;padding:0 12px 0 18px;border-radius:32px;background:#050505;color:#fff}
+.brand{font-family:Georgia,"Times New Roman",serif;font-size:27px;line-height:1;font-weight:700;letter-spacing:-1.7px}.brand span{font-size:.7em;font-weight:400;letter-spacing:-.5px}
+.start{height:42px;min-width:126px;border:0;border-radius:999px;background:#fff;color:#090909;padding:0 16px 0 20px;display:flex;align-items:center;justify-content:center;gap:12px;font-size:14px;font-weight:800;text-decoration:none}
+.start b{font-size:24px;font-weight:400;line-height:1}
+.menu{position:relative;width:38px;height:38px;border:0;background:transparent;padding:0}
+.menu i,.menu:before,.menu:after{content:"";position:absolute;left:6px;width:27px;height:2px;border-radius:999px;background:#fff;transition:transform .22s ease,top .22s ease,opacity .18s ease}
+.menu:before{top:9px}.menu i{top:18px}.menu:after{top:27px}
+.menu[aria-expanded="true"]:before{top:18px;transform:rotate(45deg)}.menu[aria-expanded="true"] i{opacity:0}.menu[aria-expanded="true"]:after{top:18px;transform:rotate(-45deg)}
+
+.hero-copy{text-align:center;margin-top:clamp(82px,12svh,118px);padding:0 8px}
+.social-proof{width:max-content;max-width:100%;margin:0 auto 26px;min-height:38px;padding:5px 14px 5px 7px;display:flex;align-items:center;gap:10px;border-radius:999px;background:#ececea;color:#2b2b2b;font-size:12px;font-weight:600;letter-spacing:-.2px}
+.avatars{display:flex;align-items:center}.avatars span{width:29px;height:29px;margin-left:-7px;border:2px solid var(--paper);border-radius:50%;background:linear-gradient(145deg,#d8d8d5,#adada9)}.avatars span:first-child{margin-left:0}
+.title{margin:0 auto;max-width:398px;font-size:clamp(43px,11.6vw,54px);line-height:.96;font-weight:520;letter-spacing:-3.1px;text-wrap:balance}
+.subtitle{margin:20px auto 0;color:#8a8a8a;font-size:16px;line-height:1.3;font-weight:500;letter-spacing:-.55px}
+
+.featured-strip{width:calc(100% + 28px);margin-left:-14px;margin-top:clamp(50px,7svh,72px);display:flex;align-items:center;justify-content:center;gap:12px;overflow:hidden;flex:none}
+.card{position:relative;flex:0 0 154px;aspect-ratio:9/16;overflow:hidden;border-radius:20px;background:linear-gradient(160deg,#c7c7c4,#ececea);color:#fff;box-shadow:0 1px 0 rgba(0,0,0,.04)}
+.card.main{flex-basis:180px}
+.card video{width:100%;height:100%;display:block;object-fit:cover;background:#d9d9d6}
+.card:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.05),transparent 38%,rgba(0,0,0,.16));pointer-events:none}
+.card-hook{position:absolute;z-index:2;top:58px;left:50%;transform:translateX(-50%);width:124px;color:#fff;font-size:19px;line-height:.97;font-weight:900;letter-spacing:-.75px;text-align:center;text-shadow:0 2px 12px rgba(0,0,0,.45)}
+.explore{margin:auto auto 0;padding-top:30px;display:flex;flex-direction:column;align-items:center;gap:5px;color:#7d7d7d;text-decoration:none;font-size:12px;font-weight:500}
+.explore span{font-size:25px;line-height:1;color:#8a8a8a}
+
+.info{padding:64px 22px 90px;background:#fff;border-top:1px solid #ececea;text-align:center}
+.info-kicker{margin:0 0 10px;color:#8a8a8a;font-size:10px;font-weight:800;letter-spacing:.16em;text-transform:uppercase}
+.info h2{margin:0 auto;max-width:370px;font-size:38px;line-height:.98;letter-spacing:-2px;font-weight:560}
+.info p{max-width:345px;margin:16px auto 0;color:#858585;font-size:13px;line-height:1.5}
+.cta{width:100%;height:56px;margin-top:24px;border:0;border-radius:999px;background:#080808;color:#fff;display:flex;align-items:center;justify-content:center;gap:12px;text-decoration:none;font-size:14px;font-weight:850}
+
+.site-menu{position:fixed;z-index:100;inset:0;background:rgba(0,0,0,.95);color:#fff;backdrop-filter:blur(20px);opacity:0;visibility:hidden;transition:opacity .2s,visibility .2s}
+.site-menu.open{opacity:1;visibility:visible}
+.menu-panel{width:min(100%,430px);min-height:100dvh;margin:auto;padding:calc(14px + env(safe-area-inset-top)) 22px calc(24px + env(safe-area-inset-bottom));display:flex;flex-direction:column}
+.menu-head{height:42px;display:flex;align-items:center;justify-content:space-between}.menu-brand{font-family:Georgia,"Times New Roman",serif;font-size:23px;font-weight:700}.menu-brand span{font-size:.7em;font-weight:400}.menu-close{width:38px;height:38px;border:1px solid #2a2a2e;border-radius:50%;background:#0b0b0d;color:#fff;font-size:22px}
+.menu-kicker{margin:34px 0 14px;color:#707078;font-size:8px;letter-spacing:.22em;font-weight:850;text-transform:uppercase}
+.menu-nav{display:block;max-height:66dvh;overflow:auto;scrollbar-width:none}.menu-nav::-webkit-scrollbar{display:none}
+.menu-category{padding-top:14px}.menu-category-title{display:flex;align-items:center;gap:8px;margin:0 0 5px;color:#717178;font-size:7.5px;letter-spacing:.22em;text-transform:uppercase}.menu-category-title:before{content:"";width:6px;height:6px;border-radius:50%;background:var(--orange);box-shadow:0 0 10px rgba(255,152,39,.55)}
+.menu-link{min-height:54px;border-bottom:1px solid #202024;color:#fff;text-decoration:none;display:flex;align-items:center;justify-content:space-between;font-family:Georgia,"Times New Roman",serif;font-size:22px;letter-spacing:-.7px}.menu-link small{font-family:Inter,sans-serif;color:#777780;font-size:8px;letter-spacing:0}.arrow{color:var(--orange);font-family:Inter,sans-serif}
+
+@media(max-height:780px){.hero-copy{margin-top:62px}.featured-strip{margin-top:34px}.card{flex-basis:138px}.card.main{flex-basis:160px}.explore{padding-top:18px}}
+@media(max-width:370px){.brand{font-size:23px}.start{min-width:108px;font-size:12px;padding:0 12px}.title{font-size:40px;letter-spacing:-2.5px}.subtitle{font-size:14px}.card{flex-basis:138px}.card.main{flex-basis:160px}.featured-strip{gap:9px}}
 </style>
 </head>
 <body>
 <main class="page">
-  <header class="topbar">
-    <div class="brand">clipfa<span>.st</span></div>
-    <a class="back" href="/#analyser">Analyser mon activité →</a>
-  </header>
+  <section class="hero" id="top">
+    <header class="topbar">
+      <div class="brand">clipfa<span>.st</span></div>
+      <a class="start" href="/#analyser">Commencer <b>→</b></a>
+      <button class="menu" id="menuToggle" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="siteMenu"><i></i></button>
+    </header>
 
-  <section class="hero">
-    <p class="eyebrow" id="eyebrow">POUR VOTRE ACTIVITÉ</p>
-    <h1><span id="headline">1000 vidéos pour votre activité</span><em>en moins de 5 minutes.</em></h1>
-    <svg class="swoosh" viewBox="0 0 180 24" aria-hidden="true"><path d="M4 18 C 50 6, 128 5, 176 16"/></svg>
-    <p class="copy" id="copy">À partir de votre site web, Instagram, Google Maps ou d'une simple description. Zéro tournage. Zéro montage.</p>
-
-    <a class="cta" id="cta" href="/#analyser"><span>Analyser mon activité</span><b>→</b></a>
-    <div class="proof"><span>1 000 vidéos prêtes à poster</span><i></i><span>TikTok · Reels · Shorts</span></div>
-
-    <div class="examples" aria-hidden="true">
-      <div class="example"><span id="ex1">Attirez plus de clients locaux</span></div>
-      <div class="example"><span id="ex2">Transformez vos réalisations en contenu</span></div>
-      <div class="example"><span id="ex3">Publiez toute l'année sans tourner</span></div>
+    <div class="hero-copy">
+      <div class="social-proof"><span class="avatars" aria-hidden="true"><span></span><span></span><span></span></span><span id="proof">Utilisé par 2 500+ pros</span></div>
+      <h1 class="title" id="headline">Des vidéos UGC pour votre activité</h1>
+      <p class="subtitle">1000 vidéos prêtes à publier.<br>Aucun tournage. Aucun montage.</p>
     </div>
+
+    <div class="featured-strip" id="featuredStrip" aria-label="Exemples de vidéos UGC">
+      <div class="card"><video muted playsinline loop preload="metadata"></video><strong class="card-hook" id="ex1"></strong></div>
+      <div class="card main"><video muted playsinline loop preload="metadata"></video><strong class="card-hook" id="ex2"></strong></div>
+      <div class="card"><video muted playsinline loop preload="metadata"></video><strong class="card-hook" id="ex3"></strong></div>
+    </div>
+
+    <a class="explore" href="#details">Scroll to explore <span>⌄</span></a>
   </section>
 
-  <footer class="foot">clipfa.st · contenu social pour artisans, restaurants et PME</footer>
+  <section class="info" id="details">
+    <p class="info-kicker" id="label">POUR VOTRE ACTIVITÉ</p>
+    <h2 id="detailTitle">Publiez toute l'année sans tourner une seule vidéo.</h2>
+    <p id="copy"></p>
+    <a class="cta" href="/#analyser">Analyser mon activité →</a>
+  </section>
 </main>
+
+<div class="site-menu" id="siteMenu" aria-hidden="true">
+  <div class="menu-panel">
+    <div class="menu-head"><div class="menu-brand">clipfa<span>.st</span></div><button class="menu-close" id="menuClose" aria-label="Fermer">×</button></div>
+    <p class="menu-kicker">CHOISIR VOTRE SECTEUR</p>
+    <nav class="menu-nav">
+      <section class="menu-category"><h3 class="menu-category-title">Général</h3><a class="menu-link" href="/#analyser"><span>Analyser mon activité</span><span class="arrow">→</span></a></section>
+      <section class="menu-category"><h3 class="menu-category-title">Food</h3><a class="menu-link" href="/kebab"><span>Kebab / Snack</span><span class="arrow">↗</span></a><a class="menu-link" href="/pizzeria"><span>Pizzeria</span><span class="arrow">↗</span></a><a class="menu-link" href="/tasty-crousty"><span>Tasty Crousty</span><span class="arrow">↗</span></a><a class="menu-link" href="/tacos"><span>Tacos</span><span class="arrow">↗</span></a></section>
+      <section class="menu-category"><h3 class="menu-category-title">Bâtiment & maison</h3><a class="menu-link" href="/plombier"><span>Plombier</span><span class="arrow">↗</span></a><a class="menu-link" href="/electricien"><span>Électricien</span><span class="arrow">↗</span></a><a class="menu-link" href="/peintre-batiment"><span>Peintre bâtiment</span><span class="arrow">↗</span></a><a class="menu-link" href="/installateur-clim"><span>Installateur clim</span><span class="arrow">↗</span></a></section>
+      <section class="menu-category"><h3 class="menu-category-title">Auto</h3><a class="menu-link" href="/garagiste"><span>Garagiste</span><span class="arrow">↗</span></a></section>
+    </nav>
+  </div>
+</div>
 
 <script>
 (function(){
   const configs={
-    '/plombier':{label:'POUR LES PLOMBIERS',headline:'1000 vidéos pour votre plomberie',copy:'Montrez vos dépannages, rénovations, chauffe-eau et interventions locales sans passer vos journées à filmer.',examples:['Une fuite ? Voilà qui appeler.','Avant / après salle de bain.','Le plombier local qu’on recommande.']},
-    '/electricien':{label:'POUR LES ÉLECTRICIENS',headline:'1000 vidéos pour votre entreprise d’électricité',copy:'Transformez vos installations, dépannages et chantiers en contenu local prêt à publier.',examples:['Ce tableau électrique avait besoin de ça.','L’erreur électrique qu’on voit partout.','Intervention propre, rapide, locale.']},
-    '/pizzeria':{label:'POUR LES PIZZERIAS',headline:'1000 vidéos pour votre pizzeria',copy:'Mettez vos pizzas, votre four et vos meilleures recettes au centre de vidéos qui donnent faim.',examples:['La pizza qui fait changer de programme.','Regarde cette pâte avant cuisson.','Ce soir, on sait où commander.']},
-    '/tasty-crousty':{label:'POUR LES TASTY CROUSTY',headline:'1000 vidéos pour votre Tasty Crousty',copy:'Créez des vidéos courtes autour du croustillant, des sauces, des portions et des réactions clients.',examples:['Le croustillant qu’on entend avant de goûter.','Cette sauce change tout.','Tu pensais partager ? Mauvaise idée.']},
-    '/tacos':{label:'POUR LES TACOS',headline:'1000 vidéos pour votre tacos',copy:'Mettez vos recettes, tailles, sauces et cheese en vidéos verticales prêtes pour TikTok et Reels.',examples:['Ce tacos ne rentre presque plus dans la boîte.','La sauce fromagère qu’on vient chercher.','Le repas léger… enfin presque.']},
-    '/peintre-batiment':{label:'POUR LES PEINTRES EN BÂTIMENT',headline:'1000 vidéos pour votre activité de peinture',copy:'Transformez vos avant/après, rénovations et finitions en preuve visuelle pour trouver plus de chantiers.',examples:['Avant / après en une seule pièce.','La finition qui change tout.','Ce mur avait besoin de nous.']},
-    '/installateur-clim':{label:'POUR LES INSTALLATEURS DE CLIM',headline:'1000 vidéos pour vos installations de clim',copy:'Expliquez vos installations, entretiens et économies d’énergie avec du contenu local simple à publier.',examples:['Avant l’été, vérifiez ça.','Installation propre en quelques heures.','La clim qui change cette pièce.']},
-    '/garagiste':{label:'POUR LES GARAGISTES',headline:'1000 vidéos pour votre garage',copy:'Montrez diagnostics, réparations et conseils auto pour rester visible auprès des automobilistes de votre zone.',examples:['Ce bruit moteur n’était pas normal.','La pièce qu’il fallait remplacer.','Avant de partir en vacances, vérifiez ça.']}
+    '/plombier':{label:'POUR LES PLOMBIERS',proof:'Utilisé par des artisans locaux',headline:'Des vidéos UGC pour votre plomberie',detail:'Transformez chaque intervention en contenu.',copy:'Dépannages, rénovations, chauffe-eau et interventions locales : votre activité devient une bibliothèque de contenus prêts à publier.',examples:['Une fuite ? Voilà qui appeler.','Avant / après salle de bain.','Le plombier local qu’on recommande.']},
+    '/electricien':{label:'POUR LES ÉLECTRICIENS',proof:'Utilisé par des artisans locaux',headline:'Des vidéos UGC pour votre entreprise d’électricité',detail:'Vos chantiers deviennent votre meilleur contenu.',copy:'Installations, dépannages, tableaux électriques et rénovations : montrez votre savoir-faire sans passer votre temps à filmer.',examples:['Ce tableau avait besoin de ça.','L’erreur électrique qu’on voit partout.','Intervention propre, rapide, locale.']},
+    '/pizzeria':{label:'POUR LES PIZZERIAS',proof:'Utilisé par 2 500+ restaurants',headline:'Des vidéos UGC pour votre pizzeria',detail:'Donnez faim avant même la première bouchée.',copy:'Vos pizzas, votre pâte, votre four et vos recettes deviennent des vidéos verticales prêtes pour TikTok, Reels et Shorts.',examples:['La pizza qui change le programme.','Regarde cette pâte avant cuisson.','Ce soir, on sait où commander.']},
+    '/tasty-crousty':{label:'POUR LES TASTY CROUSTY',proof:'Utilisé par 2 500+ snacks',headline:'Des vidéos UGC pour votre Tasty Crousty',detail:'Faites entendre le croustillant dans le feed.',copy:'Sauces, portions, croustillant et réactions clients : créez une présence sociale constante sans tournage quotidien.',examples:['Le croustillant avant la bouchée.','Cette sauce change tout.','Tu pensais partager ? Mauvaise idée.']},
+    '/tacos':{label:'POUR LES TACOS',proof:'Utilisé par 2 500+ snacks',headline:'Des vidéos UGC pour votre tacos',detail:'Transformez vos recettes en contenu qui donne faim.',copy:'Tailles, sauces, cheese et recettes deviennent des vidéos courtes prêtes à publier toute l’année.',examples:['Ce tacos dépasse presque de la boîte.','La sauce fromagère qu’on vient chercher.','Le repas léger… enfin presque.']},
+    '/peintre-batiment':{label:'POUR LES PEINTRES EN BÂTIMENT',proof:'Utilisé par des artisans locaux',headline:'Des vidéos UGC pour votre activité de peinture',detail:'Chaque avant / après devient une preuve.',copy:'Rénovations, murs, façades et finitions : montrez votre travail en continu pour générer plus de demandes locales.',examples:['Avant / après en une pièce.','La finition qui change tout.','Ce mur avait besoin de nous.']},
+    '/installateur-clim':{label:'POUR LES INSTALLATEURS DE CLIM',proof:'Utilisé par des artisans locaux',headline:'Des vidéos UGC pour vos installations de clim',detail:'Restez visible avant les pics de chaleur.',copy:'Installations, entretiens et conseils deviennent des contenus courts pensés pour rassurer et convertir localement.',examples:['Avant l’été, vérifiez ça.','Installation propre en quelques heures.','La clim qui change cette pièce.']},
+    '/garagiste':{label:'POUR LES GARAGISTES',proof:'Utilisé par des pros locaux',headline:'Des vidéos UGC pour votre garage',detail:'Votre atelier devient une machine à contenu.',copy:'Diagnostics, réparations, conseils et entretiens deviennent des vidéos utiles pour rester présent dans l’esprit des automobilistes.',examples:['Ce bruit moteur n’était pas normal.','La pièce qu’il fallait remplacer.','Avant les vacances, vérifiez ça.']}
   };
   const path=location.pathname.replace(/\/$/,'')||'/';
-  const c=configs[path]||configs['/plombier'];
-  document.title='clipfa.st — '+c.label.toLowerCase();
-  document.getElementById('eyebrow').textContent=c.label;
-  document.getElementById('headline').textContent=c.headline;
-  document.getElementById('copy').textContent=c.copy+' À partir de votre site, Instagram, Google Maps ou d’une simple description.';
-  document.getElementById('ex1').textContent=c.examples[0];
-  document.getElementById('ex2').textContent=c.examples[1];
-  document.getElementById('ex3').textContent=c.examples[2];
-  const target='/#analyser';
-  document.getElementById('cta').href=target;
+  const cfg=configs[path]||configs['/plombier'];
+  document.title='clipfa.st — '+cfg.headline;
+  document.getElementById('proof').textContent=cfg.proof;
+  document.getElementById('headline').textContent=cfg.headline;
+  document.getElementById('label').textContent=cfg.label;
+  document.getElementById('detailTitle').textContent=cfg.detail;
+  document.getElementById('copy').textContent=cfg.copy;
+  ['ex1','ex2','ex3'].forEach((id,i)=>document.getElementById(id).textContent=cfg.examples[i]);
+
+  fetch('/videos.txt',{cache:'force-cache'}).then(r=>r.ok?r.text():'').then(text=>{
+    const urls=text.split(/\r?\n/).map(s=>s.trim()).filter(s=>/^https:\/\//.test(s)).slice(0,3);
+    document.querySelectorAll('.card video').forEach((v,i)=>{
+      if(!urls[i])return;
+      v.src=urls[i];
+      v.addEventListener('canplay',()=>{v.play().catch(()=>{});},{once:true});
+    });
+  }).catch(()=>{});
+
+  const menu=document.getElementById('siteMenu');
+  const toggle=document.getElementById('menuToggle');
+  const close=document.getElementById('menuClose');
+  function openMenu(){menu.classList.add('open');menu.setAttribute('aria-hidden','false');toggle.setAttribute('aria-expanded','true');document.body.style.overflow='hidden'}
+  function closeMenu(){menu.classList.remove('open');menu.setAttribute('aria-hidden','true');toggle.setAttribute('aria-expanded','false');document.body.style.overflow=''}
+  toggle.addEventListener('click',()=>menu.classList.contains('open')?closeMenu():openMenu());
+  close.addEventListener('click',closeMenu);
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')closeMenu()});
 })();
 </script>
 </body>
