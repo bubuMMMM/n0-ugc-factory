@@ -40,7 +40,8 @@ radial-gradient(35% 18% at 50% 100%,rgba(255,152,39,.06),transparent 80%),#000;p
 .menu-brand span{font-size:.7em;font-weight:400}
 .menu-close{width:38px;height:38px;border:1px solid rgba(255,255,255,.12);border-radius:50%;background:#0b0b0d;color:#fff;font-size:22px;line-height:1}
 .menu-kicker{margin:42px 0 14px;color:#707078;font-size:8px;letter-spacing:.22em;font-weight:850;text-transform:uppercase}
-.menu-nav{display:grid;border-top:1px solid #202024}
+.menu-nav{display:grid;border-top:1px solid #202024;max-height:52dvh;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:none}
+.menu-nav::-webkit-scrollbar{display:none}
 .menu-link{width:100%;min-height:69px;border:0;border-bottom:1px solid #202024;background:transparent;color:#fff;padding:0;display:flex;align-items:center;justify-content:space-between;text-decoration:none;text-align:left;font-family:Georgia,"Times New Roman",serif;font-size:28px;letter-spacing:-1px}
 .menu-link small{font-family:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#777780;font-size:9px;letter-spacing:0;font-weight:700}
 .menu-link .arrow{font-family:Inter,sans-serif;color:var(--orange);font-size:21px}
@@ -215,12 +216,18 @@ h1 em{display:block;color:var(--orange);font-style:italic;font-weight:400;letter
       <button class="menu-close" id="menuClose" aria-label="Fermer le menu">×</button>
     </div>
 
-    <p class="menu-kicker">NAVIGATION</p>
+    <p class="menu-kicker">CHOISIR UNE LANDING PAGE</p>
     <nav class="menu-nav" aria-label="Navigation principale">
-      <a class="menu-link" href="#top" data-menu-link><span>Accueil</span><span class="arrow">↗</span></a>
-      <a class="menu-link" href="#videos" data-menu-link><span>Vidéos</span><small>98 aperçus</small></a>
-      <a class="menu-link" href="#unlock" data-menu-link><span>Le pack</span><small>1 000 + 20 premium</small></a>
-      <button class="menu-link" type="button" data-menu-start><span>Comment ça marche</span><span class="arrow">→</span></button>
+      <a class="menu-link" href="/#analyser"><span>Analyser mon activité</span><span class="arrow">→</span></a>
+      <a class="menu-link" href="/kebab"><span>Kebab / Snack</span><small>page actuelle</small></a>
+      <a class="menu-link" href="/plombier"><span>Plombier</span><span class="arrow">↗</span></a>
+      <a class="menu-link" href="/electricien"><span>Électricien</span><span class="arrow">↗</span></a>
+      <a class="menu-link" href="/pizzeria"><span>Pizzeria</span><span class="arrow">↗</span></a>
+      <a class="menu-link" href="/tasty-crousty"><span>Tasty Crousty</span><span class="arrow">↗</span></a>
+      <a class="menu-link" href="/tacos"><span>Tacos</span><span class="arrow">↗</span></a>
+      <a class="menu-link" href="/peintre-batiment"><span>Peintre bâtiment</span><span class="arrow">↗</span></a>
+      <a class="menu-link" href="/installateur-clim"><span>Installateur clim</span><span class="arrow">↗</span></a>
+      <a class="menu-link" href="/garagiste"><span>Garagiste</span><span class="arrow">↗</span></a>
     </nav>
 
     <div class="menu-spacer"></div>
@@ -228,7 +235,7 @@ h1 em{display:block;color:var(--orange);font-style:italic;font-weight:400;letter
     <div class="menu-offer">
       <div class="menu-offer-top"><b>1 000 vidéos prêtes à poster</b><strong>129€</strong></div>
       <p>Zéro tournage, zéro montage. TikTok, Instagram Reels, Facebook et YouTube Shorts.</p>
-      <button class="menu-cta" type="button" data-menu-start>Créer mes 1000 vidéos →</button>
+      <a class="menu-cta" href="/#analyser" style="text-decoration:none;display:flex;align-items:center;justify-content:center">Analyser mon activité →</a>
     </div>
     <p class="menu-foot">Paiement unique · aucun abonnement</p>
   </div>
