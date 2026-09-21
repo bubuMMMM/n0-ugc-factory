@@ -143,17 +143,6 @@ h1 em{display:block;color:var(--orange);font-style:italic;font-weight:400;letter
 
         <button class="primary-cta" data-onboard>Créer mes 1000 vidéos <b>→</b></button>
 
-        <label class="link-field" id="urlField">
-          <svg viewBox="0 0 24 24" fill="none" stroke="#a6a7b2" stroke-width="2" stroke-linecap="round" aria-hidden="true">
-            <path d="M10 13a5 5 0 0 0 7.54.54l2-2a5 5 0 0 0-7.07-7.07l-1.15 1.15"/>
-            <path d="M14 11a5 5 0 0 0-7.54-.54l-2 2a5 5 0 0 0 7.07 7.07l1.15-1.15"/>
-          </svg>
-          <input id="kebabUrl" type="url" inputmode="url" autocomplete="url" placeholder="lien de votre kebab (site, Instagram, etc.)">
-        </label>
-
-        <div class="micro">
-          <span>0 tournage</span><span>0 montage</span><span>formats réseaux sociaux</span>
-        </div>
       </div>
      </div>
    </section>
@@ -269,7 +258,6 @@ h1 em{display:block;color:var(--orange);font-style:italic;font-weight:400;letter
 <script src="/assets/kebab-gallery.js?v=20260921-1" defer></script>
 <script>
 (function(){
-  var urlInput=document.getElementById('kebabUrl');
   /* Onboarding */
   var onboarding=document.getElementById('onboarding');
   var obSteps=Array.from(document.querySelectorAll('.ob-step'));
@@ -312,7 +300,6 @@ h1 em{display:block;color:var(--orange);font-style:italic;font-weight:400;letter
   }
   function openOnboarding(){
     restoreDraft();
-    if(urlInput.value.trim()&&!document.getElementById('obUrl').value)document.getElementById('obUrl').value=urlInput.value.trim();
     onboarding.classList.add('open');
     onboarding.setAttribute('aria-hidden','false');
     document.body.style.overflow='hidden';
