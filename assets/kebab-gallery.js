@@ -3,6 +3,10 @@
   'use strict';
   const PREVIEW_LIMIT = 98;
   const uploads = [
+    {id:'kebab-broche-097f153d',src:'/media/kebab/broche-097f153d.mp4',poster:'/media/kebab/broche-097f153d.jpg',hook:"La découpe qui donne faim avant même la première bouchée.",placement:'top'},
+    {id:'kebab-voiture-3f655e32',src:'/media/kebab/voiture-3f655e32.mp4',poster:'/media/kebab/voiture-3f655e32.jpg',hook:"Tu avais prévu de manger chez toi. Tu n’as pas tenu jusque-là.",placement:'top'},
+    {id:'kebab-pitas-44da836d',src:'/media/kebab/pitas-44da836d.mp4',poster:'/media/kebab/pitas-44da836d.jpg',hook:"Le plus dur ? Choisir lequel tu attaques en premier.",placement:'top'},
+    {id:'kebab-degustation-e2827722',src:'/media/kebab/degustation-e2827722.mp4',poster:'/media/kebab/degustation-e2827722.jpg',hook:"La première bouchée. Tout le reste peut attendre.",placement:'top'},
     {id:'kebab-reaction',src:'/media/kebab/reaction-cbab9e5f.mp4',poster:'/media/kebab/reaction.jpg',embeddedText:true,hook:''},
     {id:'kebab-preparation',src:'/media/kebab/preparation.mp4',poster:'/media/kebab/preparation.jpg',hook:'Le moment où tu comprends que tu ne partageras pas ton kebab.',placement:'top'},
     {id:'kebab-street',src:'/media/kebab/street-89044c24.mp4',poster:'/media/kebab/street.jpg',hook:'Tu devais juste rentrer chez toi. Puis tu as croisé ce kebab.',placement:'lower'}
@@ -196,7 +200,7 @@
   if(galleryTrigger)galleryTrigger.addEventListener('click',()=>document.getElementById('videos').scrollIntoView({behavior:'smooth'}));
   // Uploaded clips remain usable even when the remote library cannot load.
   appendFrom(0);
-  loadState.textContent='3 vidéos kebab disponibles. Chargement des autres aperçus…';
+  loadState.textContent=uploads.length+' vidéos kebab disponibles. Chargement des autres aperçus…';
   fetch('/videos.txt',{cache:'no-cache',signal:AbortSignal.timeout(15000)})
     .then(function(r){if(!r.ok)throw new Error('VIDEOS_HTTP_'+r.status);return r.text();})
     .then(function(text){
@@ -213,5 +217,5 @@
       appendFrom(start);
       loadState.textContent=videos.length+' aperçus disponibles — lecture au défilement.';
     })
-    .catch(function(err){console.warn('kebab catalogue',err.message);loadState.textContent='Les 3 vidéos kebab restent disponibles. Recharge la page pour les autres aperçus.';});
+    .catch(function(err){console.warn('kebab catalogue',err.message);loadState.textContent='Les '+uploads.length+' vidéos kebab restent disponibles. Recharge la page pour les autres aperçus.';});
 })();

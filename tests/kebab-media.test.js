@@ -12,7 +12,7 @@ test('kebab scripts only bind to elements present in the page',()=>{
 });
 test('uploaded MP4s and posters exist and MP4 boxes are complete and fast-start',()=>{
   const media=[...new Set([...js.matchAll(/['"](\/media\/kebab\/[^'"]+)['"]/g)].map(m=>m[1]))];
-  assert.equal(media.filter(p=>p.endsWith('.mp4')).length,3);
+  assert.equal(media.filter(p=>p.endsWith('.mp4')).length,7);
   for(const url of media){
     const data=fs.readFileSync(path.join(root,url));
     assert.ok(data.length>0,url);
