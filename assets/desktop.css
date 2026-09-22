@@ -1,0 +1,170 @@
+/* Shared desktop layout. Keep the established mobile design below 900px. */
+@media (min-width: 900px) {
+  :root { --desktop-width: 1280px; }
+  .home-ugc-hero, .landing-kebab .page, .landing-niche .page {
+    max-width: none;
+  }
+  .home-ugc-hero, .hero-clone { min-height: 0; }
+  .home-shell, .clone-shell, .landing-niche .hero {
+    width: min(calc(100% - 80px), var(--desktop-width));
+    margin-inline: auto;
+    padding: 24px 0 64px;
+    min-height: 700px;
+    height: clamp(700px, 92svh, 900px);
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.08fr);
+    grid-template-rows: 64px 1fr .5fr;
+    column-gap: clamp(24px, 4vw, 64px);
+    overflow: visible;
+  }
+  .home-topbar, .clone-topbar, .landing-niche .topbar {
+    grid-column: 1 / -1;
+    height: 64px;
+    padding: 0 16px 0 28px;
+    gap: 20px;
+  }
+  .home-start, .clone-start, .landing-niche .start { min-width: 150px; }
+  .home-copy, .clone-copy, .landing-niche .hero-copy {
+    grid-column: 1;
+    grid-row: 2;
+    align-self: end;
+    margin: 56px 0 0;
+    padding: 0;
+    text-align: left;
+    min-width: 0;
+  }
+  .home-proof, .social-proof { margin: 0 0 28px; }
+  .home-copy h1, .clone-title, .landing-niche .title {
+    max-width: 640px;
+    margin: 0;
+    font-size: clamp(52px, 5.1vw, 76px);
+    line-height: 1.02;
+    letter-spacing: -.065em;
+    text-wrap: balance;
+  }
+  .home-copy p, .clone-sub, .landing-niche .subtitle {
+    margin: 24px 0 0;
+    font-size: 18px;
+    line-height: 1.55;
+    letter-spacing: -.4px;
+    color: #737373;
+  }
+  .home-featured, .featured-strip {
+    grid-column: 2;
+    grid-row: 2 / 4;
+    align-self: center;
+    width: 100%;
+    margin: 32px 0 0;
+    padding: 20px 0;
+    gap: 12px;
+    overflow: visible;
+    min-width: 0;
+  }
+  .home-card, .featured-card, .landing-niche .featured-strip .card {
+    flex: 0 1 calc((100% - 24px) * .29);
+    min-width: 0;
+    border-radius: 22px;
+  }
+  .home-card.main, .featured-main, .landing-niche .featured-strip .card.main {
+    flex-basis: calc((100% - 24px) * .42);
+  }
+  .home-card strong, .featured-hook, .landing-niche .featured-strip .card-hook {
+    width: 82%;
+    top: 18%;
+    font-size: clamp(18px, 1.8vw, 26px);
+    line-height: 1.05;
+  }
+  .home-explore, .scroll-explore, .landing-niche .explore {
+    grid-column: 1;
+    grid-row: 3;
+    align-self: start;
+    justify-self: start;
+    margin: 30px 0 0;
+    padding: 17px 24px;
+    min-height: 56px;
+    border-radius: 999px;
+    background: #090909;
+    color: #fff;
+    flex-direction: row;
+    gap: 24px;
+    font-size: 14px;
+    font-weight: 700;
+  }
+  .home-explore span, .scroll-explore span, .landing-niche .explore span { color: inherit; }
+  .home-explore:hover, .scroll-explore:hover, .landing-niche .explore:hover { background: #303030; }
+
+  /* The analysis and preview sections share the hero's horizontal edges. */
+  .home-analyser { padding: 88px 40px; }
+  .home-analyser-inner {
+    width: min(100%, var(--desktop-width));
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.08fr);
+    column-gap: clamp(24px, 4vw, 64px);
+    text-align: left;
+    align-items: center;
+  }
+  .home-analyser-kicker, .home-analyser h2, .home-analyser-copy { grid-column: 1; }
+  .home-analyser h2 { font-size: clamp(42px, 4vw, 60px); }
+  .home-analyser-copy { margin: 20px 0 0; font-size: 16px; }
+  .home-analyser .hero-form-wrap { grid-column: 2; grid-row: 1 / 4; min-width: 0; }
+  .home-analyser .site-field { flex-wrap: wrap; height: auto; padding: 12px; gap: 12px; }
+  .home-analyser .site-field input { width: 0; flex: 1; min-width: 100px; height: 42px; }
+  .home-analyser .site-submit { font-size: 13px; gap: 10px; }
+  #library.video-only, .landing-kebab .gallery {
+    width: min(calc(100% - 80px), var(--desktop-width));
+    margin-inline: auto;
+    padding: 48px 0 96px;
+  }
+  #library.video-only > .wrap { width: 100%; }
+  #library .grid, .landing-kebab .video-grid {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 16px;
+  }
+  .landing-kebab .card { border: 0; box-shadow: none; border-radius: 18px; }
+  .landing-kebab .card-hook { font-size: clamp(13px, 1.2vw, 17px); line-height: 1.15; left: 10%; right: 10%; }
+  .landing-kebab .card-hook.top { top: 17%; }
+  .landing-kebab .card-hook.upper { top: 26%; }
+  .landing-kebab .card-hook.lower { bottom: 20%; }
+  .landing-kebab .card-hook.bottom { bottom: 12%; }
+  .landing-kebab .card-index, .landing-kebab .card-brand { font-size: 10px; }
+  .landing-kebab .card-play { width: 28px; height: 28px; font-size: 10px; }
+  .load-state { padding: 24px 0; font-size: 12px; }
+  .unlock-card { max-width: 800px; margin: 56px auto 0; padding: 48px; border-radius: 32px; }
+  .unlock-card h2 { font-size: 46px; }
+  .unlock-copy { max-width: 480px; font-size: 16px; }
+  .unlock-progress, .unlock-kicker, .unlock-note, .unlock-price span { font-size: 12px; }
+  .unlock-btn { max-width: 380px; font-size: 15px; height: 56px; }
+  .landing-niche .info { padding: 88px 40px 104px; }
+  .landing-niche .info h2 { max-width: 800px; font-size: 56px; }
+  .landing-niche .info p { max-width: 600px; font-size: 17px; }
+  .landing-niche .info .cta { max-width: 360px; margin: 28px auto 0; }
+
+  /* Navigation and checkout should not look like a phone floating on a monitor. */
+  .home-menu-panel, .menu-panel { width: min(calc(100% - 80px), 1120px); padding: 32px 0; }
+  .home-menu-nav, .menu-nav { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 32px; max-height: none; }
+  .home-menu-nav h3, .menu-category-title { font-size: 11px; margin-bottom: 16px; }
+  .home-menu-nav a, .menu-link { font-size: 22px; min-height: 64px; }
+  .home-menu-kicker, .menu-kicker { font-size: 11px; margin: 56px 0 24px; }
+  .menu-offer { width: 440px; align-self: end; padding: 24px; }
+  .menu-offer p, .menu-foot { font-size: 12px; }
+  .onboarding { background: #ececea; padding: 32px; }
+  .ob-shell { width: min(100%, 760px); min-height: min(820px, calc(100dvh - 64px)); padding: 20px 32px 32px; background: #f7f7f5; border: 1px solid #dededb; border-radius: 32px; }
+  .ob-step { padding: 36px 12px 0; }
+  .ob-title { max-width: 600px; font-size: 48px; }
+  .ob-copy { max-width: 540px; font-size: 15px; margin-bottom: 24px; }
+  .ob-label, .ob-step-count, .choice small, .secure { font-size: 12px; }
+  .ob-kicker { font-size: 10px; }
+  .ob-spacer { min-height: 12px; }
+  .order-line, .order-line b, .order-bonus { font-size: 14px; }
+  .landing-kebab .modal { background: rgba(0,0,0,.85); padding: 24px; }
+  .landing-kebab .modal-player { height: min(880px, calc(100dvh - 48px)); width: auto; aspect-ratio: 9 / 16; border-radius: 24px; }
+  .landing-home :is(a, button):focus-visible, .landing-niche :is(a, button):focus-visible { outline: 2px solid #777; outline-offset: 4px; }
+}
+
+@media (min-width: 900px) and (max-width: 1100px) {
+  .home-shell, .clone-shell, .landing-niche .hero { width: calc(100% - 48px); column-gap: 24px; }
+  .home-copy h1, .clone-title, .landing-niche .title { font-size: 52px; }
+  .home-analyser .site-submit { width: 100%; justify-content: center; }
+  #library .grid, .landing-kebab .video-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .home-menu-nav, .menu-nav { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
