@@ -581,7 +581,7 @@ body{background:#f7f7f5!important;color:#0a0a0a}
 body>header{display:none!important}
 .home-ugc-hero{width:100%;max-width:430px;min-height:100svh;margin:0 auto;background:#f7f7f5;color:#090909;overflow:hidden}
 .home-shell{min-height:100svh;padding:calc(14px + env(safe-area-inset-top)) 14px 22px;display:flex;flex-direction:column}
-.home-topbar{height:58px;display:grid;grid-template-columns:1fr auto auto;align-items:center;gap:10px;padding:0 12px 0 18px;border-radius:32px;background:#050505;color:#fff}
+.home-topbar{position:relative;inset:auto;z-index:auto;height:58px;display:grid;grid-template-columns:1fr auto auto;align-items:center;gap:10px;padding:0 12px 0 18px;border-radius:32px;background:#050505;color:#fff;box-shadow:0 2px 0 rgba(0,0,0,.05)}
 .home-brand{font-family:Georgia,"Times New Roman",serif;font-size:27px;line-height:1;font-weight:700;letter-spacing:-1.7px}.home-brand span{font-size:.7em;font-weight:400}
 .home-start{height:42px;min-width:126px;border-radius:999px;background:#fff;color:#090909;padding:0 16px 0 20px;display:flex;align-items:center;justify-content:center;gap:12px;font-size:14px;font-weight:800;text-decoration:none}.home-start b{font-size:24px;font-weight:400}
 .home-menu{position:relative;width:38px;height:38px;border:0;background:transparent;padding:0}.home-menu i,.home-menu:before,.home-menu:after{content:"";position:absolute;left:6px;width:27px;height:2px;border-radius:999px;background:#fff;transition:.2s}.home-menu:before{top:9px}.home-menu i{top:18px}.home-menu:after{top:27px}.home-menu[aria-expanded="true"]:before{top:18px;transform:rotate(45deg)}.home-menu[aria-expanded="true"] i{opacity:0}.home-menu[aria-expanded="true"]:after{top:18px;transform:rotate(-45deg)}
@@ -604,11 +604,11 @@ body>header{display:none!important}
 <body>
 <section class="home-ugc-hero" id="top">
   <div class="home-shell">
-    <header class="home-topbar">
+    <div class="home-topbar">
       <div class="home-brand">clipfa<span>.st</span></div>
       <a class="home-start" href="#analyser">Commencer <b>→</b></a>
       <button class="home-menu" id="menuToggle" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="siteMenu"><i></i></button>
-    </header>
+    </div>
 
     <div class="home-copy">
       <div class="home-proof"><span class="home-avatars" aria-hidden="true"><span></span><span></span><span></span></span><span>Utilisé par des pros locaux</span></div>
