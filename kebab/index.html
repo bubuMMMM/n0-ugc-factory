@@ -314,68 +314,46 @@ body{background:#f7f7f5;color:#111}
 }
 .platform-badge{
   position:relative;
-  isolation:isolate;
   flex:none;
-  width:48px;
-  height:34px;
-  margin-top:2px;
-  border:1px solid #deded8;
-  border-radius:999px;
-  background:rgba(238,238,234,.88);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.86),0 6px 18px rgba(0,0,0,.04);
-  overflow:hidden;
+  width:28px;
+  height:28px;
+  margin-left:1px;
+  overflow:visible;
   transform:translateY(1px);
-}
-.platform-badge:before{
-  content:"";
-  position:absolute;
-  z-index:0;
-  inset:-1px;
-  border-radius:inherit;
-  padding:1px;
-  pointer-events:none;
-  background:linear-gradient(110deg,transparent 31%,rgba(255,255,255,.35) 43%,rgba(255,152,39,.48) 50%,rgba(255,255,255,.92) 56%,transparent 69%);
-  background-size:260% 100%;
-  animation:platformBadgeShine 7.5s ease-in-out infinite;
-  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
-  -webkit-mask-composite:xor;
-  mask-composite:exclude;
 }
 .platform-icon{
   position:absolute;
-  z-index:1;
   inset:0;
   display:grid;
   place-items:center;
   opacity:0;
-  transform:translateY(5px) scale(.92);
+  transform:translateY(6px) scale(.9);
+  filter:blur(.15px);
   animation:platformCycle 10.5s cubic-bezier(.22,.8,.3,1) infinite;
+  will-change:opacity,transform;
 }
 .platform-icon img{
   display:block;
-  width:17px;
-  height:17px;
-  opacity:.8;
+  width:23px;
+  height:23px;
+  object-fit:contain;
 }
 .icon-tiktok{animation-delay:0s}
 .icon-instagram{animation-delay:3.5s}
 .icon-facebook{animation-delay:7s}
 @keyframes platformCycle{
-  0%,26%{opacity:1;transform:translateY(0) scale(1)}
-  31%{opacity:0;transform:translateY(-5px) scale(.96)}
-  31.01%,100%{opacity:0;transform:translateY(5px) scale(.92)}
-}
-@keyframes platformBadgeShine{
-  0%,68%{background-position:110% 0}
-  100%{background-position:-70% 0}
+  0%{opacity:0;transform:translateY(6px) scale(.9)}
+  5%,25%{opacity:1;transform:translateY(0) scale(1)}
+  30%{opacity:0;transform:translateY(-6px) scale(.96)}
+  30.01%,100%{opacity:0;transform:translateY(6px) scale(.9)}
 }
 @media(max-width:370px){
-  .clone-title-line{gap:8px}
-  .platform-badge{width:44px;height:31px}
-  .platform-icon img{width:15px;height:15px}
+  .clone-title-line{gap:7px}
+  .platform-badge{width:25px;height:25px}
+  .platform-icon img{width:21px;height:21px}
 }
 @media(prefers-reduced-motion:reduce){
-  .platform-badge:before,.platform-icon{animation:none}
+  .platform-icon{animation:none}
   .icon-tiktok{opacity:1;transform:none}
 }
 .clone-sub{
@@ -507,13 +485,13 @@ body{background:#f7f7f5;color:#111}
           <span class="clone-title-line">Des vidéos
             <span class="platform-badge" aria-label="TikTok, Instagram et Facebook">
               <span class="platform-icon icon-tiktok" aria-hidden="true">
-                <img src="https://cdn.simpleicons.org/tiktok/171717" alt="">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/a/a6/Tiktok_icon.svg" alt="">
               </span>
               <span class="platform-icon icon-instagram" aria-hidden="true">
-                <img src="https://cdn.simpleicons.org/instagram/171717" alt="">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/9/95/Instagram_logo_2022.svg" alt="">
               </span>
               <span class="platform-icon icon-facebook" aria-hidden="true">
-                <img src="https://cdn.simpleicons.org/facebook/171717" alt="">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/b/b9/2023_Facebook_icon.svg" alt="">
               </span>
             </span>
           </span>
