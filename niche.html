@@ -81,7 +81,7 @@ button,a,input,textarea{font:inherit}button{cursor:pointer}
 </style>
 <link rel="stylesheet" href="/assets/desktop.css?v=20260922">
 <link rel="stylesheet" href="/assets/brand.css?v=20260923-1">
-<link rel="stylesheet" href="/assets/kebab-editorial.css?v=3">
+<link rel="stylesheet" href="/assets/kebab-editorial.css?v=4">
 </head>
 <body class="landing-kebab landing-niche">
 <main class="page">
@@ -119,13 +119,13 @@ button,a,input,textarea{font:inherit}button{cursor:pointer}
   <section class="gallery" id="videos">
     <div class="video-grid" id="grid" aria-live="polite"></div>
     <div class="load-state" id="loadState">Chargement des 12 aperçus…</div>
-    <section class="unlock-card" id="unlock">
-      <p class="unlock-kicker">VOTRE PACK VIDÉO</p>
-      <h2>À votre tour<br>de vous montrer.</h2>
-      <p class="unlock-copy"><span id="packCopy">1 000 vidéos pour votre activité.</span><br>20 vidéos premium offertes.</p>
-      <button class="unlock-btn" data-onboard>Créer mes vidéos · 129€ <b aria-hidden="true">→</b></button>
-      <p class="unlock-note">Paiement unique · aucun abonnement</p>
-    </section>
+  </section>
+
+  <section class="trade-info" id="details">
+    <p class="trade-info-kicker" id="closingKicker">POUR VOTRE ACTIVITÉ</p>
+    <h2 id="closingTitle">Votre activité mérite du contenu qui donne envie.</h2>
+    <p class="trade-info-copy" id="closingCopy"></p>
+    <button class="trade-info-cta" type="button" data-onboard>Analyser mon activité <span aria-hidden="true">→</span></button>
   </section>
 </main>
 
@@ -213,20 +213,22 @@ button,a,input,textarea{font:inherit}button{cursor:pointer}
 <script>
 (function(){
   const configs={
-    '/plombier':{slug:'plombier',label:'plombier',tail:'pour votre plomberie',pack:'1 000 vidéos pour votre activité de plomberie.',kicker:'01 · VOTRE ENTREPRISE',businessLabel:'Nom de l’entreprise',productLabel:'Service à pousser',examples:['Une fuite ? Voilà qui appeler.','Avant / après salle de bain.','Le plombier local qu’on recommande.']},
-    '/electricien':{slug:'electricien',label:'électricien',tail:'pour votre entreprise',pack:'1 000 vidéos pour votre entreprise d’électricité.',kicker:'01 · VOTRE ENTREPRISE',businessLabel:'Nom de l’entreprise',productLabel:'Service à pousser',examples:['Ce tableau avait besoin de ça.','L’erreur électrique qu’on voit partout.','Intervention propre, rapide, locale.']},
-    '/pizzeria':{slug:'pizzeria',label:'pizzeria',tail:'pour votre pizzeria',pack:'1 000 vidéos pour votre pizzeria.',kicker:'01 · VOTRE PIZZERIA',businessLabel:'Nom de la pizzeria',productLabel:'Produit / spécialité à pousser',examples:['La pizza qui change le programme.','Regarde cette pâte avant cuisson.','Ce soir, on sait où commander.']},
-    '/tasty-crousty':{slug:'tasty-crousty',label:'Tasty Crousty',tail:'pour votre Tasty Crousty',pack:'1 000 vidéos pour votre Tasty Crousty.',kicker:'01 · VOTRE RESTAURANT',businessLabel:'Nom du restaurant',productLabel:'Produit / spécialité à pousser',examples:['Le croustillant avant la bouchée.','Cette sauce change tout.','Tu pensais partager ? Mauvaise idée.']},
-    '/tacos':{slug:'tacos',label:'tacos',tail:'pour votre tacos',pack:'1 000 vidéos pour votre tacos.',kicker:'01 · VOTRE RESTAURANT',businessLabel:'Nom du restaurant',productLabel:'Produit / spécialité à pousser',examples:['Ce tacos dépasse presque de la boîte.','La sauce fromagère qu’on vient chercher.','Le repas léger… enfin presque.']},
-    '/peintre-batiment':{slug:'peintre-batiment',label:'peintre en bâtiment',tail:'pour votre activité',pack:'1 000 vidéos pour votre activité de peinture.',kicker:'01 · VOTRE ENTREPRISE',businessLabel:'Nom de l’entreprise',productLabel:'Prestation à pousser',examples:['Avant / après en une pièce.','La finition qui change tout.','Ce mur avait besoin de nous.']},
-    '/installateur-clim':{slug:'installateur-clim',label:'installateur de clim',tail:'pour votre activité',pack:'1 000 vidéos pour vos installations de clim.',kicker:'01 · VOTRE ENTREPRISE',businessLabel:'Nom de l’entreprise',productLabel:'Service à pousser',examples:['Avant l’été, vérifiez ça.','Installation propre en quelques heures.','La clim qui change cette pièce.']},
-    '/garagiste':{slug:'garagiste',label:'garage',tail:'pour votre garage',pack:'1 000 vidéos pour votre garage.',kicker:'01 · VOTRE GARAGE',businessLabel:'Nom du garage',productLabel:'Service à pousser',examples:['Ce bruit moteur n’était pas normal.','La pièce qu’il fallait remplacer.','Avant les vacances, vérifiez ça.']}
+    '/plombier':{slug:'plombier',label:'plombier',tail:'pour votre plomberie',kicker:'01 · VOTRE ENTREPRISE',businessLabel:'Nom de l’entreprise',productLabel:'Service à pousser',closingKicker:'POUR LES PLOMBIERS',closingTitle:'Transformez chaque intervention en contenu.',closingCopy:'Dépannages, rénovations, chauffe-eau et interventions locales : votre activité devient une bibliothèque de contenus prêts à publier.',examples:['Une fuite ? Voilà qui appeler.','Avant / après salle de bain.','Le plombier local qu’on recommande.']},
+    '/electricien':{slug:'electricien',label:'électricien',tail:'pour votre entreprise',kicker:'01 · VOTRE ENTREPRISE',businessLabel:'Nom de l’entreprise',productLabel:'Service à pousser',closingKicker:'POUR LES ÉLECTRICIENS',closingTitle:'Vos chantiers deviennent votre meilleur contenu.',closingCopy:'Installations, dépannages, tableaux électriques et rénovations : montrez votre savoir-faire sans passer votre temps à filmer.',examples:['Ce tableau avait besoin de ça.','L’erreur électrique qu’on voit partout.','Intervention propre, rapide, locale.']},
+    '/pizzeria':{slug:'pizzeria',label:'pizzeria',tail:'pour votre pizzeria',kicker:'01 · VOTRE PIZZERIA',businessLabel:'Nom de la pizzeria',productLabel:'Produit / spécialité à pousser',closingKicker:'POUR LES PIZZERIAS',closingTitle:'Donnez faim avant même la première bouchée.',closingCopy:'Vos pizzas, votre pâte, votre four et vos recettes deviennent des vidéos verticales prêtes pour TikTok, Reels et Shorts.',examples:['La pizza qui change le programme.','Regarde cette pâte avant cuisson.','Ce soir, on sait où commander.']},
+    '/tasty-crousty':{slug:'tasty-crousty',label:'Tasty Crousty',tail:'pour votre Tasty Crousty',kicker:'01 · VOTRE RESTAURANT',businessLabel:'Nom du restaurant',productLabel:'Produit / spécialité à pousser',closingKicker:'POUR LES TASTY CROUSTY',closingTitle:'Faites entendre le croustillant dans le feed.',closingCopy:'Sauces, portions, croustillant et réactions clients : créez une présence sociale constante sans tournage quotidien.',examples:['Le croustillant avant la bouchée.','Cette sauce change tout.','Tu pensais partager ? Mauvaise idée.']},
+    '/tacos':{slug:'tacos',label:'tacos',tail:'pour votre tacos',kicker:'01 · VOTRE RESTAURANT',businessLabel:'Nom du restaurant',productLabel:'Produit / spécialité à pousser',closingKicker:'POUR LES TACOS',closingTitle:'Transformez vos recettes en contenu qui donne faim.',closingCopy:'Tailles, sauces, cheese et recettes deviennent des vidéos courtes prêtes à publier toute l’année.',examples:['Ce tacos dépasse presque de la boîte.','La sauce fromagère qu’on vient chercher.','Le repas léger… enfin presque.']},
+    '/peintre-batiment':{slug:'peintre-batiment',label:'peintre en bâtiment',tail:'pour votre activité',kicker:'01 · VOTRE ENTREPRISE',businessLabel:'Nom de l’entreprise',productLabel:'Prestation à pousser',closingKicker:'POUR LES PEINTRES EN BÂTIMENT',closingTitle:'Chaque avant / après devient une preuve.',closingCopy:'Rénovations, murs, façades et finitions : montrez votre travail en continu pour générer plus de demandes locales.',examples:['Avant / après en une pièce.','La finition qui change tout.','Ce mur avait besoin de nous.']},
+    '/installateur-clim':{slug:'installateur-clim',label:'installateur de clim',tail:'pour votre activité',kicker:'01 · VOTRE ENTREPRISE',businessLabel:'Nom de l’entreprise',productLabel:'Service à pousser',closingKicker:'POUR LES INSTALLATEURS DE CLIM',closingTitle:'Restez visible avant les pics de chaleur.',closingCopy:'Installations, entretiens et conseils deviennent des contenus courts pensés pour rassurer et convertir localement.',examples:['Avant l’été, vérifiez ça.','Installation propre en quelques heures.','La clim qui change cette pièce.']},
+    '/garagiste':{slug:'garagiste',label:'garage',tail:'pour votre garage',kicker:'01 · VOTRE GARAGE',businessLabel:'Nom du garage',productLabel:'Service à pousser',closingKicker:'POUR LES GARAGISTES',closingTitle:'Votre atelier devient une machine à contenu.',closingCopy:'Diagnostics, réparations, conseils et entretiens deviennent des vidéos utiles pour rester présent dans l’esprit des automobilistes.',examples:['Ce bruit moteur n’était pas normal.','La pièce qu’il fallait remplacer.','Avant les vacances, vérifiez ça.']}
   };
   const path=location.pathname.replace(/\/$/,'')||'/plombier';
   const cfg=configs[path]||configs['/plombier'];
   document.title='CLIPFA.ST — 1000 vidéos pour votre '+cfg.label;
   document.getElementById('headlineTail').textContent=cfg.tail;
-  document.getElementById('packCopy').textContent=cfg.pack;
+  document.getElementById('closingKicker').textContent=cfg.closingKicker;
+  document.getElementById('closingTitle').textContent=cfg.closingTitle;
+  document.getElementById('closingCopy').textContent=cfg.closingCopy;
   document.getElementById('obKicker').textContent=cfg.kicker;
   document.getElementById('businessLabel').textContent=cfg.businessLabel;
   document.getElementById('productLabel').textContent=cfg.productLabel;
