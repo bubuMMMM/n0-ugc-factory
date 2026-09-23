@@ -132,6 +132,10 @@
   ],
   "rewrites": [
     {
+      "source": "/metiers",
+      "destination": "/metiers/index.html"
+    },
+    {
       "source": "/kebab",
       "destination": "/kebab/index.html"
     },
