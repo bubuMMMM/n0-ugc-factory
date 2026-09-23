@@ -423,10 +423,19 @@ body{background:#f7f7f5;color:#111}
   flex-direction:column;
   align-items:center;
   gap:5px;
+  border:0;
+  background:transparent;
   color:#7d7d7d;
   text-decoration:none;
+  font:inherit;
   font-size:12px;
   font-weight:500;
+  cursor:pointer;
+}
+@media(min-width:900px){
+  .clone-copy{text-align:left}
+  .clone-title-line{justify-content:flex-start}
+  .scroll-explore{margin-left:0;margin-right:0}
 }
 .scroll-explore span{font-size:25px;line-height:1;color:#8a8a8a}
 
@@ -515,7 +524,7 @@ body{background:#f7f7f5;color:#111}
         </a>
       </div>
 
-      <a class="scroll-explore" href="#videos">Scroll to explore <span>⌄</span></a>
+      <button class="scroll-explore" type="button" data-onboard>Créer mes vidéos <span aria-hidden="true">→</span></button>
     </div>
   </section>
 
