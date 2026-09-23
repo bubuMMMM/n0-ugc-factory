@@ -4,20 +4,19 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#f7f7f5">
-<title>clipfa.st — 1000 vidéos UGC</title>
-<meta name="description" content="1000 vidéos UGC verticales prêtes à publier pour votre activité. Aucun tournage. Aucun montage.">
+<title>CLIPFA.ST — 1000 vidéos prêtes à publier</title>
+<meta name="description" content="1000 vidéos verticales prêtes à publier pour votre activité. Aucun tournage. Aucun montage.">
 <style>
 :root{--paper:#f7f7f5;--ink:#090909;--muted:#898989;--orange:#ff9827}
 *{box-sizing:border-box}
 html{background:var(--paper);color:var(--ink);scroll-behavior:smooth}
 body{margin:0;background:var(--paper);color:var(--ink);font-family:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;overflow-x:hidden}
-button,a{font:inherit}
-button{cursor:pointer}
+button,a,input,textarea{font:inherit}button{cursor:pointer}
 .page{width:100%;max-width:430px;min-height:100dvh;margin:0 auto;background:var(--paper)}
 .hero{min-height:100svh;padding:calc(14px + env(safe-area-inset-top)) 14px 22px;display:flex;flex-direction:column;overflow:hidden}
 .topbar{height:58px;display:grid;grid-template-columns:1fr auto auto;align-items:center;gap:10px;padding:0 12px 0 18px;border-radius:32px;background:#050505;color:#fff}
-.brand{font-family:Georgia,"Times New Roman",serif;font-size:27px;line-height:1;font-weight:700;letter-spacing:-1.7px}.brand span{font-size:.7em;font-weight:400;letter-spacing:-.5px}
-.start{height:42px;min-width:126px;border:0;border-radius:999px;background:#fff;color:#090909;padding:0 16px 0 20px;display:flex;align-items:center;justify-content:center;gap:12px;font-size:14px;font-weight:800;text-decoration:none}
+.brand{font-size:27px;line-height:1;font-weight:800;letter-spacing:-1.7px}
+.start{height:42px;min-width:126px;border:0;border-radius:999px;background:#fff;color:#090909;padding:0 16px 0 20px;display:flex;align-items:center;justify-content:center;gap:12px;font-size:14px;font-weight:800}
 .start b{font-size:24px;font-weight:400;line-height:1}
 .menu{position:relative;width:38px;height:38px;border:0;background:transparent;padding:0}
 .menu i,.menu:before,.menu:after{content:"";position:absolute;left:6px;width:27px;height:2px;border-radius:999px;background:#fff;transition:transform .22s ease,top .22s ease,opacity .18s ease}
@@ -25,125 +24,255 @@ button{cursor:pointer}
 .menu[aria-expanded="true"]:before{top:18px;transform:rotate(45deg)}.menu[aria-expanded="true"] i{opacity:0}.menu[aria-expanded="true"]:after{top:18px;transform:rotate(-45deg)}
 
 .hero-copy{text-align:center;margin-top:clamp(82px,12svh,118px);padding:0 8px}
-.social-proof{width:max-content;max-width:100%;margin:0 auto 26px;min-height:38px;padding:5px 14px 5px 7px;display:flex;align-items:center;gap:10px;border-radius:999px;background:#ececea;color:#2b2b2b;font-size:12px;font-weight:600;letter-spacing:-.2px}
-.avatars{display:flex;align-items:center}.avatars span{width:29px;height:29px;margin-left:-7px;border:2px solid var(--paper);border-radius:50%;background:linear-gradient(145deg,#d8d8d5,#adada9)}.avatars span:first-child{margin-left:0}
-.title{margin:0 auto;max-width:398px;font-size:clamp(43px,11.6vw,54px);line-height:.96;font-weight:520;letter-spacing:-3.1px;text-wrap:balance}
+.social-proof{position:relative;isolation:isolate;overflow:hidden;width:max-content;max-width:100%;margin:0 auto 26px;min-height:38px;padding:9px 16px;display:flex;align-items:center;justify-content:center;border:1px solid #deded9;border-radius:999px;background:rgba(238,238,234,.88);color:#2b2b2b;font-size:12px;font-weight:600;letter-spacing:-.2px;box-shadow:inset 0 1px 0 rgba(255,255,255,.82),0 8px 28px rgba(0,0,0,.035)}
+.social-proof:before{content:"";position:absolute;z-index:-1;inset:-1px;border-radius:inherit;padding:1px;pointer-events:none;background:linear-gradient(110deg,transparent 30%,rgba(255,255,255,.28) 42%,rgba(255,152,39,.62) 50%,rgba(255,255,255,.92) 56%,transparent 70%);background-size:260% 100%;animation:proofShine 7s ease-in-out infinite;-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude}
+@keyframes proofShine{0%,62%{background-position:100% 0}100%{background-position:-70% 0}}
+.title{margin:0 auto;max-width:410px;font-size:clamp(43px,11.6vw,54px);line-height:.96;font-weight:520;letter-spacing:-3.1px;text-wrap:balance}
+.title-line{display:flex;align-items:center;justify-content:center;gap:10px;white-space:nowrap}
+.title-line+.title-line{margin-top:2px}
+.platform-rotator{position:relative;flex:none;width:32px;height:32px;transform:translateY(4px)}
+.platform-icon{position:absolute;inset:0;display:grid;place-items:center;opacity:0;transform:translateY(6px) scale(.9);animation:platformCycle 10.5s cubic-bezier(.22,.8,.3,1) infinite;will-change:opacity,transform}
+.platform-icon img{display:block;width:26px;height:26px;object-fit:contain}
+.platform-icon.instagram{animation-delay:3.5s}.platform-icon.facebook{animation-delay:7s}
+@keyframes platformCycle{0%{opacity:0;transform:translateY(6px) scale(.9)}5%,25%{opacity:1;transform:translateY(0) scale(1)}30%{opacity:0;transform:translateY(-6px) scale(.96)}30.01%,100%{opacity:0;transform:translateY(6px) scale(.9)}}
 .subtitle{margin:20px auto 0;color:#8a8a8a;font-size:16px;line-height:1.3;font-weight:500;letter-spacing:-.55px}
 
 .featured-strip{width:calc(100% + 28px);margin-left:-14px;margin-top:clamp(50px,7svh,72px);display:flex;align-items:center;justify-content:center;gap:12px;overflow:hidden;flex:none}
-.card{position:relative;flex:0 0 154px;aspect-ratio:9/16;overflow:hidden;border-radius:20px;background:linear-gradient(160deg,#c7c7c4,#ececea);color:#fff;box-shadow:0 1px 0 rgba(0,0,0,.04)}
-.card.main{flex-basis:180px}
-.card video{width:100%;height:100%;display:block;object-fit:cover;background:#d9d9d6}
+.card{position:relative;flex:0 0 154px;aspect-ratio:9/16;overflow:hidden;border-radius:20px;background:#d9d9d6;color:#fff;box-shadow:0 1px 0 rgba(0,0,0,.04)}
+.card.main{flex-basis:180px}.card video{width:100%;height:100%;display:block;object-fit:cover;background:#d9d9d6}
 .card:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.05),transparent 38%,rgba(0,0,0,.16));pointer-events:none}
 .card-hook{position:absolute;z-index:2;top:58px;left:50%;transform:translateX(-50%);width:124px;color:#fff;font-size:19px;line-height:.97;font-weight:900;letter-spacing:-.75px;text-align:center;text-shadow:0 2px 12px rgba(0,0,0,.45)}
-.explore{margin:auto auto 0;padding-top:30px;display:flex;flex-direction:column;align-items:center;gap:5px;color:#7d7d7d;text-decoration:none;font-size:12px;font-weight:500}
-.explore span{font-size:25px;line-height:1;color:#8a8a8a}
+.explore{margin:auto auto 0;padding:30px 0 0;border:0;background:transparent;display:flex;flex-direction:column;align-items:center;gap:5px;color:#7d7d7d;font-size:12px;font-weight:500}
+.explore span{font-size:22px;line-height:1;color:inherit}
 
-.info{padding:64px 22px 90px;background:#fff;border-top:1px solid #ececea;text-align:center}
-.info-kicker{margin:0 0 10px;color:#8a8a8a;font-size:10px;font-weight:800;letter-spacing:.16em;text-transform:uppercase}
-.info h2{margin:0 auto;max-width:370px;font-size:38px;line-height:.98;letter-spacing:-2px;font-weight:560}
-.info p{max-width:345px;margin:16px auto 0;color:#858585;font-size:13px;line-height:1.5}
-.cta{width:100%;height:56px;margin-top:24px;border:0;border-radius:999px;background:#080808;color:#fff;display:flex;align-items:center;justify-content:center;gap:12px;text-decoration:none;font-size:14px;font-weight:850}
+.gallery{background:#f7f7f5;color:#0a0a0a;padding:22px 12px 92px}
+.video-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.preview-card{position:relative;aspect-ratio:9/16;overflow:hidden;border-radius:14px;background:#e8e8e4;border:1px solid #e1e1dc}
+.preview-card video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;background:#ddd}
+.preview-card:after{content:"";position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.65),transparent 48%,rgba(0,0,0,.08));pointer-events:none}
+.preview-hook{position:absolute;z-index:2;left:8px;right:8px;top:16%;color:#fff;text-align:center;font-size:9px;line-height:1.04;font-weight:900;text-shadow:0 2px 8px rgba(0,0,0,.7)}
+.load-state{text-align:center;font-size:9px;color:#85857e;padding:16px 0 0}
 
-.site-menu{position:fixed;z-index:100;inset:0;background:rgba(0,0,0,.95);color:#fff;backdrop-filter:blur(20px);opacity:0;visibility:hidden;transition:opacity .2s,visibility .2s}
-.site-menu.open{opacity:1;visibility:visible}
-.menu-panel{width:min(100%,430px);min-height:100dvh;margin:auto;padding:calc(14px + env(safe-area-inset-top)) 22px calc(24px + env(safe-area-inset-bottom));display:flex;flex-direction:column}
-.menu-head{height:42px;display:flex;align-items:center;justify-content:space-between}.menu-brand{font-family:Georgia,"Times New Roman",serif;font-size:23px;font-weight:700}.menu-brand span{font-size:.7em;font-weight:400}.menu-close{width:38px;height:38px;border:1px solid #2a2a2e;border-radius:50%;background:#0b0b0d;color:#fff;font-size:22px}
-.menu-kicker{margin:34px 0 14px;color:#707078;font-size:8px;letter-spacing:.22em;font-weight:850;text-transform:uppercase}
-.menu-nav{display:block;max-height:66dvh;overflow:auto;scrollbar-width:none}.menu-nav::-webkit-scrollbar{display:none}
-.menu-category{padding-top:14px}.menu-category-title{display:flex;align-items:center;gap:8px;margin:0 0 5px;color:#717178;font-size:7.5px;letter-spacing:.22em;text-transform:uppercase}.menu-category-title:before{content:"";width:6px;height:6px;border-radius:50%;background:var(--orange);box-shadow:0 0 10px rgba(255,152,39,.55)}
-.menu-link{min-height:54px;border-bottom:1px solid #202024;color:#fff;text-decoration:none;display:flex;align-items:center;justify-content:space-between;font-family:Georgia,"Times New Roman",serif;font-size:22px;letter-spacing:-.7px}.menu-link small{font-family:Inter,sans-serif;color:#777780;font-size:8px;letter-spacing:0}.arrow{color:var(--orange);font-family:Inter,sans-serif}
+.onboarding{position:fixed;z-index:180;inset:0;background:#f7f7f5;color:#0a0a0a;display:none;overflow:auto}.onboarding.open{display:block}
+.ob-shell{width:min(100%,430px);min-height:100dvh;margin:0 auto;padding:calc(14px + env(safe-area-inset-top)) 14px calc(22px + env(safe-area-inset-bottom));display:flex;flex-direction:column}
+.ob-top{height:58px;display:grid;grid-template-columns:40px 1fr auto 40px;align-items:center;gap:8px;padding:0 10px;border-radius:32px;background:#050505;color:#fff}
+.ob-close,.ob-back{width:36px;height:36px;border:0;border-radius:50%;background:#fff;color:#080808;font-size:18px;display:grid;place-items:center}
+.ob-brand{font-weight:800;font-size:19px;letter-spacing:-.8px}.ob-step-count{font-size:9px;color:#bdbdc2;font-weight:700}
+.ob-progress{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:18px 3px 0}.ob-progress i{height:4px;border-radius:99px;background:#dededb}.ob-progress i.active{background:#0a0a0a}
+.ob-step{display:none;flex:1;padding:42px 5px 0}.ob-step.active{display:flex;flex-direction:column}
+.ob-kicker{width:max-content;max-width:100%;margin:0 0 18px;padding:8px 12px;border-radius:999px;background:#ececea;color:#5d5d5d;font-size:8px;font-weight:850;letter-spacing:.16em;text-transform:uppercase}
+.ob-title{margin:0;max-width:390px;font-size:clamp(39px,10.6vw,48px);line-height:.94;letter-spacing:-2.8px;font-weight:560;text-wrap:balance}.ob-title em{font-style:normal}
+.ob-copy{margin:15px 0 28px;color:#858585;font-size:13px;line-height:1.5;max-width:360px}
+.ob-fields{display:grid;gap:12px}.ob-label{font-size:9px;color:#6f6f6f;margin:0 0 7px 2px;font-weight:750}
+.ob-input,.ob-textarea{width:100%;border:1px solid #dadad6;background:#fff;color:#111;border-radius:18px;padding:0 15px;outline:none;font-size:14px}.ob-input{height:56px}.ob-textarea{min-height:110px;padding-top:15px;resize:none;line-height:1.45}
+.ob-input:focus,.ob-textarea:focus{border-color:#111;box-shadow:0 0 0 3px rgba(0,0,0,.06)}
+.choice-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}.choice{min-height:74px;border:1px solid #dadad6;border-radius:18px;background:#fff;color:#191919;text-align:left;padding:14px;font-size:13px;font-weight:800}.choice.selected{border-color:#0a0a0a;background:#0a0a0a;color:#fff}.choice small{display:block;margin-top:6px;color:#969696;font-size:9px;font-weight:550}.choice.selected small{color:#bdbdbd}
+.ob-spacer{flex:1;min-height:34px}.ob-next{width:100%;height:58px;border:0;border-radius:999px;background:#0a0a0a;color:#fff;font-size:14px;font-weight:900;margin-top:24px}
+.order-card{border:1px solid #dededb;border-radius:24px;background:#fff;padding:18px}.order-line{display:flex;justify-content:space-between;gap:16px;padding:13px 0;border-bottom:1px solid #ededeb;font-size:11px}.order-line:last-of-type{border-bottom:0}.order-line span{color:#8d8d8d;text-align:right;max-width:46%}
+.order-bonus{margin-top:14px;background:#0a0a0a;border-radius:16px;padding:14px;color:#fff;font-size:11px;line-height:1.4}.order-bonus span{color:#bdbdbd}
+.order-total{display:flex;justify-content:space-between;align-items:end;margin-top:22px;padding:0 2px}.order-total span{color:#818181;font-size:10px;line-height:1.4}.order-total strong{font-size:48px;line-height:.9;letter-spacing:-3px}
+.pay-btn{width:100%;height:60px;border:0;border-radius:999px;background:#0a0a0a;color:#fff;font-size:14px;font-weight:900;margin-top:16px}.pay-btn[disabled]{opacity:.5}.secure{margin:10px 0 0;text-align:center;color:#8a8a8a;font-size:9px}
+.ob-error{display:none;margin:12px 0 0;padding:12px 14px;border:1px solid #f1c4c4;background:#fff1f1;color:#a12d2d;border-radius:14px;font-size:10px}.ob-error.show{display:block}
 
 @media(max-height:780px){.hero-copy{margin-top:62px}.featured-strip{margin-top:34px}.card{flex-basis:138px}.card.main{flex-basis:160px}.explore{padding-top:18px}}
-@media(max-width:370px){.brand{font-size:23px}.start{min-width:108px;font-size:12px;padding:0 12px}.title{font-size:40px;letter-spacing:-2.5px}.subtitle{font-size:14px}.card{flex-basis:138px}.card.main{flex-basis:160px}.featured-strip{gap:9px}}
+@media(max-width:370px){.brand{font-size:23px}.start{min-width:108px;font-size:12px;padding:0 12px}.title{font-size:40px;letter-spacing:-2.5px}.subtitle{font-size:14px}.card{flex-basis:138px}.card.main{flex-basis:160px}.featured-strip{gap:9px}.platform-rotator{width:29px;height:29px;transform:translateY(3px)}.platform-icon img{width:24px;height:24px}}
+@media(min-width:900px){.title-line{justify-content:flex-start}.platform-rotator{width:52px;height:52px;margin-left:4px;transform:translateY(8px)}.platform-icon img{width:46px;height:46px}.video-grid{grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}.gallery{width:min(calc(100% - 80px),1280px);margin:0 auto;padding:48px 0 96px}.preview-hook{font-size:12px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.platform-icon,.social-proof:before{animation:none}.platform-icon.tiktok{opacity:1;transform:none}}
 </style>
 <link rel="stylesheet" href="/assets/desktop.css?v=20260922">
 <link rel="stylesheet" href="/assets/brand.css?v=20260923-1">
+<link rel="stylesheet" href="/assets/kebab-editorial.css?v=3">
 </head>
-<body class="landing-niche">
+<body class="landing-kebab landing-niche">
 <main class="page">
   <section class="hero" id="top">
     <header class="topbar">
       <div class="brand">CLIPFA.ST</div>
-      <a class="start" href="/#analyser">Commencer <b>→</b></a>
+      <button class="start" type="button" data-onboard>Commencer <b>→</b></button>
       <button class="menu" id="menuToggle" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="siteMenu"><i></i></button>
     </header>
 
     <div class="hero-copy">
-      <div class="social-proof"><span class="avatars" aria-hidden="true"><span></span><span></span><span></span></span><span id="proof">Utilisé par 2 500+ pros</span></div>
-      <h1 class="title" id="headline">Des vidéos UGC pour votre activité</h1>
+      <div class="social-proof"><span>1 an de contenu générer en 3min</span></div>
+      <h1 class="title">
+        <span class="title-line">Des vidéos
+          <span class="platform-rotator" aria-label="TikTok, Instagram et Facebook">
+            <span class="platform-icon tiktok" aria-hidden="true"><img src="https://upload.wikimedia.org/wikipedia/commons/a/a6/Tiktok_icon.svg" alt=""></span>
+            <span class="platform-icon instagram" aria-hidden="true"><img src="https://upload.wikimedia.org/wikipedia/commons/9/95/Instagram_logo_2022.svg" alt=""></span>
+            <span class="platform-icon facebook" aria-hidden="true"><img src="https://upload.wikimedia.org/wikipedia/commons/b/b9/2023_Facebook_icon.svg" alt=""></span>
+          </span>
+        </span>
+        <span class="title-line" id="headlineTail">pour votre activité</span>
+      </h1>
       <p class="subtitle">1000 vidéos prêtes à publier.<br>Aucun tournage. Aucun montage.</p>
     </div>
 
-    <div class="featured-strip" id="featuredStrip" aria-label="Exemples de vidéos UGC">
+    <div class="featured-strip" id="featuredStrip" aria-label="Exemples de vidéos">
       <div class="card"><video muted playsinline loop preload="metadata"></video><strong class="card-hook" id="ex1"></strong></div>
       <div class="card main"><video muted playsinline loop preload="metadata"></video><strong class="card-hook" id="ex2"></strong></div>
       <div class="card"><video muted playsinline loop preload="metadata"></video><strong class="card-hook" id="ex3"></strong></div>
     </div>
 
-    <a class="explore" href="#details">Scroll to explore <span>⌄</span></a>
+    <button class="explore" type="button" data-onboard>Créer mes vidéos <span aria-hidden="true">→</span></button>
   </section>
 
-  <section class="info" id="details">
-    <p class="info-kicker" id="label">POUR VOTRE ACTIVITÉ</p>
-    <h2 id="detailTitle">Publiez toute l'année sans tourner une seule vidéo.</h2>
-    <p id="copy"></p>
-    <a class="cta" href="/#analyser">Analyser mon activité →</a>
+  <section class="gallery" id="videos">
+    <div class="video-grid" id="grid" aria-live="polite"></div>
+    <div class="load-state" id="loadState">Chargement des 12 aperçus…</div>
+    <section class="unlock-card" id="unlock">
+      <p class="unlock-kicker">VOTRE PACK VIDÉO</p>
+      <h2>À votre tour<br>de vous montrer.</h2>
+      <p class="unlock-copy"><span id="packCopy">1 000 vidéos pour votre activité.</span><br>20 vidéos premium offertes.</p>
+      <button class="unlock-btn" data-onboard>Créer mes vidéos · 129€ <b aria-hidden="true">→</b></button>
+      <p class="unlock-note">Paiement unique · aucun abonnement</p>
+    </section>
   </section>
 </main>
 
 <div class="site-menu" id="siteMenu" aria-hidden="true">
   <div class="menu-panel">
-    <div class="menu-head"><div class="menu-brand">CLIPFA.ST</div><button class="menu-close" id="menuClose" aria-label="Fermer">×</button></div>
+    <div class="menu-head"><div class="menu-brand">CLIPFA.ST</div><button class="menu-close" id="menuClose" aria-label="Fermer le menu">×</button></div>
     <p class="menu-kicker">CHOISIR VOTRE SECTEUR</p>
-    <nav class="menu-nav">
-      <section class="menu-category"><h3 class="menu-category-title">Général</h3><a class="menu-link" href="/#analyser"><span>Analyser mon activité</span><span class="arrow">→</span></a></section>
-      <section class="menu-category"><h3 class="menu-category-title">Food</h3><a class="menu-link" href="/kebab"><span>Kebab / Snack</span><span class="arrow">↗</span></a><a class="menu-link" href="/pizzeria"><span>Pizzeria</span><span class="arrow">↗</span></a><a class="menu-link" href="/tasty-crousty"><span>Tasty Crousty</span><span class="arrow">↗</span></a><a class="menu-link" href="/tacos"><span>Tacos</span><span class="arrow">↗</span></a></section>
-      <section class="menu-category"><h3 class="menu-category-title">Bâtiment & maison</h3><a class="menu-link" href="/plombier"><span>Plombier</span><span class="arrow">↗</span></a><a class="menu-link" href="/electricien"><span>Électricien</span><span class="arrow">↗</span></a><a class="menu-link" href="/peintre-batiment"><span>Peintre bâtiment</span><span class="arrow">↗</span></a><a class="menu-link" href="/installateur-clim"><span>Installateur clim</span><span class="arrow">↗</span></a></section>
-      <section class="menu-category"><h3 class="menu-category-title">Auto</h3><a class="menu-link" href="/garagiste"><span>Garagiste</span><span class="arrow">↗</span></a></section>
+    <nav class="menu-nav" aria-label="Navigation principale">
+      <section class="menu-category"><h3 class="menu-category-title">Général</h3><div class="menu-category-links"><a class="menu-link" href="/metiers"><span>Tous les métiers</span><span class="arrow">→</span></a></div></section>
+      <section class="menu-category"><h3 class="menu-category-title">Food</h3><div class="menu-category-links"><a class="menu-link" href="/kebab"><span>Kebab / Snack</span><span class="arrow">↗</span></a><a class="menu-link" href="/pizzeria"><span>Pizzeria</span><span class="arrow">↗</span></a><a class="menu-link" href="/tasty-crousty"><span>Tasty Crousty</span><span class="arrow">↗</span></a><a class="menu-link" href="/tacos"><span>Tacos</span><span class="arrow">↗</span></a></div></section>
+      <section class="menu-category"><h3 class="menu-category-title">Bâtiment & maison</h3><div class="menu-category-links"><a class="menu-link" href="/plombier"><span>Plombier</span><span class="arrow">↗</span></a><a class="menu-link" href="/electricien"><span>Électricien</span><span class="arrow">↗</span></a><a class="menu-link" href="/peintre-batiment"><span>Peintre bâtiment</span><span class="arrow">↗</span></a><a class="menu-link" href="/installateur-clim"><span>Installateur clim</span><span class="arrow">↗</span></a></div></section>
+      <section class="menu-category"><h3 class="menu-category-title">Auto</h3><div class="menu-category-links"><a class="menu-link" href="/garagiste"><span>Garagiste</span><span class="arrow">↗</span></a></div></section>
     </nav>
+    <div class="menu-spacer"></div>
+    <button class="menu-cta" type="button" data-onboard>Créer mes vidéos <span aria-hidden="true">→</span></button>
+  </div>
+</div>
+
+<div class="onboarding" id="onboarding" aria-hidden="true">
+  <div class="ob-shell">
+    <div class="ob-top">
+      <button class="ob-back" id="obBack" aria-label="Retour">←</button>
+      <div class="ob-brand">CLIPFA.ST</div>
+      <div class="ob-step-count" id="obCount">1 / 4</div>
+      <button class="ob-close" id="obClose" aria-label="Fermer">×</button>
+    </div>
+    <div class="ob-progress" id="obProgress"><i></i><i></i><i></i><i></i></div>
+
+    <section class="ob-step active" data-step="0">
+      <p class="ob-kicker" id="obKicker">01 · VOTRE ACTIVITÉ</p>
+      <h2 class="ob-title">On commence par <em>votre entreprise.</em></h2>
+      <p class="ob-copy">Donnez-nous ce qu’on doit connaître pour créer des contenus qui ressemblent vraiment à votre activité.</p>
+      <div class="ob-fields">
+        <div><p class="ob-label" id="businessLabel">Nom de l’entreprise</p><input class="ob-input" id="obName" placeholder="Ex. Dupont & Fils"></div>
+        <div><p class="ob-label">Site, Instagram ou Google Maps</p><input class="ob-input" id="obUrl" placeholder="https://…"></div>
+        <div><p class="ob-label">Ville</p><input class="ob-input" id="obCity" placeholder="Ex. Nantes"></div>
+      </div>
+      <div class="ob-spacer"></div><button class="ob-next" data-next>Continuer →</button>
+    </section>
+
+    <section class="ob-step" data-step="1">
+      <p class="ob-kicker">02 · CE QU’ON DOIT METTRE EN AVANT</p>
+      <h2 class="ob-title">Qu’est-ce qui fait choisir <em>votre entreprise ?</em></h2>
+      <p class="ob-copy">Un service, une spécialité ou une différence suffit. On s’en sert pour personnaliser les 1 000 accroches.</p>
+      <div class="ob-fields">
+        <div><p class="ob-label" id="productLabel">Service / spécialité à pousser</p><input class="ob-input" id="obProduct" placeholder="Ex. dépannage, rénovation, entretien…"></div>
+        <div><p class="ob-label">Offre ou différence</p><textarea class="ob-textarea" id="obOffer" placeholder="Ex. intervention rapide, devis gratuit, spécialité locale…"></textarea></div>
+      </div>
+      <div class="ob-spacer"></div><button class="ob-next" data-next>Continuer →</button>
+    </section>
+
+    <section class="ob-step" data-step="2">
+      <p class="ob-kicker">03 · VOS RÉSEAUX</p>
+      <h2 class="ob-title">Où voulez-vous prendre <em>plus de vues ?</em></h2>
+      <p class="ob-copy">Sélectionnez les plateformes. Les formats seront pensés pour le contenu vertical.</p>
+      <div class="choice-grid" id="platformChoices">
+        <button class="choice selected" data-value="TikTok">TikTok<small>vidéos courtes</small></button>
+        <button class="choice selected" data-value="Instagram">Instagram<small>Reels & stories</small></button>
+        <button class="choice selected" data-value="Facebook">Facebook<small>Reels locaux</small></button>
+        <button class="choice" data-value="YouTube Shorts">YouTube Shorts<small>vertical 9:16</small></button>
+      </div>
+      <div class="ob-fields" style="margin-top:16px"><div><p class="ob-label">Votre objectif principal</p><input class="ob-input" id="obGoal" placeholder="Ex. plus de demandes locales"></div></div>
+      <div class="ob-spacer"></div><button class="ob-next" data-next>Voir mon pack →</button>
+    </section>
+
+    <section class="ob-step" data-step="3">
+      <p class="ob-kicker">04 · VOTRE PACK</p>
+      <h2 class="ob-title">1 000 vidéos.<br><em>129€ une fois.</em></h2>
+      <p class="ob-copy">On utilise vos réponses pour générer votre pack complet. Les 20 vidéos premium sont ajoutées en cadeau.</p>
+      <div class="order-card">
+        <div class="order-line"><b>1 000 vidéos personnalisées</b><span id="orderVertical">adaptées à votre activité</span></div>
+        <div class="order-line"><b>Formats verticaux</b><span>TikTok · Reels · Shorts</span></div>
+        <div class="order-line"><b>Prêtes à publier</b><span>aucun tournage · aucun montage</span></div>
+        <div class="order-bonus">🎁 <b>+ 20 vidéos premium offertes</b><br><span>formats plus travaillés pour vos meilleures campagnes</span></div>
+      </div>
+      <div class="ob-fields" style="margin-top:14px"><div><p class="ob-label">Email de livraison</p><input class="ob-input" id="obEmail" type="email" placeholder="vous@entreprise.fr"></div></div>
+      <div class="order-total"><span>paiement unique<br>aucun abonnement</span><strong>129€</strong></div>
+      <div class="ob-error" id="obError"></div>
+      <button class="pay-btn" id="payBtn">Payer 129€ et lancer la création →</button>
+      <p class="secure">Paiement sécurisé · livraison du pack après validation</p>
+    </section>
   </div>
 </div>
 
 <script>
 (function(){
   const configs={
-    '/plombier':{label:'POUR LES PLOMBIERS',proof:'Utilisé par des artisans locaux',headline:'Des vidéos UGC pour votre plomberie',detail:'Transformez chaque intervention en contenu.',copy:'Dépannages, rénovations, chauffe-eau et interventions locales : votre activité devient une bibliothèque de contenus prêts à publier.',examples:['Une fuite ? Voilà qui appeler.','Avant / après salle de bain.','Le plombier local qu’on recommande.']},
-    '/electricien':{label:'POUR LES ÉLECTRICIENS',proof:'Utilisé par des artisans locaux',headline:'Des vidéos UGC pour votre entreprise d’électricité',detail:'Vos chantiers deviennent votre meilleur contenu.',copy:'Installations, dépannages, tableaux électriques et rénovations : montrez votre savoir-faire sans passer votre temps à filmer.',examples:['Ce tableau avait besoin de ça.','L’erreur électrique qu’on voit partout.','Intervention propre, rapide, locale.']},
-    '/pizzeria':{label:'POUR LES PIZZERIAS',proof:'Utilisé par 2 500+ restaurants',headline:'Des vidéos UGC pour votre pizzeria',detail:'Donnez faim avant même la première bouchée.',copy:'Vos pizzas, votre pâte, votre four et vos recettes deviennent des vidéos verticales prêtes pour TikTok, Reels et Shorts.',examples:['La pizza qui change le programme.','Regarde cette pâte avant cuisson.','Ce soir, on sait où commander.']},
-    '/tasty-crousty':{label:'POUR LES TASTY CROUSTY',proof:'Utilisé par 2 500+ snacks',headline:'Des vidéos UGC pour votre Tasty Crousty',detail:'Faites entendre le croustillant dans le feed.',copy:'Sauces, portions, croustillant et réactions clients : créez une présence sociale constante sans tournage quotidien.',examples:['Le croustillant avant la bouchée.','Cette sauce change tout.','Tu pensais partager ? Mauvaise idée.']},
-    '/tacos':{label:'POUR LES TACOS',proof:'Utilisé par 2 500+ snacks',headline:'Des vidéos UGC pour votre tacos',detail:'Transformez vos recettes en contenu qui donne faim.',copy:'Tailles, sauces, cheese et recettes deviennent des vidéos courtes prêtes à publier toute l’année.',examples:['Ce tacos dépasse presque de la boîte.','La sauce fromagère qu’on vient chercher.','Le repas léger… enfin presque.']},
-    '/peintre-batiment':{label:'POUR LES PEINTRES EN BÂTIMENT',proof:'Utilisé par des artisans locaux',headline:'Des vidéos UGC pour votre activité de peinture',detail:'Chaque avant / après devient une preuve.',copy:'Rénovations, murs, façades et finitions : montrez votre travail en continu pour générer plus de demandes locales.',examples:['Avant / après en une pièce.','La finition qui change tout.','Ce mur avait besoin de nous.']},
-    '/installateur-clim':{label:'POUR LES INSTALLATEURS DE CLIM',proof:'Utilisé par des artisans locaux',headline:'Des vidéos UGC pour vos installations de clim',detail:'Restez visible avant les pics de chaleur.',copy:'Installations, entretiens et conseils deviennent des contenus courts pensés pour rassurer et convertir localement.',examples:['Avant l’été, vérifiez ça.','Installation propre en quelques heures.','La clim qui change cette pièce.']},
-    '/garagiste':{label:'POUR LES GARAGISTES',proof:'Utilisé par des pros locaux',headline:'Des vidéos UGC pour votre garage',detail:'Votre atelier devient une machine à contenu.',copy:'Diagnostics, réparations, conseils et entretiens deviennent des vidéos utiles pour rester présent dans l’esprit des automobilistes.',examples:['Ce bruit moteur n’était pas normal.','La pièce qu’il fallait remplacer.','Avant les vacances, vérifiez ça.']}
+    '/plombier':{slug:'plombier',label:'plombier',tail:'pour votre plomberie',pack:'1 000 vidéos pour votre activité de plomberie.',kicker:'01 · VOTRE ENTREPRISE',businessLabel:'Nom de l’entreprise',productLabel:'Service à pousser',examples:['Une fuite ? Voilà qui appeler.','Avant / après salle de bain.','Le plombier local qu’on recommande.']},
+    '/electricien':{slug:'electricien',label:'électricien',tail:'pour votre entreprise',pack:'1 000 vidéos pour votre entreprise d’électricité.',kicker:'01 · VOTRE ENTREPRISE',businessLabel:'Nom de l’entreprise',productLabel:'Service à pousser',examples:['Ce tableau avait besoin de ça.','L’erreur électrique qu’on voit partout.','Intervention propre, rapide, locale.']},
+    '/pizzeria':{slug:'pizzeria',label:'pizzeria',tail:'pour votre pizzeria',pack:'1 000 vidéos pour votre pizzeria.',kicker:'01 · VOTRE PIZZERIA',businessLabel:'Nom de la pizzeria',productLabel:'Produit / spécialité à pousser',examples:['La pizza qui change le programme.','Regarde cette pâte avant cuisson.','Ce soir, on sait où commander.']},
+    '/tasty-crousty':{slug:'tasty-crousty',label:'Tasty Crousty',tail:'pour votre Tasty Crousty',pack:'1 000 vidéos pour votre Tasty Crousty.',kicker:'01 · VOTRE RESTAURANT',businessLabel:'Nom du restaurant',productLabel:'Produit / spécialité à pousser',examples:['Le croustillant avant la bouchée.','Cette sauce change tout.','Tu pensais partager ? Mauvaise idée.']},
+    '/tacos':{slug:'tacos',label:'tacos',tail:'pour votre tacos',pack:'1 000 vidéos pour votre tacos.',kicker:'01 · VOTRE RESTAURANT',businessLabel:'Nom du restaurant',productLabel:'Produit / spécialité à pousser',examples:['Ce tacos dépasse presque de la boîte.','La sauce fromagère qu’on vient chercher.','Le repas léger… enfin presque.']},
+    '/peintre-batiment':{slug:'peintre-batiment',label:'peintre en bâtiment',tail:'pour votre activité',pack:'1 000 vidéos pour votre activité de peinture.',kicker:'01 · VOTRE ENTREPRISE',businessLabel:'Nom de l’entreprise',productLabel:'Prestation à pousser',examples:['Avant / après en une pièce.','La finition qui change tout.','Ce mur avait besoin de nous.']},
+    '/installateur-clim':{slug:'installateur-clim',label:'installateur de clim',tail:'pour votre activité',pack:'1 000 vidéos pour vos installations de clim.',kicker:'01 · VOTRE ENTREPRISE',businessLabel:'Nom de l’entreprise',productLabel:'Service à pousser',examples:['Avant l’été, vérifiez ça.','Installation propre en quelques heures.','La clim qui change cette pièce.']},
+    '/garagiste':{slug:'garagiste',label:'garage',tail:'pour votre garage',pack:'1 000 vidéos pour votre garage.',kicker:'01 · VOTRE GARAGE',businessLabel:'Nom du garage',productLabel:'Service à pousser',examples:['Ce bruit moteur n’était pas normal.','La pièce qu’il fallait remplacer.','Avant les vacances, vérifiez ça.']}
   };
-  const path=location.pathname.replace(/\/$/,'')||'/';
+  const path=location.pathname.replace(/\/$/,'')||'/plombier';
   const cfg=configs[path]||configs['/plombier'];
-  document.title='clipfa.st — '+cfg.headline;
-  document.getElementById('proof').textContent=cfg.proof;
-  document.getElementById('headline').textContent=cfg.headline;
-  document.getElementById('label').textContent=cfg.label;
-  document.getElementById('detailTitle').textContent=cfg.detail;
-  document.getElementById('copy').textContent=cfg.copy;
+  document.title='CLIPFA.ST — 1000 vidéos pour votre '+cfg.label;
+  document.getElementById('headlineTail').textContent=cfg.tail;
+  document.getElementById('packCopy').textContent=cfg.pack;
+  document.getElementById('obKicker').textContent=cfg.kicker;
+  document.getElementById('businessLabel').textContent=cfg.businessLabel;
+  document.getElementById('productLabel').textContent=cfg.productLabel;
+  document.getElementById('orderVertical').textContent='adaptées à votre '+cfg.label;
   ['ex1','ex2','ex3'].forEach((id,i)=>document.getElementById(id).textContent=cfg.examples[i]);
 
-  fetch('/videos.txt',{cache:'force-cache'}).then(r=>r.ok?r.text():'').then(text=>{
-    const urls=text.split(/\r?\n/).map(s=>s.trim()).filter(s=>/^https:\/\//.test(s)).slice(0,3);
-    document.querySelectorAll('.card video').forEach((v,i)=>{
-      if(!urls[i])return;
-      v.src=urls[i];
-      v.addEventListener('canplay',()=>{v.play().catch(()=>{});},{once:true});
-    });
-  }).catch(()=>{});
-
-  const menu=document.getElementById('siteMenu');
-  const toggle=document.getElementById('menuToggle');
-  const close=document.getElementById('menuClose');
-  function openMenu(){menu.classList.add('open');menu.setAttribute('aria-hidden','false');toggle.setAttribute('aria-expanded','true');document.body.style.overflow='hidden'}
+  const menu=document.getElementById('siteMenu'),toggle=document.getElementById('menuToggle'),close=document.getElementById('menuClose');
   function closeMenu(){menu.classList.remove('open');menu.setAttribute('aria-hidden','true');toggle.setAttribute('aria-expanded','false');document.body.style.overflow=''}
-  toggle.addEventListener('click',()=>menu.classList.contains('open')?closeMenu():openMenu());
-  close.addEventListener('click',closeMenu);
-  document.addEventListener('keydown',e=>{if(e.key==='Escape')closeMenu()});
+  toggle.addEventListener('click',()=>{const open=!menu.classList.contains('open');menu.classList.toggle('open',open);menu.setAttribute('aria-hidden',String(!open));toggle.setAttribute('aria-expanded',String(open));document.body.style.overflow=open?'hidden':''});
+  close.addEventListener('click',closeMenu);menu.addEventListener('click',e=>{if(e.target===menu)closeMenu()});
+
+  const grid=document.getElementById('grid'),loadState=document.getElementById('loadState');
+  fetch('/videos.txt',{cache:'force-cache'}).then(r=>r.ok?r.text():'').then(text=>{
+    const urls=text.split(/\r?\n/).map(s=>s.trim()).filter(s=>/^https:\/\//.test(s)).slice(0,12);
+    document.querySelectorAll('.featured-strip video').forEach((v,i)=>{if(urls[i]){v.src=urls[i];v.addEventListener('canplay',()=>v.play().catch(()=>{}),{once:true})}});
+    urls.forEach((url,i)=>{
+      const card=document.createElement('article');card.className='preview-card';
+      const video=document.createElement('video');video.muted=true;video.loop=true;video.playsInline=true;video.preload='none';video.dataset.src=url;
+      const hook=document.createElement('strong');hook.className='preview-hook';hook.textContent=cfg.examples[i%cfg.examples.length];
+      card.append(video,hook);grid.appendChild(card);
+    });
+    const io=new IntersectionObserver(entries=>entries.forEach(entry=>{const v=entry.target;if(entry.isIntersecting){if(!v.src)v.src=v.dataset.src;v.play().catch(()=>{})}else v.pause()}),{rootMargin:'220px'});
+    grid.querySelectorAll('video').forEach(v=>io.observe(v));
+    loadState.textContent=urls.length+' aperçus · 1 000 vidéos dans votre pack';
+  }).catch(()=>{loadState.textContent='12 aperçus · 1 000 vidéos dans votre pack'});
+
+  const onboarding=document.getElementById('onboarding'),steps=[...document.querySelectorAll('.ob-step')],bars=[...document.querySelectorAll('#obProgress i')],count=document.getElementById('obCount'),back=document.getElementById('obBack'),error=document.getElementById('obError');let step=0;
+  function showStep(n){step=Math.max(0,Math.min(3,n));steps.forEach((s,i)=>s.classList.toggle('active',i===step));bars.forEach((b,i)=>b.classList.toggle('active',i<=step));count.textContent=(step+1)+' / 4';back.style.visibility=step?'visible':'hidden'}
+  function draftKey(){return 'clipfast_'+cfg.slug+'_draft'}
+  function collect(){return{vertical:cfg.slug,verticalLabel:cfg.label,returnPath:path,business:document.getElementById('obName').value.trim(),source:document.getElementById('obUrl').value.trim(),city:document.getElementById('obCity').value.trim(),product:document.getElementById('obProduct').value.trim(),offer:document.getElementById('obOffer').value.trim(),goal:document.getElementById('obGoal').value.trim(),email:document.getElementById('obEmail').value.trim(),platforms:[...document.querySelectorAll('#platformChoices .choice.selected')].map(x=>x.dataset.value)}}
+  function save(){try{localStorage.setItem(draftKey(),JSON.stringify(collect()))}catch(e){}}
+  function restore(){try{const d=JSON.parse(localStorage.getItem(draftKey())||'{}');[['obName','business'],['obUrl','source'],['obCity','city'],['obProduct','product'],['obOffer','offer'],['obGoal','goal'],['obEmail','email']].forEach(([id,k])=>{if(d[k])document.getElementById(id).value=d[k]})}catch(e){}}
+  function openOnboarding(){closeMenu();restore();onboarding.classList.add('open');onboarding.setAttribute('aria-hidden','false');document.body.style.overflow='hidden';showStep(0)}
+  function closeOnboarding(){save();onboarding.classList.remove('open');onboarding.setAttribute('aria-hidden','true');document.body.style.overflow=''}
+  document.querySelectorAll('[data-onboard]').forEach(b=>b.addEventListener('click',openOnboarding));
+  document.getElementById('obClose').addEventListener('click',closeOnboarding);back.addEventListener('click',()=>showStep(step-1));document.querySelectorAll('[data-next]').forEach(b=>b.addEventListener('click',()=>{save();showStep(step+1)}));
+  document.querySelectorAll('#platformChoices .choice').forEach(b=>b.addEventListener('click',()=>b.classList.toggle('selected')));
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'){if(onboarding.classList.contains('open'))closeOnboarding();else closeMenu()}});
+  document.getElementById('payBtn').addEventListener('click',async function(){
+    const order=collect();error.classList.remove('show');
+    if(!/^\S+@\S+\.\S+$/.test(order.email)){error.textContent='Ajoutez un email valide pour recevoir votre pack.';error.classList.add('show');return}
+    save();this.disabled=true;this.textContent='Ouverture du paiement sécurisé…';
+    try{const r=await fetch('/api/kebab-checkout',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(order)});const data=await r.json().catch(()=>({}));if(!r.ok||!data.url)throw new Error(data.error||'CHECKOUT_UNAVAILABLE');location.href=data.url}
+    catch(e){error.textContent='Impossible d’ouvrir le paiement pour le moment.';error.classList.add('show');this.disabled=false;this.textContent='Payer 129€ et lancer la création →'}
+  });
+  if(new URLSearchParams(location.search).get('checkout')==='cancelled')openOnboarding();
 })();
 </script>
 </body>
