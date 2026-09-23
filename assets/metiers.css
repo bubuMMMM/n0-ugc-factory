@@ -28,19 +28,19 @@
 @media(min-width:700px){.offer-intro{padding:64px 32px 36px}.offer-intro h1{font-size:80px}.offer-subtitle{max-width:480px;font-size:18px}.offer-benefits{flex-direction:row;justify-content:center;gap:24px;font-size:12px;margin-top:32px}}
 
 /* Quiet editorial hero: oversized offer, restrained monochrome details. */
-.offer-intro{position:relative;padding:28px 16px 18px;max-width:1100px}
-.offer-eyebrow{background:transparent;border:1px solid #d6d6d0;padding:8px 13px;margin-bottom:14px;letter-spacing:.11em;font-size:9px;color:#62625d;display:inline-flex;align-items:center;gap:9px}
+.offer-intro{position:relative;padding:38px 20px 28px;max-width:1100px}
+.offer-eyebrow{background:transparent;border:1px solid #d6d6d0;padding:8px 13px;margin-bottom:22px;letter-spacing:.11em;font-size:9px;color:#62625d;display:inline-flex;align-items:center;gap:9px}
 .offer-eyebrow:before{content:"";width:5px;height:5px;flex:none;border-radius:50%;background:#191919}
-.offer-intro h1{display:block;font-size:clamp(38px,10.8vw,52px);line-height:1;letter-spacing:-.06em;font-weight:550;white-space:nowrap}
+.offer-intro h1{display:block;font-size:clamp(38px,10.5vw,46px);line-height:1;letter-spacing:-.055em;font-weight:550;white-space:nowrap}
 .offer-receive{font-size:20px;line-height:1.2;letter-spacing:-.7px;font-weight:450;margin-bottom:10px}
 .offer-number{font-size:1.18em;line-height:.98;color:#090909;white-space:nowrap}
 .offer-month{color:#85857f;font-weight:450;line-height:1.12;white-space:nowrap}
-.offer-subtitle{max-width:300px;margin:8px auto 16px;font-size:14px;line-height:1.4;color:#74746f}
+.offer-subtitle{max-width:300px;margin:8px auto 22px;font-size:13px;line-height:1.4;color:#74746f}
 .offer-intro .hero-cta{min-height:54px;min-width:230px;justify-content:space-between;border:1px solid #090909;box-shadow:0 4px 0 #0000000a;transition:background .2s,transform .2s}
 .offer-intro .hero-cta:hover{transform:translateY(-2px)}
 .offer-intro .hero-cta span{display:grid;place-items:center;width:26px;height:26px;border-radius:50%;background:#ffffff20;font-size:17px}
-.offer-benefits{border-top:0;max-width:360px;padding-top:0;margin-top:8px;gap:9px;color:#777770;font-size:10.5px}
+.offer-benefits{border-top:0;max-width:360px;padding-top:0;margin-top:10px;gap:9px;color:#777770;font-size:10.5px}
 .offer-benefits li{display:flex;gap:8px;align-items:center}.offer-benefits li>span{display:inline-grid;place-items:center;width:16px;color:#171717;font-size:13px}
 .collections{margin-top:14px}
-@media(min-width:700px){.offer-intro{padding:42px 32px 28px}.offer-eyebrow{font-size:10px;margin-bottom:18px}.offer-intro h1{font-size:68px}.offer-receive{font-size:26px;margin-bottom:12px}.offer-subtitle{max-width:440px;font-size:16px;margin:10px auto 20px}.offer-benefits{max-width:850px;gap:32px;margin-top:10px;padding-top:0;font-size:12px}.collections{margin-top:12px}}
-@media(max-width:360px){.offer-intro h1{font-size:36px}.offer-intro{padding-inline:10px}}
+@media(min-width:700px){.offer-intro{padding:56px 32px 38px}.offer-eyebrow{font-size:10px;margin-bottom:26px}.offer-intro h1{font-size:72px}.offer-receive{font-size:26px;margin-bottom:12px}.offer-subtitle{max-width:440px;font-size:15px;margin:10px auto 24px}.offer-benefits{max-width:850px;gap:32px;margin-top:12px;padding-top:0;font-size:12px}.collections{margin-top:16px}}
+@media(max-width:360px){.offer-intro h1{font-size:36px}.offer-intro{padding-inline:16px}}
