@@ -1,7 +1,7 @@
 /* One catalogue and one player for both uploaded clips and the legacy library. */
 (function () {
   'use strict';
-  const PREVIEW_LIMIT = 98;
+  const PREVIEW_LIMIT = 12;
   const uploads = [
     {id:'kebab-broche-097f153d',src:'/media/kebab/broche-097f153d.mp4',poster:'/media/kebab/broche-097f153d.jpg',hook:"La découpe qui donne faim avant même la première bouchée.",placement:'top'},
     {id:'kebab-voiture-3f655e32',src:'/media/kebab/voiture-3f655e32.mp4',poster:'/media/kebab/voiture-3f655e32.jpg',hook:"Tu avais prévu de manger chez toi. Tu n’as pas tenu jusque-là.",placement:'top'},
