@@ -109,9 +109,9 @@ button,a,input,textarea{font:inherit}button{cursor:pointer}
     </div>
 
     <div class="featured-strip" id="featuredStrip" aria-label="Exemples de vidéos">
-      <div class="card"><video muted playsinline loop preload="metadata"></video><strong class="card-hook" id="ex1"></strong></div>
-      <div class="card main"><video muted playsinline loop preload="metadata"></video><strong class="card-hook" id="ex2"></strong></div>
-      <div class="card"><video muted playsinline loop preload="metadata"></video><strong class="card-hook" id="ex3"></strong></div>
+      <div class="card"><video muted playsinline loop autoplay preload="auto"></video><strong class="card-hook" id="ex1"></strong></div>
+      <div class="card main"><video muted playsinline loop autoplay preload="auto"></video><strong class="card-hook" id="ex2"></strong></div>
+      <div class="card"><video muted playsinline loop autoplay preload="auto"></video><strong class="card-hook" id="ex3"></strong></div>
     </div>
 
     <button class="explore" type="button" data-onboard>Créer mes vidéos <span aria-hidden="true">→</span></button>
@@ -244,7 +244,26 @@ button,a,input,textarea{font:inherit}button{cursor:pointer}
   const grid=document.getElementById('grid'),loadState=document.getElementById('loadState');
   fetch('/videos.txt',{cache:'force-cache'}).then(r=>r.ok?r.text():'').then(text=>{
     const urls=text.split(/\r?\n/).map(s=>s.trim()).filter(s=>/^https:\/\//.test(s)).slice(0,12);
-    document.querySelectorAll('.featured-strip video').forEach((v,i)=>{if(urls[i]){v.src=urls[i];v.addEventListener('canplay',()=>v.play().catch(()=>{}),{once:true})}});
+    document.querySelectorAll('.featured-strip video').forEach((v,i)=>{
+      if(!urls[i])return;
+      v.muted=true;
+      v.defaultMuted=true;
+      v.loop=true;
+      v.autoplay=true;
+      v.playsInline=true;
+      v.setAttribute('muted','');
+      v.setAttribute('playsinline','');
+      v.setAttribute('webkit-playsinline','');
+      v.src=urls[i];
+      const start=()=>{const p=v.play();if(p&&p.catch)p.catch(()=>{});};
+      v.addEventListener('loadeddata',start,{once:true});
+      v.addEventListener('canplay',start,{once:true});
+      v.addEventListener('canplaythrough',start,{once:true});
+      v.load();
+      start();
+      setTimeout(start,250);
+      setTimeout(start,900);
+    });
     urls.forEach((url,i)=>{
       const card=document.createElement('article');card.className='preview-card';
       const video=document.createElement('video');video.muted=true;video.loop=true;video.playsInline=true;video.preload='none';video.dataset.src=url;
