@@ -42,25 +42,3 @@ trades.forEach((t,i)=>{
 document.addEventListener('visibilitychange',()=>root.querySelectorAll('video').forEach(play));
 })();
 
-
-(()=>{'use strict';
-const el=document.querySelector('[data-number-ticker]');
-if(!el)return;
-const target=Number(el.dataset.numberTicker||1000);
-const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
-if(reduced){el.textContent=String(target);return;}
-const duration=950;
-const delay=120;
-const ease=t=>1-Math.pow(1-t,4);
-el.textContent='0';
-setTimeout(()=>{
-  const start=performance.now();
-  const tick=now=>{
-    const progress=Math.min((now-start)/duration,1);
-    el.textContent=String(Math.round(target*ease(progress)));
-    if(progress<1)requestAnimationFrame(tick);
-    else el.textContent=String(target);
-  };
-  requestAnimationFrame(tick);
-},delay);
-})();
