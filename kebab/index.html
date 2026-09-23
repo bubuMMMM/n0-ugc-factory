@@ -347,10 +347,28 @@ body{background:#f7f7f5;color:#111}
   30%{opacity:0;transform:translateY(-6px) scale(.96)}
   30.01%,100%{opacity:0;transform:translateY(6px) scale(.9)}
 }
+@media(max-width:899px){
+  .platform-badge{
+    width:32px;
+    height:32px;
+    transform:translateY(4px);
+  }
+  .platform-icon img{
+    width:26px;
+    height:26px;
+  }
+}
 @media(max-width:370px){
   .clone-title-line{gap:7px}
-  .platform-badge{width:25px;height:25px}
-  .platform-icon img{width:21px;height:21px}
+  .platform-badge{
+    width:29px;
+    height:29px;
+    transform:translateY(3px);
+  }
+  .platform-icon img{
+    width:24px;
+    height:24px;
+  }
 }
 @media(min-width:900px){
   .platform-badge{
