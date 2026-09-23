@@ -8,16 +8,23 @@ export default async function handler(req,res){
   const clean=(v,n=300)=>String(v||'').slice(0,n);
   const p=new URLSearchParams();
   p.set('mode','payment');
-  p.set('success_url',origin+'/kebab/success?session_id={CHECKOUT_SESSION_ID}');
-  p.set('cancel_url',origin+'/kebab?checkout=cancelled');
+  const rawVertical=clean(body.vertical||'kebab',80).toLowerCase();
+  const vertical=/^[a-z0-9-]+$/.test(rawVertical)?rawVertical:'kebab';
+  const verticalLabel=clean(body.verticalLabel||vertical,120);
+  const rawReturn=clean(body.returnPath||'/kebab',120);
+  const returnPath=/^\/[a-z0-9-]+$/.test(rawReturn)?rawReturn:'/kebab';
+  p.set('success_url',vertical==='kebab'
+    ? origin+'/kebab/success?session_id={CHECKOUT_SESSION_ID}'
+    : origin+returnPath+'?checkout=success&session_id={CHECKOUT_SESSION_ID}');
+  p.set('cancel_url',origin+returnPath+'?checkout=cancelled');
   p.set('customer_creation','always');
   if(body.email)p.set('customer_email',clean(body.email,180));
   p.set('line_items[0][price_data][currency]','eur');
   p.set('line_items[0][price_data][unit_amount]','12900');
-  p.set('line_items[0][price_data][product_data][name]','Pack Kebab — 1000 vidéos + 20 premium');
+  p.set('line_items[0][price_data][product_data][name]','Pack '+verticalLabel+' — 1000 vidéos + 20 premium');
   p.set('line_items[0][price_data][product_data][description]','1000 vidéos personnalisées prêtes à publier + 20 vidéos premium offertes');
   p.set('line_items[0][quantity]','1');
-  p.set('metadata[vertical]','kebab');
+  p.set('metadata[vertical]',vertical);
   p.set('metadata[business]',clean(body.business,200));
   p.set('metadata[source]',clean(body.source,300));
   p.set('metadata[city]',clean(body.city,120));
