@@ -168,3 +168,8 @@
   #library .grid, .landing-kebab .video-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
   .home-menu-nav, .menu-nav { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
+
+/* Keep the video backdrop inside its desktop column, away from the headline. */
+@media (min-width: 900px) {
+  .landing-home .home-featured::before { inset: 0; }
+}
