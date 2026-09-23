@@ -17,3 +17,12 @@
 .example-note{max-width:1240px;margin:0 auto 28px;padding:0 12px}
 @media(min-width:700px){.collections{padding:0 24px;margin-top:28px}.trade-section{padding-bottom:22px}.trade-divider h2{font-size:13px}.video-card{flex-basis:128px}.hook{font-size:11px}.example-note{padding:0 24px}.closing{padding:40px 20px}.closing h2{font-size:44px}}
 @media(max-width:699px){.rail-controls{display:none}.topbar{margin-top:14px}.collections{margin-top:22px}}
+
+/* Annual content offer above the compact trade catalogue. */
+.offer-intro{text-align:center;padding:52px 20px 28px;max-width:960px;margin:0 auto}
+.offer-eyebrow{display:inline-block;margin:0 0 22px;padding:9px 14px;border:1px solid #dededa;border-radius:99px;background:#ececea;font-size:10px;font-weight:650;letter-spacing:.1em}
+.offer-intro h1{font-size:clamp(48px,13vw,64px);font-weight:520;line-height:.96;letter-spacing:-.065em;margin:0 auto}
+.offer-subtitle{max-width:340px;margin:20px auto 24px;color:#808080;font-size:15px;line-height:1.5;letter-spacing:-.25px}
+.offer-intro .hero-cta{min-height:54px;padding:0 26px;font-size:14px}
+.offer-benefits{list-style:none;padding:0;margin:26px auto 0;display:flex;flex-direction:column;align-items:center;gap:10px;font-size:11px;line-height:1.4;color:#747474}
+@media(min-width:700px){.offer-intro{padding:64px 32px 36px}.offer-intro h1{font-size:80px}.offer-subtitle{max-width:480px;font-size:18px}.offer-benefits{flex-direction:row;justify-content:center;gap:24px;font-size:12px;margin-top:32px}}
