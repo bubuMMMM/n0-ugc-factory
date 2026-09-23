@@ -249,32 +249,49 @@ body{background:#f7f7f5;color:#111}
   padding:0 8px;
 }
 .social-proof{
+  position:relative;
+  isolation:isolate;
+  overflow:hidden;
   width:max-content;
   max-width:100%;
   margin:0 auto 26px;
   min-height:38px;
-  padding:5px 14px 5px 7px;
+  padding:9px 16px;
   display:flex;
   align-items:center;
-  gap:10px;
+  justify-content:center;
+  border:1px solid #deded9;
   border-radius:999px;
-  background:#ececea;
+  background:rgba(238,238,234,.88);
   color:#2b2b2b;
   font-size:12px;
   font-weight:600;
   letter-spacing:-.2px;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.82),0 8px 28px rgba(0,0,0,.035);
 }
-.proof-avatars{display:flex;align-items:center;padding-left:1px}
-.proof-avatars span{
-  width:29px;
-  height:29px;
-  margin-left:-7px;
-  border:2px solid #f7f7f5;
-  border-radius:50%;
-  background-size:cover;
-  background-position:center;
+.social-proof:before{
+  content:"";
+  position:absolute;
+  z-index:-1;
+  inset:-1px;
+  border-radius:inherit;
+  padding:1px;
+  pointer-events:none;
+  background:linear-gradient(110deg,transparent 30%,rgba(255,255,255,.28) 42%,rgba(255,152,39,.62) 50%,rgba(255,255,255,.92) 56%,transparent 70%);
+  background-size:260% 100%;
+  animation:proofShineBorder 7s ease-in-out infinite;
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+  -webkit-mask-composite:xor;
+  mask-composite:exclude;
 }
-.proof-avatars span:first-child{margin-left:0}
+.proof-copy{position:relative;z-index:1}
+@keyframes proofShineBorder{
+  0%,62%{background-position:100% 0}
+  100%{background-position:-70% 0}
+}
+@media(prefers-reduced-motion:reduce){
+  .social-proof:before{animation:none}
+}
 .clone-title{
   margin:0 auto;
   max-width:398px;
@@ -407,12 +424,7 @@ body{background:#f7f7f5;color:#111}
 
       <div class="clone-copy">
         <div class="social-proof">
-          <span class="proof-avatars" aria-hidden="true">
-            <span style="background-image:url('/media/kebab/reaction.jpg')"></span>
-            <span style="background-image:url('/media/kebab/street.jpg')"></span>
-            <span style="background-image:url('/media/kebab/preparation.jpg')"></span>
-          </span>
-          <span>1 an de contenu générer en 3min</span>
+          <span class="proof-copy">1 an de contenu générer en 3min</span>
         </div>
 
         <h1 class="clone-title">Des vidéos UGC<br>pour votre kebab</h1>
