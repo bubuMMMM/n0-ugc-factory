@@ -418,7 +418,7 @@ body{background:#f7f7f5;color:#111}
   box-shadow:0 1px 0 rgba(0,0,0,.04);
 }
 .featured-main{flex-basis:180px}
-.featured-card img{
+.featured-card img,.featured-card video{
   width:100%;
   height:100%;
   display:block;
@@ -544,16 +544,16 @@ body{background:#f7f7f5;color:#111}
 
       <div class="featured-strip" aria-label="Exemples de vidéos UGC">
         <a class="featured-card featured-side" href="#videos" aria-label="Voir la vidéo 1">
-          <img src="/media/kebab/reaction.jpg" alt="">
+          <video src="/media/kebab/reaction-cbab9e5f.mp4" poster="/media/kebab/reaction.jpg" muted playsinline loop autoplay preload="metadata"></video>
         </a>
 
         <a class="featured-card featured-main" href="#videos" aria-label="Voir la vidéo 2">
-          <img src="/media/kebab/preparation.jpg" alt="">
+          <video src="/media/kebab/preparation.mp4" poster="/media/kebab/preparation.jpg" muted playsinline loop autoplay preload="metadata"></video>
           <strong class="featured-hook">Le kebab<br>qui régale<br>toujours.</strong>
         </a>
 
         <a class="featured-card featured-side" href="#videos" aria-label="Voir la vidéo 3">
-          <img src="/media/kebab/street.jpg" alt="">
+          <video src="/media/kebab/street-89044c24.mp4" poster="/media/kebab/street.jpg" muted playsinline loop autoplay preload="metadata"></video>
         </a>
       </div>
 
@@ -715,6 +715,24 @@ body{background:#f7f7f5;color:#111}
   </div>
 </div>
 
+<script>
+(function(){
+  /* Hero preview autoplay */
+  document.querySelectorAll('.featured-card video').forEach(function(v){
+    v.muted=true;
+    v.defaultMuted=true;
+    v.loop=true;
+    v.playsInline=true;
+    v.setAttribute('muted','');
+    v.setAttribute('playsinline','');
+    var start=function(){var p=v.play();if(p&&p.catch)p.catch(function(){});};
+    v.addEventListener('loadeddata',start,{once:true});
+    v.addEventListener('canplay',start,{once:true});
+    start();
+  });
+})();
+
+</script>
 <script src="/assets/demo-hooks.js"></script>
 <script src="/assets/kebab-gallery.js?v=20260923-5" defer></script>
 <script>
