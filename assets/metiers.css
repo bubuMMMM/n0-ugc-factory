@@ -16,7 +16,7 @@
 .video-card.playing .video-action{opacity:0}.video-card:hover .video-action,.video-card:focus-within .video-action{opacity:1}
 .example-note{max-width:1240px;margin:0 auto 28px;padding:0 12px}
 @media(min-width:700px){.collections{padding:0 24px;margin-top:28px}.trade-section{padding-bottom:22px}.trade-divider h2{font-size:13px}.video-card{flex-basis:128px}.hook{font-size:11px}.example-note{padding:0 24px}.closing{padding:40px 20px}.closing h2{font-size:44px}}
-@media(max-width:699px){.rail-controls{display:none}.topbar{margin-top:14px}.collections{margin-top:22px}}
+@media(max-width:699px){.rail-controls{display:none}.topbar{margin-top:14px}.collections{margin-top:22px;padding-left:6px;padding-right:6px}.video-rail{gap:6px}.video-card{flex-basis:calc((100vw - 54px)/3)}}
 
 /* Annual content offer above the compact trade catalogue. */
 .offer-intro{text-align:center;padding:52px 20px 28px;max-width:960px;margin:0 auto}
