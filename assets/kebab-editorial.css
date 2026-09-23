@@ -1,0 +1,60 @@
+/* Kebab offer and navigation: the same paper-and-ink system as the landing. */
+.landing-kebab .unlock-card{margin:28px 0 0;padding:28px 22px 24px;border:1px solid #dededa;border-radius:24px;background:#fff;color:#111;box-shadow:none;text-align:left}
+.landing-kebab .unlock-progress{display:flex;align-items:center;gap:12px;justify-content:space-between;color:#93938c;font-size:9px;margin:0 0 26px;padding-bottom:16px;border-bottom:1px solid #eeeee9;letter-spacing:.01em}
+.landing-kebab .unlock-bar{display:none}
+.landing-kebab .unlock-kicker{display:inline-block;margin:0 0 16px;padding:7px 10px;border-radius:99px;border:1px solid #e3e3dd;background:#f7f7f5;color:#71716b;font-size:8px;letter-spacing:.12em;font-weight:650}
+.landing-kebab .unlock-card h2{font-family:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-size:clamp(27px,7.5vw,34px);font-weight:550;line-height:1.08;letter-spacing:-1.5px;text-wrap:balance}
+.landing-kebab .unlock-card h2 em{margin-top:5px;color:#8a8a82;font-style:normal;font-weight:450}
+.landing-kebab .unlock-copy{max-width:470px;margin:18px 0 0;color:#81817a;font-size:12px;line-height:1.65}
+.landing-kebab .unlock-copy b{font-weight:600;color:#252520}
+.landing-kebab .unlock-price{justify-content:flex-start;align-items:center;gap:14px;margin:26px 0 20px}
+.landing-kebab .unlock-price strong{font-family:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-size:48px;line-height:1;letter-spacing:-2.8px;font-weight:550;color:#111}
+.landing-kebab .unlock-price span{font-size:10px;color:#8a8a82;max-width:65px;line-height:1.4}
+.landing-kebab .unlock-btn{max-width:none;display:flex;align-items:center;justify-content:space-between;gap:16px;height:54px;padding:0 20px;border:1px solid #090909;border-radius:99px;background:#090909;color:#fff;font-size:12px;font-weight:700;transition:background .2s}
+.landing-kebab .unlock-btn:hover{background:#303030}
+.landing-kebab .unlock-btn b{display:grid;place-items:center;width:25px;height:25px;border-radius:50%;background:#ffffff18;font-size:18px;font-weight:400;margin:0}
+.landing-kebab .unlock-note{margin:12px 0 0;text-align:center;color:#96968e;font-size:9px;line-height:1.5}
+.landing-kebab .site-menu{background:#f7f7f5;color:#111;backdrop-filter:none;overflow-y:auto;overscroll-behavior:contain}
+.landing-kebab .menu-panel{width:min(100%,520px);min-height:100dvh;padding:calc(14px + env(safe-area-inset-top)) 14px calc(24px + env(safe-area-inset-bottom));transform:none}
+.landing-kebab .menu-head{height:58px;flex-shrink:0;padding:0 12px 0 18px;background:#050505;border-radius:32px;color:#fff}
+.landing-kebab .menu-close{width:34px;height:34px;border:1px solid #ffffff40;background:#ffffff12;color:#fff;font-size:22px}
+.landing-kebab .menu-kicker{margin:32px 10px 8px;font-size:9px;letter-spacing:.13em;color:#96968f;font-weight:600}
+.landing-kebab .menu-nav{display:block;max-height:none;overflow:visible;border:0;padding:0 10px}
+.landing-kebab .menu-category{padding-top:22px}
+.landing-kebab .menu-category:first-child{padding-top:12px}
+.landing-kebab .menu-category-title{font-size:9px;letter-spacing:.1em;font-weight:650;color:#92928a;margin:0 0 5px;padding:0}
+.landing-kebab .menu-category-title:before{display:none}
+.landing-kebab .menu-category-links{border:0}
+.landing-kebab .menu-link{min-height:46px;padding:8px 0;border-bottom:1px solid #e4e4df;color:#1b1b18;font-family:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-size:16px;font-weight:500;letter-spacing:-.4px;gap:12px}
+.landing-kebab .menu-link .arrow{font-size:18px;color:#99998f;font-weight:400}
+.landing-kebab .menu-link small{font-size:8px;letter-spacing:0;color:#77776f;border:1px solid #ddddd7;background:#efefea;padding:4px 7px;border-radius:99px}
+.landing-kebab .menu-link:hover{color:#000;background:#eeeee9}
+.landing-kebab .menu-spacer{min-height:28px}
+.landing-kebab .menu-offer{width:auto;align-self:stretch;margin:0 6px;padding:20px;border:1px solid #dededa;border-radius:20px;background:#fff;box-shadow:none}
+.landing-kebab .menu-offer-top{align-items:center}
+.landing-kebab .menu-offer-top b{font-family:inherit;font-size:15px;font-weight:550;line-height:1.3;letter-spacing:-.5px;max-width:180px}
+.landing-kebab .menu-offer-top strong{font-family:inherit;font-weight:550;font-size:30px;color:#111;letter-spacing:-1.5px}
+.landing-kebab .menu-offer p{color:#8a8a82;font-size:11px;line-height:1.5;margin:10px 0 16px}
+.landing-kebab .menu-cta{height:46px;background:#090909;color:#fff;font-size:11px;font-weight:650;border-radius:99px}
+.landing-kebab .menu-foot{font-size:9px;color:#99998f;margin-top:14px}
+.landing-kebab :is(.unlock-btn,.menu-link,.menu-close,.menu-cta):focus-visible{outline:2px solid #888;outline-offset:4px}
+@media(min-width:900px){
+.landing-kebab .unlock-card{max-width:800px;margin:48px auto 0;padding:42px 48px;border-radius:28px}
+.landing-kebab .unlock-progress{font-size:11px;margin-bottom:28px}
+.landing-kebab .unlock-card h2{font-size:46px;max-width:620px;letter-spacing:-2px}
+.landing-kebab .unlock-kicker{font-size:10px}
+.landing-kebab .unlock-copy{font-size:15px;max-width:560px}
+.landing-kebab .unlock-price strong{font-size:56px}
+.landing-kebab .unlock-price span{font-size:12px;max-width:none}
+.landing-kebab .unlock-btn{max-width:390px;font-size:14px;height:56px}
+.landing-kebab .unlock-note{max-width:390px;font-size:11px}
+.landing-kebab .menu-panel{width:min(calc(100% - 80px),1120px);padding:24px 0 32px}
+.landing-kebab .menu-head{height:64px;padding-left:28px}
+.landing-kebab .menu-kicker{margin:48px 8px 12px;font-size:10px}
+.landing-kebab .menu-nav{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:28px;padding:0 8px}
+.landing-kebab .menu-category:first-child{padding-top:22px}
+.landing-kebab .menu-link{font-size:17px;min-height:54px}
+.landing-kebab .menu-offer{width:400px;align-self:flex-end;margin-top:32px;padding:24px}
+.landing-kebab .menu-foot{text-align:right;margin-right:12px}
+}
+@media(prefers-reduced-motion:reduce){.landing-kebab .unlock-btn{transition:none}}
