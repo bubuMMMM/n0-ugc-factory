@@ -45,4 +45,4 @@
 @media(min-width:700px){.offer-intro{padding:56px 32px 38px}.offer-eyebrow{font-size:10px;margin-bottom:26px}.offer-intro h1{font-size:72px}.offer-receive{font-size:26px;margin-bottom:12px}.offer-subtitle{max-width:440px;font-size:15px;margin:10px auto 24px}.offer-benefits{max-width:850px;gap:32px;margin-top:12px;padding-top:0;font-size:12px}.collections{margin-top:16px}}
 @media(max-width:360px){.offer-intro h1{font-size:36px}.offer-intro{padding-inline:16px}}
 
-.number-ticker{display:inline-block;min-width:4ch;text-align:center;font-variant-numeric:tabular-nums;}
+.number-ticker{display:inline-block;min-width:3.35ch;text-align:center;font-variant-numeric:tabular-nums;margin:0;padding:0;}
