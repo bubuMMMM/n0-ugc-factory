@@ -1,0 +1,130 @@
+/* CLIPFA.ST wordmark — compact monochrome shine border inspired by Magic UI / 21st.dev.
+   Kept dependency-free so every static landing page shares the same treatment. */
+@property --clipfast-brand-angle{
+  syntax:"<angle>";
+  initial-value:0deg;
+  inherits:false;
+}
+
+.home-brand,
+.home-menu-brand,
+.topbar .brand,
+.menu-brand,
+.ob-brand{
+  --clipfast-brand-angle:0deg;
+  position:relative;
+  isolation:isolate;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:max-content;
+  min-width:0;
+  height:29px;
+  padding:0 10px 0 11px;
+  border:1px solid rgba(255,255,255,.10);
+  border-radius:999px;
+  background:
+    linear-gradient(180deg,rgba(255,255,255,.055),rgba(255,255,255,.018));
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.055),
+    inset 0 -1px 0 rgba(0,0,0,.18);
+  color:#f4f4f5;
+  font-family:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif !important;
+  font-size:12.5px !important;
+  line-height:1 !important;
+  font-weight:780 !important;
+  letter-spacing:.105em !important;
+  text-transform:uppercase;
+  white-space:nowrap;
+  overflow:hidden;
+  text-shadow:0 1px 0 rgba(0,0,0,.24);
+  font-variant-numeric:tabular-nums;
+  -webkit-font-smoothing:antialiased;
+}
+
+.home-brand::before,
+.home-menu-brand::before,
+.topbar .brand::before,
+.menu-brand::before,
+.ob-brand::before{
+  content:"";
+  position:absolute;
+  z-index:-1;
+  inset:-1px;
+  border-radius:inherit;
+  padding:1px;
+  pointer-events:none;
+  background:conic-gradient(
+    from var(--clipfast-brand-angle),
+    transparent 0deg,
+    transparent 255deg,
+    rgba(255,255,255,.025) 278deg,
+    rgba(255,255,255,.72) 300deg,
+    rgba(255,255,255,.13) 320deg,
+    transparent 340deg,
+    transparent 360deg
+  );
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite:xor;
+  mask-composite:exclude;
+  animation:clipfast-brand-shine 8.5s linear infinite;
+}
+
+.home-brand::after,
+.home-menu-brand::after,
+.topbar .brand::after,
+.menu-brand::after,
+.ob-brand::after{
+  content:"";
+  position:absolute;
+  z-index:-2;
+  inset:2px;
+  border-radius:inherit;
+  background:radial-gradient(circle at 18% 0%,rgba(255,255,255,.055),transparent 38%);
+  pointer-events:none;
+}
+
+/* The open menu / onboarding use the exact same scale, so the brand never jumps. */
+.home-menu-brand,
+.menu-brand,
+.ob-brand{
+  height:28px;
+  font-size:11.75px !important;
+  padding-inline:10px;
+}
+
+/* Keep the métiers footer typographic and quiet; the treatment is navigation-only. */
+footer .brand{
+  font-family:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  font-size:13px;
+  line-height:1;
+  font-weight:760;
+  letter-spacing:.09em;
+}
+
+@keyframes clipfast-brand-shine{
+  to{--clipfast-brand-angle:360deg}
+}
+
+@media(max-width:370px){
+  .home-brand,
+  .topbar .brand{
+    height:28px;
+    padding-inline:9px;
+    font-size:11.75px !important;
+    letter-spacing:.095em !important;
+  }
+}
+
+@media(prefers-reduced-motion:reduce){
+  .home-brand::before,
+  .home-menu-brand::before,
+  .topbar .brand::before,
+  .menu-brand::before,
+  .ob-brand::before{
+    animation:none;
+    --clipfast-brand-angle:305deg;
+  }
+}
