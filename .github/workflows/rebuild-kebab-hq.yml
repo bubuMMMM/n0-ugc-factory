@@ -1,0 +1,44 @@
+name: Rebuild kebab HQ videos
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '.tmp-kebab-hq/**'
+
+permissions:
+  contents: write
+
+jobs:
+  rebuild:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Rebuild high-quality videos
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p media/kebab
+          cat .tmp-kebab-hq/collection-f13b42e6.part* | base64 -d > media/kebab/collection-f13b42e6.mp4
+          cat .tmp-kebab-hq/collection-5d27d39c.part* | base64 -d > media/kebab/collection-5d27d39c.mp4
+          cat .tmp-kebab-hq/collection-a3e99d9c.part* | base64 -d > media/kebab/collection-a3e99d9c.mp4
+
+          echo "8cff5984b366c271139e0d410af79cdf2f34bdb9d8ee72b9b5c8c039f2f1e523  media/kebab/collection-f13b42e6.mp4" | sha256sum -c -
+          echo "db5d37aabb98f0d25dabafdec6deca8a897036b401eed0c81012fada6da11be4  media/kebab/collection-5d27d39c.mp4" | sha256sum -c -
+          echo "be9070202d5323962690330ae0bbffdafb4278d90fdec4a4397bdcc5613abd44  media/kebab/collection-a3e99d9c.mp4" | sha256sum -c -
+
+          rm -rf .tmp-kebab-hq
+
+      - name: Commit rebuilt videos
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Restore high-quality kebab videos"
+          git push
