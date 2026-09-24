@@ -100,6 +100,15 @@
       ]
     },
     {
+      "source": "/musique",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-store, max-age=0"
+        }
+      ]
+    },
+    {
       "source": "/videos.txt",
       "headers": [
         {
@@ -138,6 +147,10 @@
     {
       "source": "/kebab",
       "destination": "/kebab/index.html"
+    },
+    {
+      "source": "/musique",
+      "destination": "/musique/index.html"
     },
     {
       "source": "/plombier",
