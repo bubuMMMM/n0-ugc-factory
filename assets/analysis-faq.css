@@ -86,44 +86,6 @@
 .analysis-legend .win{background:#25a55a}
 .analysis-legend .watch{background:#9a9a94}
 .analysis-legend .drop{background:#d94335}
-.analysis-loop{
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  margin-top:14px;
-  overflow:hidden;
-  border:1px solid #deded9;
-  border-radius:18px;
-  background:#fff;
-}
-.analysis-step{
-  position:relative;
-  min-height:112px;
-  padding:18px 16px;
-}
-.analysis-step+.analysis-step{border-left:1px solid #e5e5e0}
-.analysis-step small{
-  display:block;
-  margin-bottom:22px;
-  color:#a0a09a;
-  font-size:8px;
-  font-weight:800;
-  letter-spacing:.12em;
-}
-.analysis-step strong{
-  display:block;
-  font-size:14px;
-  line-height:1.15;
-  font-weight:700;
-  letter-spacing:-.3px;
-}
-.analysis-step:not(:last-child):after{
-  content:"→";
-  position:absolute;
-  right:12px;
-  bottom:15px;
-  color:#adada8;
-  font-size:14px;
-}
 .faq-head{margin-bottom:28px}
 .faq-list{
   max-width:900px;
@@ -170,10 +132,6 @@
   .analysis-visual{margin-top:28px;border-radius:17px}
   .analysis-caption{align-items:flex-start;flex-direction:column;gap:9px;padding:12px 13px}
   .analysis-legend{justify-content:flex-start}
-  .analysis-loop{grid-template-columns:1fr 1fr}
-  .analysis-step{min-height:100px}
-  .analysis-step:nth-child(3){border-left:0}
-  .analysis-step:nth-child(n+3){border-top:1px solid #e5e5e0}
   .faq-item summary{font-size:14px;padding-block:18px}
 }
 @media(min-width:900px){
