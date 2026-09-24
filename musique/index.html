@@ -51,6 +51,31 @@ main{position:relative;z-index:1}
 .showcase{padding:26px 0 72px}.showcase-grid{display:grid;grid-template-columns:1fr;gap:14px;max-width:980px;margin:0 auto}.shot{position:relative;min-height:240px;overflow:hidden;border:1px solid var(--line-1);border-radius:22px;background:linear-gradient(145deg,#0a0a0a,#171717);isolation:isolate}.shot:before{content:"";position:absolute;width:270px;height:270px;border-radius:50%;filter:blur(80px);opacity:.42;left:-80px;top:-100px;background:var(--accent)}.shot:nth-child(2):before{left:auto;right:-90px;top:auto;bottom:-90px;background:#ff6b35;opacity:.28}.shot:nth-child(3):before{left:30%;top:10%;background:#7b61ff;opacity:.28}
 .shot-ui{position:absolute;inset:0;padding:18px;display:flex;flex-direction:column;justify-content:space-between}.shot-top{display:flex;justify-content:space-between;align-items:center;font-family:"JetBrains Mono",monospace;font-size:9px;text-transform:uppercase;letter-spacing:.14em;color:var(--ink-2)}.shot-chip{padding:5px 8px;border:1px solid var(--line-2);border-radius:999px;background:rgba(0,0,0,.24)}.shot-center{display:grid;place-items:center;flex:1}.play{width:50px;height:50px;border-radius:50%;display:grid;place-items:center;background:rgba(245,243,238,.94);color:#000;box-shadow:0 10px 30px rgba(0,0,0,.35)}.play:before{content:"";margin-left:3px;border-left:13px solid #000;border-top:8px solid transparent;border-bottom:8px solid transparent}.wave{display:flex;align-items:center;justify-content:center;gap:4px;height:42px}.wave i{width:3px;border-radius:999px;background:var(--accent);animation:wave 1s ease-in-out infinite}.wave i:nth-child(2n){animation-delay:.12s}.wave i:nth-child(3n){animation-delay:.24s}.shot-bottom{display:flex;align-items:end;justify-content:space-between;gap:12px}.shot-title{font-size:23px;font-weight:700;letter-spacing:-.035em}.shot-meta{font-family:"JetBrains Mono",monospace;font-size:9px;text-transform:uppercase;letter-spacing:.12em;color:var(--ink-2);text-align:right}
 
+
+.mega-section{padding:96px 0;text-align:center}
+.mega-title{max-width:1180px;margin:0 auto;font-size:clamp(64px,14vw,160px);font-weight:800;line-height:.9;letter-spacing:-.055em}
+.mega-muted{position:relative;display:inline-block;color:var(--ink-2)}
+.mega-strike{position:absolute;left:-8px;right:-8px;top:50%;height:5px;transform:translateY(-50%) rotate(-3deg);z-index:-1;border-radius:999px;background:var(--accent);opacity:.85}
+.mega-copy{max-width:540px;margin:28px auto 0;color:var(--ink-2);font-size:17px}
+.mini-strip{margin:32px auto 0;padding:14px 20px 20px;display:flex;justify-content:center;gap:12px;overflow-x:auto;scrollbar-width:none;-webkit-mask-image:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent);mask-image:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent)}
+.mini-strip::-webkit-scrollbar{display:none}.mini-clip{position:relative;width:72px;aspect-ratio:9/16;flex:none;overflow:hidden;border:1px solid var(--line-1);border-radius:9px}.mini-clip:nth-child(even){transform:translateY(-12px)}.mini-clip:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 50%,rgba(0,0,0,.7))}
+.mini-clip:nth-child(1){background:linear-gradient(135deg,#ff6b35,#1a0a1f)}.mini-clip:nth-child(2){background:linear-gradient(135deg,#d4ff3a,#2d5016)}.mini-clip:nth-child(3){background:linear-gradient(135deg,#1a1a2e,#6b1f3d)}.mini-clip:nth-child(4){background:linear-gradient(135deg,#00d4ff,#1a0a1f)}.mini-clip:nth-child(5){background:linear-gradient(135deg,#ff6b35,#d4ff3a)}
+
+.features-section{padding:72px 0}
+.features-head h2{max-width:760px;font-size:36px;line-height:1.05;letter-spacing:-.04em;font-weight:750}
+.features-head p{max-width:560px;margin-top:18px;color:var(--ink-2);font-size:15px;line-height:1.55}
+.bento{display:grid;grid-template-columns:1fr;gap:16px;margin-top:32px}
+.studio-feature{position:relative;overflow:hidden;min-height:260px;padding:24px;border:1px solid var(--line-1);border-radius:20px;background:var(--surface-1);transition:transform .3s ease,border-color .3s ease}
+.studio-feature:hover{transform:translateY(-6px);border-color:var(--line-2)}
+.feature-kicker{display:flex;align-items:center;gap:8px;margin-bottom:16px;color:var(--ink-2);font-family:"JetBrains Mono",monospace;font-size:10px;text-transform:uppercase;letter-spacing:.2em}
+.feature-num{width:22px;height:22px;border:1px solid var(--line-2);border-radius:50%;display:inline-flex;align-items:center;justify-content:center;color:var(--ink);font-size:9px}
+.studio-feature h3{margin:0 0 12px;font-size:24px;line-height:1.15;letter-spacing:-.03em}.studio-feature.large h3{font-size:28px}
+.studio-feature p{max-width:430px;color:var(--ink-2);font-size:13px;line-height:1.55}
+.format-previews{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:22px}.format-box{position:relative;overflow:hidden;flex:none;border:1px solid var(--line-1);border-radius:12px}.format-box:after{content:attr(data-format);position:absolute;left:8px;top:8px;padding:2px 7px;border-radius:4px;background:rgba(0,0,0,.6);color:#fff;font-family:"JetBrains Mono",monospace;font-size:9px;letter-spacing:.1em}.format-portrait{width:72px;aspect-ratio:9/16;background:linear-gradient(135deg,#ff6b35,#1a0a1f)}.format-wide{width:180px;aspect-ratio:16/9;background:linear-gradient(135deg,#d4ff3a,#2d5016)}.format-square{width:110px;aspect-ratio:1;background:linear-gradient(135deg,#1a1a2e,#d4ff3a)}
+.compare-bars{display:flex;flex-direction:column;gap:8px;margin-top:22px}.compare-row{display:flex;align-items:center;gap:8px;font-family:"JetBrains Mono",monospace;font-size:10px}.compare-name{width:60px;flex:none;color:var(--ink-2);text-transform:uppercase}.compare-track{height:6px;flex:1;overflow:hidden;border-radius:999px;background:var(--glass-1)}.compare-fill{height:100%;min-width:6px;border-radius:999px;background:rgba(245,243,238,.3)}.compare-fill.kling{background:rgba(245,243,238,.5)}.compare-fill.clipfast{background:var(--accent)}.compare-value{width:46px;flex:none;text-align:right}.compare-value.accent{color:var(--accent);font-weight:600}
+.license-card{display:inline-flex;align-items:center;gap:10px;margin-top:22px;padding:10px 14px;border:1px solid var(--line-2);border-radius:12px;background:var(--glass-1);transition:.2s}.license-card:hover{border-color:var(--accent);background:var(--accent-soft)}.pdf-icon{position:relative;width:26px;height:32px;flex:none;border:1px solid var(--line-3);border-radius:3px;background:#141414}.pdf-icon:before{content:"PDF";position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:var(--accent);font-family:"JetBrains Mono",monospace;font-size:6px;font-weight:700}.license-copy b{display:block;font-size:13px}.license-copy span{display:block;margin-top:1px;color:var(--ink-2);font-family:"JetBrains Mono",monospace;font-size:9px;text-transform:uppercase;letter-spacing:.1em}
+.speed-demo{display:flex;align-items:center;gap:20px;flex-wrap:wrap;margin-top:22px}.timer-ring{position:relative;width:76px;height:76px;flex:none}.timer-ring svg{width:100%;height:100%;transform:rotate(-90deg)}.timer-value{position:absolute;inset:0;display:grid;place-items:center;color:var(--accent);font-family:"JetBrains Mono",monospace;font-size:13px;font-weight:700;font-variant-numeric:tabular-nums}.render-label{color:var(--ink-2);font-family:"JetBrains Mono",monospace;font-size:10px;text-transform:uppercase;letter-spacing:.2em;line-height:1.5}.render-dot{display:inline-block;width:5px;height:5px;margin-right:5px;border-radius:50%;background:var(--accent);vertical-align:middle;animation:renderPulse 1.5s ease-in-out infinite}@keyframes renderPulse{0%,100%{opacity:1}50%{opacity:.35}}
+
 .section{padding:72px 0}.section-label{display:inline-flex;align-items:center;gap:8px;margin-bottom:20px;padding:5px 10px;border:1px solid var(--line-1);border-radius:999px;background:var(--glass-1);font-family:"JetBrains Mono",monospace;font-size:10px;text-transform:uppercase;letter-spacing:.2em;color:var(--ink-2)}.section-label:before{content:"";width:6px;height:6px;border-radius:50%;background:var(--accent)}.section h2{max-width:780px;font-size:36px;line-height:1.05;letter-spacing:-.045em;font-weight:750}.section-lead{max-width:560px;margin-top:18px;color:var(--ink-2);font-size:15px;line-height:1.6}
 
 .demo-grid{display:grid;grid-template-columns:1fr;gap:30px;align-items:center}.demo-card{padding:20px;border:1px solid var(--line-1);border-radius:20px;background:var(--surface-1)}.mono-label{margin-bottom:12px;font-family:"JetBrains Mono",monospace;font-size:10px;text-transform:uppercase;letter-spacing:.2em;color:var(--ink-2)}.input-card{position:relative;padding:16px;border:1px solid var(--line-1);border-radius:12px;background:linear-gradient(180deg,#1a1a1a,#0d0d0d);overflow:hidden}.input-card:before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--accent)}.quote{font-family:"Instrument Serif",Georgia,serif;font-style:italic;font-size:18px;line-height:1.55}.quote span{color:var(--accent);font-size:1.5em}.audio-meta{margin-top:13px;padding-top:13px;border-top:1px solid var(--line-1);font-family:"JetBrains Mono",monospace;font-size:9px;color:var(--ink-2)}
@@ -73,7 +98,7 @@ footer{position:relative;z-index:1;border-top:1px solid var(--line-1);padding:34
 .ob-step{display:none;flex:1;padding:46px 6px 0}.ob-step.active{display:flex;flex-direction:column}.ob-kicker{width:max-content;margin-bottom:18px;padding:6px 10px;border:1px solid rgba(212,255,58,.24);border-radius:999px;background:var(--accent-soft);color:var(--accent);font-family:"JetBrains Mono",monospace;font-size:9px;letter-spacing:.13em;text-transform:uppercase}.ob-title{font-size:42px;line-height:.98;letter-spacing:-.05em;font-weight:750}.ob-title em{font-family:"Instrument Serif",Georgia,serif;font-style:italic;font-weight:400;color:var(--ink-2)}.ob-copy{margin:14px 0 26px;color:var(--ink-2);font-size:14px;line-height:1.6}.fields{display:grid;gap:12px}.label{margin:0 0 7px 3px;font-family:"JetBrains Mono",monospace;font-size:9px;text-transform:uppercase;letter-spacing:.12em;color:var(--ink-2)}.input,.textarea{width:100%;border:1px solid var(--line-2);border-radius:16px;background:var(--surface-1);outline:none;padding:0 15px;color:var(--ink);font-size:14px}.input{height:54px}.textarea{min-height:106px;padding-top:14px;resize:none;line-height:1.5}.input:focus,.textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(212,255,58,.08)}.choices{display:grid;grid-template-columns:1fr 1fr;gap:9px}.choice{min-height:76px;padding:14px;border:1px solid var(--line-2);border-radius:16px;background:var(--surface-1);text-align:left;font-size:13px;font-weight:750}.choice.selected{border-color:var(--accent);background:var(--accent-soft);color:var(--accent)}.choice small{display:block;margin-top:6px;color:var(--ink-3);font-size:9px;font-weight:500}.spacer{flex:1;min-height:28px}.next,.pay{width:100%;min-height:56px;margin-top:24px;border-radius:999px;background:var(--accent);color:var(--bg);font-size:14px;font-weight:800}.order{padding:18px;border:1px solid var(--line-2);border-radius:18px;background:var(--surface-1)}.order-row{display:flex;justify-content:space-between;gap:14px;padding:12px 0;border-bottom:1px solid var(--line-1);font-size:12px}.order-row:last-child{border-bottom:0}.order-row span{color:var(--ink-2);text-align:right}.total{display:flex;align-items:end;justify-content:space-between;margin-top:22px}.total span{color:var(--ink-2);font-size:10px;line-height:1.4}.total strong{font-size:54px;line-height:.86;letter-spacing:-.06em}.secure{text-align:center;margin-top:10px;color:var(--ink-3);font-size:9px}.error{display:none;margin-top:12px;padding:12px 14px;border:1px solid rgba(255,90,90,.28);border-radius:13px;background:rgba(255,90,90,.08);color:#ff8d8d;font-size:11px}.error.show{display:block}.success{display:none;max-width:520px;margin:22px auto 0;padding:14px 16px;border:1px solid rgba(212,255,58,.24);border-radius:14px;background:var(--accent-soft);color:var(--accent);font-size:12px}.success.show{display:block}
 @keyframes wave{0%,100%{height:7px}50%{height:34px}}
 @media(min-width:640px){.hero-actions{max-width:none;flex-direction:row;justify-content:center;align-items:center}.footer-row{flex-direction:row;justify-content:space-between;align-items:center}.showcase-grid{grid-template-columns:repeat(3,1fr)}.shot{min-height:330px}}
-@media(min-width:768px){.nav-links{display:flex}.hero{padding-top:180px;padding-bottom:92px}.hero-copy{font-size:18px}.section{padding:110px 0}.section h2{font-size:46px}.demo-grid{grid-template-columns:1.08fr .92fr;gap:72px}.price-card{padding:30px}.final{padding:120px 0 140px}}
+@media(min-width:768px){.nav-links{display:flex}.mega-strike{height:7px}.features-head h2{font-size:44px}.features-head p{font-size:17px}.bento{grid-template-columns:repeat(12,minmax(0,1fr));gap:20px}.feature-format{grid-column:span 8;min-height:360px}.feature-long{grid-column:span 4;min-height:320px}.feature-own{grid-column:span 4;min-height:320px}.feature-speed{grid-column:span 8;min-height:360px}.hero{padding-top:180px;padding-bottom:92px}.hero-copy{font-size:18px}.section{padding:110px 0}.section h2{font-size:46px}.demo-grid{grid-template-columns:1.08fr .92fr;gap:72px}.price-card{padding:30px}.final{padding:120px 0 140px}}
 @media(max-width:520px){.nav{top:48px;width:calc(100% - 20px);padding-left:14px}.announcement{font-size:9px;padding-inline:8px}.nav-cta{font-size:12px;padding-inline:13px}.hero{padding-top:132px}.hero h1{font-size:46px}.showcase{padding-top:10px}.shot{min-height:230px}.guarantees{grid-template-columns:1fr}.ob-title{font-size:38px}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.wave i{animation:none}}
 </style>
@@ -86,7 +111,7 @@ footer{position:relative;z-index:1;border-top:1px solid var(--line-1);padding:34
 <nav class="nav" id="nav">
   <a class="brand" href="/"><span class="brand-mark" aria-hidden="true"></span>CLIPFA.ST</a>
   <div class="nav-links">
-    <a href="#demo">Concept</a>
+    <a href="#features">Features</a>
     <a href="#process">Process</a>
     <a href="#offre">Offre</a>
     <a href="#faq">FAQ</a>
@@ -137,6 +162,16 @@ footer{position:relative;z-index:1;border-top:1px solid var(--line-1);padding:34
   </div>
 </section>
 
+<section class="mega-section" aria-label="Make clips, not excuses">
+  <div class="wrap">
+    <h2 class="mega-title">Make clips.<br><span class="mega-muted">Not excuses.<span class="mega-strike" aria-hidden="true"></span></span></h2>
+    <p class="mega-copy">Make clips that ship. Not clips that wait.</p>
+    <div class="mini-strip" aria-label="Clip formats preview">
+      <div class="mini-clip"></div><div class="mini-clip"></div><div class="mini-clip"></div><div class="mini-clip"></div><div class="mini-clip"></div>
+    </div>
+  </div>
+</section>
+
 <section class="section" id="demo">
   <div class="wrap">
     <div class="demo-grid">
@@ -162,6 +197,66 @@ footer{position:relative;z-index:1;border-top:1px solid var(--line-1);padding:34
         <p class="section-lead">Tu ne commandes pas un template. Le clip part de ton morceau, de ton esthétique et de tes références. Chaque projet est traité comme une direction artistique à part entière.</p>
         <button class="btn-primary" type="button" data-onboard style="margin-top:28px">Analyser mon morceau <span class="btn-arrow">→</span></button>
       </div>
+    </div>
+  </div>
+</section>
+
+<section class="features-section" id="features">
+  <div class="wrap">
+    <div class="features-head">
+      <div class="section-label">FEATURES</div>
+      <h2>Studio-quality clips,<br><span class="serif">without the studio.</span></h2>
+      <p>No film crew. No editor. No label approval. Drop your track, describe the vibe, ship.</p>
+    </div>
+
+    <div class="bento">
+      <article class="studio-feature large feature-format">
+        <div class="feature-kicker"><span class="feature-num">01</span>EVERY FORMAT</div>
+        <h3>One audio file. <span class="lime">Every format.</span></h3>
+        <p>Vertical, horizontal, square — all aspect ratios in one generation. TikTok, YouTube, IG, Spotify Canvas. Same source, same output.</p>
+        <div class="format-previews">
+          <div class="format-box format-portrait" data-format="9:16"></div>
+          <div class="format-box format-wide" data-format="16:9"></div>
+          <div class="format-box format-square" data-format="1:1"></div>
+        </div>
+      </article>
+
+      <article class="studio-feature feature-long">
+        <div class="feature-kicker"><span class="feature-num">02</span>LONG FORMAT</div>
+        <h3>Up to <span class="lime">8 minutes.</span></h3>
+        <p>Where others cap at 15 seconds, clipfa.st renders full-length tracks.</p>
+        <div class="compare-bars" aria-label="Maximum clip length comparison">
+          <div class="compare-row"><span class="compare-name">SORA</span><span class="compare-track"><span class="compare-fill" style="display:block;width:6%"></span></span><span class="compare-value">20s</span></div>
+          <div class="compare-row"><span class="compare-name">KLING</span><span class="compare-track"><span class="compare-fill kling" style="display:block;width:25%"></span></span><span class="compare-value">2min</span></div>
+          <div class="compare-row"><span class="compare-name">CLIPFA.ST</span><span class="compare-track"><span class="compare-fill clipfast" style="display:block;width:100%"></span></span><span class="compare-value accent">8min</span></div>
+        </div>
+      </article>
+
+      <article class="studio-feature feature-own">
+        <div class="feature-kicker"><span class="feature-num">03</span>OWNERSHIP</div>
+        <h3>You <span class="serif">own</span> it.</h3>
+        <p>Full commercial license with every Creator and Pro clip.</p>
+        <div class="license-card" aria-label="Commercial license PDF">
+          <span class="pdf-icon" aria-hidden="true"></span>
+          <span class="license-copy"><b>Commercial License</b><span>DOWNLOADABLE PDF</span></span>
+        </div>
+      </article>
+
+      <article class="studio-feature large feature-speed">
+        <div class="feature-kicker"><span class="feature-num">04</span>SPEED</div>
+        <h3>Fast. <span class="lime">Like really.</span></h3>
+        <p>3-min clip rendered in ~12 minutes. Coffee, done.</p>
+        <div class="speed-demo">
+          <div class="timer-ring">
+            <svg viewBox="0 0 80 80" aria-hidden="true">
+              <circle cx="40" cy="40" r="35" fill="none" stroke="var(--line-2)" stroke-width="5"></circle>
+              <circle id="speedRing" cx="40" cy="40" r="35" fill="none" stroke="var(--accent)" stroke-width="5" stroke-linecap="round" stroke-dasharray="220" stroke-dashoffset="0"></circle>
+            </svg>
+            <span class="timer-value" id="speedTimer">11:06</span>
+          </div>
+          <div class="render-label"><span class="render-dot"></span>RENDERING<br>YOUR CLIP</div>
+        </div>
+      </article>
     </div>
   </div>
 </section>
@@ -306,6 +401,24 @@ footer{position:relative;z-index:1;border-top:1px solid var(--line-1);padding:34
 
 <script>
 (function(){
+  const speedTimer=document.getElementById('speedTimer');
+  const speedRing=document.getElementById('speedRing');
+  if(speedTimer&&speedRing){
+    const START=11*60+6;
+    let total=START;
+    const CIRC=220;
+    const tick=()=>{
+      const min=Math.floor(total/60);
+      const sec=String(total%60).padStart(2,'0');
+      speedTimer.textContent=min+':'+sec;
+      const progress=1-total/START;
+      speedRing.style.strokeDashoffset=String(CIRC*(1-progress));
+      total=total<=0?START:total-1;
+    };
+    tick();
+    setInterval(tick,1000);
+  }
+
   const nav=document.getElementById('nav');
   const onScroll=()=>nav.classList.toggle('scrolled',window.scrollY>60);
   window.addEventListener('scroll',onScroll,{passive:true});onScroll();
