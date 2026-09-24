@@ -3,9 +3,6 @@
   'use strict';
   const PREVIEW_LIMIT = 12;
   const uploads = [
-    {id:'kebab-upload-01',src:'/media/kebab/kebab-upload-01.mp4',embeddedText:true,hook:''},
-    {id:'kebab-upload-02',src:'/media/kebab/kebab-upload-02.mp4',embeddedText:true,hook:''},
-    {id:'kebab-upload-03',src:'/media/kebab/kebab-upload-03.mp4',embeddedText:true,hook:''},
     {id:'kebab-broche-097f153d',src:'/media/kebab/broche-097f153d.mp4',poster:'/media/kebab/broche-097f153d.jpg',hook:"La découpe qui donne faim avant même la première bouchée.",placement:'top'},
     {id:'kebab-voiture-3f655e32',src:'/media/kebab/voiture-3f655e32.mp4',poster:'/media/kebab/voiture-3f655e32.jpg',hook:"Tu avais prévu de manger chez toi. Tu n’as pas tenu jusque-là.",placement:'top'},
     {id:'kebab-pitas-44da836d',src:'/media/kebab/pitas-44da836d.mp4',poster:'/media/kebab/pitas-44da836d.jpg',hook:"Le plus dur ? Choisir lequel tu attaques en premier.",placement:'top'},
