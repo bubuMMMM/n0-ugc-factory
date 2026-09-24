@@ -3,6 +3,9 @@
   'use strict';
   const PREVIEW_LIMIT = 12;
   const uploads = [
+    {id:'kebab-collection-08',src:'https://doublespeed2.blob.core.windows.net/media/media/a8f3d76e-d5c3-47e0-8434-be53cbbab810/generated/ab67c89b-bb22-4a5a-a72d-a2758a2e11d5-019f5211-f03e-7553-b555-f809d5152897.mp4',embeddedText:true,hook:''},
+    {id:'kebab-collection-09',src:'https://doublespeed2.blob.core.windows.net/media/media/a8f3d76e-d5c3-47e0-8434-be53cbbab810/generated/27bc7c2d-5cf2-4674-88c8-acc213397bc4-019f62e2-a50e-73d1-b378-3cfdcc15bf49.mp4',embeddedText:true,hook:''},
+    {id:'kebab-collection-10',src:'https://doublespeed2.blob.core.windows.net/media/media/a8f3d76e-d5c3-47e0-8434-be53cbbab810/generated/c97fddf9-e325-4d9d-b9e4-9b7dcf76ab04-019f4e0f-83fd-7151-8d23-9642207b997c.mp4',embeddedText:true,hook:''},
     {id:'kebab-broche-097f153d',src:'/media/kebab/broche-097f153d.mp4',poster:'/media/kebab/broche-097f153d.jpg',hook:"La découpe qui donne faim avant même la première bouchée.",placement:'top'},
     {id:'kebab-voiture-3f655e32',src:'/media/kebab/voiture-3f655e32.mp4',poster:'/media/kebab/voiture-3f655e32.jpg',hook:"Tu avais prévu de manger chez toi. Tu n’as pas tenu jusque-là.",placement:'top'},
     {id:'kebab-pitas-44da836d',src:'/media/kebab/pitas-44da836d.mp4',poster:'/media/kebab/pitas-44da836d.jpg',hook:"Le plus dur ? Choisir lequel tu attaques en premier.",placement:'top'},
