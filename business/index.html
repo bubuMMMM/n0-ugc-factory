@@ -4,260 +4,225 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#f7f7f5">
-<title>CLIPFA.ST Business — Transformez votre activité en contenu</title>
-<meta name="description" content="Donnez-nous votre site, votre page d'app ou décrivez votre activité. CLIPFA.ST transforme votre business en vidéos courtes prêtes à publier.">
-<link rel="stylesheet" href="/assets/brand.css?v=20260923-1">
+<title>CLIPFA.ST Business — Des vidéos UGC pour votre activité</title>
+<meta name="description" content="Analysez votre site, votre page App Store ou décrivez votre activité pour créer du contenu vidéo UGC adapté à votre business.">
 <style>
-:root{--paper:#f7f7f5;--ink:#090909;--muted:#858585;--line:#deded9;--soft:#ececea;--card:#fff}
+:root{--paper:#f7f7f5;--ink:#0a0a0a;--muted:#8a8a8a;--line:#deded9}
 *{box-sizing:border-box}
 html{background:var(--paper);color:var(--ink);scroll-behavior:smooth}
-body{margin:0;background:var(--paper);color:var(--ink);font-family:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;overflow-x:hidden;-webkit-font-smoothing:antialiased}
 button,input,textarea,a{font:inherit}
 button{cursor:pointer}
-a{color:inherit}
-.shell{width:min(calc(100% - 28px),1180px);margin:0 auto}
-.topbar{height:58px;margin-top:14px;padding:0 12px 0 18px;border-radius:32px;background:#050505;color:#fff;display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:18px}
-.topbar .brand{text-decoration:none}
-.nav{display:flex;justify-content:center;align-items:center;gap:7px}
-.nav a{padding:9px 12px;border-radius:999px;color:#bcbcc2;text-decoration:none;font-size:12px;font-weight:650}
-.nav a:hover,.nav a[aria-current="page"]{background:#151517;color:#fff}
-.start{height:42px;min-width:126px;border:0;border-radius:999px;background:#fff;color:#090909;padding:0 18px;text-decoration:none;display:flex;align-items:center;justify-content:center;gap:11px;font-size:13px;font-weight:800}
-.start span{font-size:21px;font-weight:400;line-height:1}
+.home-ugc-hero{width:100%;max-width:430px;min-height:100svh;margin:0 auto;background:var(--paper);overflow:hidden}
+.home-shell{min-height:100svh;padding:calc(14px + env(safe-area-inset-top)) 14px 22px;display:flex;flex-direction:column}
+.home-topbar{height:58px;display:grid;grid-template-columns:1fr auto auto;align-items:center;gap:10px;padding:0 12px 0 18px;border-radius:32px;background:#050505;color:#fff}
+.home-start{height:42px;min-width:126px;border-radius:999px;background:#fff;color:#090909;padding:0 16px 0 20px;display:flex;align-items:center;justify-content:center;gap:12px;font-size:14px;font-weight:800;text-decoration:none}
+.home-start b{font-size:24px;font-weight:400;line-height:1}
+.home-menu{position:relative;width:38px;height:38px;border:0;background:transparent;padding:0}
+.home-menu i,.home-menu:before,.home-menu:after{content:"";position:absolute;left:6px;width:27px;height:2px;border-radius:999px;background:#fff}
+.home-menu:before{top:9px}.home-menu i{top:18px}.home-menu:after{top:27px}
+.home-copy{text-align:center;margin-top:clamp(82px,12svh,118px);padding:0 8px}
+.home-proof{width:max-content;max-width:100%;margin:0 auto 26px;min-height:38px;padding:9px 16px;display:flex;align-items:center;gap:9px;border:1px solid var(--line);border-radius:999px;background:#ececea;color:#2b2b2b;font-size:12px;font-weight:600}
+.home-proof svg{width:15px;height:15px}
+.home-copy h1{margin:0 auto;max-width:398px;font-size:clamp(43px,11.6vw,54px);line-height:.96;font-weight:520;letter-spacing:-3.1px;text-wrap:balance}
+.home-copy p{margin:20px auto 0;color:#8a8a8a;font-size:16px;line-height:1.3;font-weight:500;letter-spacing:-.55px}
+.home-featured{position:relative;width:calc(100% + 28px);margin-left:-14px;margin-top:clamp(50px,7svh,72px);display:flex;align-items:center;justify-content:center;gap:12px;overflow:hidden;flex:none}
+.home-card{position:relative;flex:0 0 154px;aspect-ratio:9/16;overflow:hidden;border-radius:20px;background:#e7e7e3}
+.home-card.main{flex-basis:180px}
+.home-card video{width:100%;height:100%;display:block;object-fit:cover;background:#e7e7e3}
+.home-card:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.04),transparent 38%,rgba(0,0,0,.16));pointer-events:none}
+.home-card strong{position:absolute;z-index:2;top:58px;left:50%;transform:translateX(-50%);width:126px;color:#fff;font-size:20px;line-height:.96;font-weight:900;letter-spacing:-.8px;text-align:center;text-shadow:0 2px 12px rgba(0,0,0,.4)}
+.home-explore{margin:auto auto 0;padding-top:30px;display:flex;flex-direction:column;align-items:center;gap:5px;color:#7d7d7d;text-decoration:none;font-size:12px;font-weight:500}
+.home-explore span{font-size:25px;line-height:1}
 
-.hero{padding:88px 0 56px;text-align:center}
-.hero-badge{position:relative;overflow:hidden;width:max-content;max-width:100%;min-height:38px;margin:0 auto 26px;padding:9px 16px;border:1px solid var(--line);border-radius:999px;background:rgba(238,238,234,.88);display:flex;align-items:center;gap:9px;color:#2b2b2b;font-size:12px;font-weight:600;box-shadow:inset 0 1px 0 rgba(255,255,255,.82),0 8px 28px rgba(0,0,0,.035)}
-.hero-badge svg{width:15px;height:15px}
-.hero h1{max-width:820px;margin:0 auto;font-size:clamp(52px,6.4vw,86px);line-height:.92;font-weight:540;letter-spacing:-.065em;text-wrap:balance}
-.hero h1 em{font-style:normal;color:#8b8b87}
-.hero-copy{max-width:680px;margin:23px auto 0;color:#868681;font-size:clamp(15px,1.5vw,18px);line-height:1.45;letter-spacing:-.35px;text-wrap:balance}
+.home-analyser{background:#fff;color:#0a0a0a;padding:70px 18px 84px;border-top:1px solid #ececea}
+.home-analyser-inner{width:min(100%,760px);margin:0 auto;text-align:center}
+.home-analyser-kicker{margin:0 0 10px;color:#8a8a8a;font-size:10px;font-weight:800;letter-spacing:.16em}
+.home-analyser h2{margin:0;font-size:clamp(42px,8vw,66px);line-height:.96;letter-spacing:-3px;font-weight:540}
+.home-analyser-copy{max-width:520px;margin:16px auto 28px;color:#858585;font-size:14px;line-height:1.45}
 
-.source-wrap{width:min(100%,760px);margin:42px auto 0}
-.source-tabs{position:relative;z-index:2;width:max-content;max-width:calc(100% - 28px);margin:0 auto -1px;display:grid;grid-template-columns:repeat(3,1fr);border:1px solid var(--line);border-bottom:0;border-radius:20px 20px 0 0;background:#efefed;overflow:hidden}
-.source-tab{height:48px;min-width:150px;padding:0 18px;border:0;border-right:1px solid var(--line);background:transparent;color:#77777b;display:flex;align-items:center;justify-content:center;gap:10px;font-size:13px;font-weight:700;white-space:nowrap}
-.source-tab:last-child{border-right:0}
-.source-tab svg{width:19px;height:19px;stroke-width:1.8}
-.source-tab.active{background:#fff;color:#111}
-.source-card{position:relative;z-index:1;padding:18px;border:1px solid var(--line);border-radius:26px;background:#fff;box-shadow:0 18px 48px rgba(0,0,0,.055)}
-.source-field{position:relative}
-.source-input,.source-textarea{width:100%;border:1px solid #dededb;background:#fbfbfa;color:#111;outline:0;transition:border-color .18s,box-shadow .18s}
-.source-input{height:62px;border-radius:999px;padding:0 20px 0 52px;font-size:16px}
-.source-textarea{min-height:150px;border-radius:22px;padding:18px 20px;font-size:15px;line-height:1.5;resize:vertical;display:none}
-.source-input:focus,.source-textarea:focus{border-color:#aaa9a4;box-shadow:0 0 0 4px rgba(0,0,0,.035)}
-.source-icon{position:absolute;left:20px;top:50%;transform:translateY(-50%);width:20px;height:20px;color:#979792;pointer-events:none}
-.source-icon svg{width:100%;height:100%}
-.source-submit{width:100%;height:58px;margin-top:12px;border:0;border-radius:999px;background:#090909;color:#fff;display:flex;align-items:center;justify-content:center;gap:16px;font-size:15px;font-weight:800;transition:transform .16s,background .16s}
-.source-submit:hover{background:#1a1a1a;transform:translateY(-1px)}
-.source-submit span:last-child{font-size:22px;font-weight:400}
-.source-error{min-height:17px;margin:9px 8px 0;color:#aa3434;text-align:left;font-size:10px}
+.mode-tabs{position:relative;z-index:2;width:max-content;max-width:calc(100% - 20px);margin:0 auto -1px;display:grid;grid-template-columns:repeat(3,1fr);border:1px solid var(--line);border-bottom:0;border-radius:18px 18px 0 0;background:#efefed;overflow:hidden}
+.mode-tab{height:45px;min-width:138px;padding:0 15px;border:0;border-right:1px solid var(--line);background:transparent;color:#7c7c80;display:flex;align-items:center;justify-content:center;gap:8px;font-size:12px;font-weight:700;white-space:nowrap}
+.mode-tab:last-child{border-right:0}
+.mode-tab svg{width:17px;height:17px}
+.mode-tab.active{background:#f7f7f5;color:#111}
 
-.features{padding:0 0 72px}
-.feature-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-.feature{min-height:118px;padding:18px;border:1px solid var(--line);border-radius:22px;background:rgba(255,255,255,.38);display:grid;grid-template-columns:48px 1fr;gap:15px;align-items:center}
-.feature-icon{width:48px;height:48px;border-radius:15px;background:#ececea;display:grid;place-items:center}
-.feature-icon svg{width:21px;height:21px}
-.feature h3{margin:0 0 5px;font-size:14px;letter-spacing:-.25px}
-.feature p{margin:0;color:#888883;font-size:12px;line-height:1.45}
+.hero-form-wrap{width:min(760px,100%);margin:0 auto}
+.site-form{width:100%;position:relative;padding:12px;border:1px solid var(--line);border-radius:22px;background:#f7f7f5}
+.site-field{width:100%;min-height:60px;display:flex;align-items:center;gap:10px;padding:6px 6px 6px 18px;border:1px solid #dededb;border-radius:17px;background:#fff}
+.site-icon{width:21px;height:21px;display:grid;place-items:center;color:#777;flex:none}
+.site-icon svg{width:100%;height:100%}
+.site-field input{flex:1;min-width:0;height:46px;border:0;outline:0;background:transparent;color:#111;font-size:15px;padding:0 6px}
+.site-field input::placeholder{color:#929292}
+.site-submit{min-height:48px;flex:none;border:0;border-radius:13px;padding:0 18px;display:inline-flex;align-items:center;justify-content:center;gap:13px;background:#080808;color:#fff;font-size:14px;font-weight:750}
+.site-submit:hover{background:#272727}
+.description-field{display:none}
+.description-field textarea{width:100%;min-height:145px;border:1px solid #dededb;border-radius:17px;background:#fff;color:#111;outline:0;padding:16px;font-size:14px;line-height:1.5;resize:vertical}
+.description-field .site-submit{width:100%;margin-top:10px}
+.site-error{min-height:17px;margin:8px 7px 0;color:#9a4d4d;text-align:left;font-size:10px}
 
-.story{padding:18px 0 92px}
-.story-card{border:1px solid var(--line);border-radius:30px;background:#efefec;padding:44px;display:grid;grid-template-columns:minmax(0,.92fr) minmax(430px,1.08fr);gap:54px;align-items:center}
-.story-kicker{width:max-content;margin:0 0 18px;padding:8px 11px;border-radius:999px;background:#e1e1de;color:#777772;font-size:9px;font-weight:800;letter-spacing:.08em;text-transform:uppercase}
-.story h2{max-width:500px;margin:0;font-size:clamp(38px,4.2vw,58px);line-height:.96;font-weight:540;letter-spacing:-.055em;text-wrap:balance}
-.story-copy{max-width:510px;margin:18px 0 0;color:#858580;font-size:15px;line-height:1.5}
-.story-list{display:grid;gap:11px;margin-top:24px}
-.story-list div{display:flex;gap:10px;align-items:center;font-size:13px;font-weight:650}
-.check{width:21px;height:21px;border-radius:50%;background:#0b0b0b;color:#fff;display:grid;place-items:center;font-size:11px;flex:none}
+.gallery{background:#f7f7f5;padding:64px 14px 88px;border-top:1px solid #ececea}
+.gallery-inner{width:min(100%,1280px);margin:0 auto}
+.gallery-head{text-align:center;margin:0 auto 30px}
+.gallery-kicker{margin:0 0 10px;color:#8a8a8a;font-size:10px;font-weight:800;letter-spacing:.16em}
+.gallery h2{margin:0;font-size:clamp(38px,7vw,58px);line-height:.96;letter-spacing:-2.8px;font-weight:540}
+.video-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.preview-card{position:relative;aspect-ratio:9/16;overflow:hidden;border-radius:14px;background:#e7e7e3}
+.preview-card video{position:absolute;inset:0;width:100%;height:100%;display:block;object-fit:cover;background:#ddd}
+.preview-card:after{content:"";position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.2),transparent 48%)}
 
-.visual{position:relative;min-height:410px}
-.browser{position:absolute;left:0;top:46px;width:55%;height:285px;border:1px solid #d9d9d5;border-radius:22px;background:#fbfbfa;box-shadow:0 16px 40px rgba(0,0,0,.04);overflow:hidden}
-.browser-top{height:34px;border-bottom:1px solid #e4e4e0;display:flex;align-items:center;gap:5px;padding:0 11px}
-.browser-top i{width:7px;height:7px;border-radius:50%;background:#d1d1cd}
-.browser-address{height:18px;flex:1;margin-left:5px;border-radius:999px;background:#eeeeda;color:#aaa;font-size:7px;display:flex;align-items:center;padding:0 9px}
-.browser-body{padding:24px}
-.browser-label{font-size:9px;color:#898985}
-.browser-title{margin:8px 0 18px;font-size:23px;line-height:1;font-weight:700;letter-spacing:-1px}
-.browser-button{width:70px;height:20px;border-radius:999px;background:#151515}
-.browser-shape{position:absolute;right:18px;bottom:18px;width:42%;height:46%;border-radius:18px;background:linear-gradient(145deg,#deded8,#c7c7c0)}
-.phone{position:absolute;width:144px;aspect-ratio:9/16;border:5px solid #fff;border-radius:26px;overflow:hidden;box-shadow:0 18px 45px rgba(0,0,0,.13);background:#1c1c1c}
-.phone:before{content:"";position:absolute;inset:0;background:linear-gradient(145deg,#b8b5aa,#615e55 54%,#20201e);z-index:0}
-.phone:after{content:"";position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.62),transparent 58%);z-index:1}
-.phone.one{right:125px;top:0;z-index:3;transform:rotate(-1deg)}
-.phone.two{right:20px;top:48px;z-index:2;transform:rotate(4deg) scale(.92)}
-.phone.three{right:-46px;top:94px;z-index:1;transform:rotate(7deg) scale(.8);opacity:.82}
-.phone-copy{position:absolute;z-index:2;left:14px;right:10px;bottom:38px;color:#fff;font-size:17px;line-height:1.02;font-weight:800;letter-spacing:-.6px}
-.phone-meta{position:absolute;z-index:2;left:14px;bottom:14px;color:#fff;font-size:8px}
-.arrow-curve{position:absolute;right:245px;top:12px;width:88px;height:42px;border-top:2px solid #242424;border-radius:50%;transform:rotate(8deg)}
-.arrow-curve:after{content:"→";position:absolute;right:-7px;top:-14px;font-size:19px;transform:rotate(-8deg)}
+.simple-menu{position:fixed;z-index:100;inset:0;background:rgba(0,0,0,.96);color:#fff;opacity:0;visibility:hidden;transition:.2s}
+.simple-menu.open{opacity:1;visibility:visible}
+.menu-panel{width:min(100%,430px);min-height:100dvh;margin:0 auto;padding:calc(14px + env(safe-area-inset-top)) 22px;display:flex;flex-direction:column}
+.menu-head{height:42px;display:flex;align-items:center;justify-content:space-between}
+.menu-close{width:38px;height:38px;border:1px solid #2a2a2e;border-radius:50%;background:#0b0b0d;color:#fff;font-size:22px}
+.menu-kicker{margin:34px 0 14px;color:#707078;font-size:8px;letter-spacing:.22em;font-weight:850}
+.menu-links{display:grid}
+.menu-links a{min-height:56px;border-bottom:1px solid #202024;color:#fff;text-decoration:none;display:flex;align-items:center;justify-content:space-between;font-size:20px;font-weight:650}
 
-.footer{padding:30px 0 42px;border-top:1px solid var(--line);color:#858580}
-.footer-row{display:flex;justify-content:space-between;align-items:center;gap:20px;font-size:11px}
-.footer-brand{font-weight:800;letter-spacing:.1em;color:#222}
-
-@media(max-width:900px){
-  .nav{display:none}
-  .topbar{grid-template-columns:1fr auto}
-  .story-card{grid-template-columns:1fr;gap:34px}
-  .visual{min-height:390px}
-}
+@media(max-height:780px){.home-copy{margin-top:62px}.home-featured{margin-top:34px}.home-card{flex-basis:138px}.home-card.main{flex-basis:160px}.home-explore{padding-top:18px}}
 @media(max-width:680px){
-  .shell{width:calc(100% - 28px)}
-  .topbar{margin-top:14px}
-  .start{min-width:118px;font-size:12px}
-  .hero{padding:70px 0 42px}
-  .hero-badge{margin-bottom:22px}
-  .hero h1{font-size:clamp(43px,12.2vw,56px);letter-spacing:-3.15px}
-  .hero-copy{max-width:360px;margin-top:18px;font-size:15px;line-height:1.38}
-  .source-wrap{margin-top:36px}
-  .source-tabs{width:calc(100% - 28px)}
-  .source-tab{min-width:0;height:44px;padding:0 10px;font-size:11px;gap:6px}
-  .source-tab svg{width:16px;height:16px}
-  .source-card{padding:12px;border-radius:21px}
-  .source-input{height:57px;padding-left:47px;font-size:14px}
-  .source-icon{left:18px;width:18px;height:18px}
-  .source-submit{height:55px;font-size:14px}
-  .features{padding-bottom:56px}
-  .feature-grid{grid-template-columns:1fr;gap:8px}
-  .feature{min-height:86px;padding:14px;border-radius:18px;grid-template-columns:43px 1fr}
-  .feature-icon{width:43px;height:43px;border-radius:14px}
-  .story{padding-top:0;padding-bottom:68px}
-  .story-card{padding:24px 18px;border-radius:24px}
-  .story h2{font-size:40px;letter-spacing:-2.4px}
-  .story-copy{font-size:14px}
-  .visual{min-height:340px}
-  .browser{width:66%;height:235px;top:58px}
-  .browser-title{font-size:18px}
-  .phone{width:112px;border-width:4px;border-radius:21px}
-  .phone.one{right:78px}
-  .phone.two{right:1px;top:50px}
-  .phone.three{display:none}
-  .phone-copy{font-size:14px}
-  .arrow-curve{right:170px;width:58px}
-  .footer-row{display:block}
-  .footer-row span{display:block;margin-top:5px}
+  .mode-tabs{width:calc(100% - 18px)}
+  .mode-tab{min-width:0;padding:0 8px;font-size:10.5px;gap:5px}
+  .site-field{display:grid;grid-template-columns:auto minmax(0,1fr);gap:6px 8px;padding:8px}
+  .site-icon{margin-left:5px}
+  .site-field input{height:42px;font-size:15px;padding-left:2px}
+  .site-submit{grid-column:1/-1;width:100%}
 }
-@media(max-width:370px){
-  .start{min-width:106px;padding-inline:13px}
-  .source-tab{font-size:10px}
+@media(max-width:370px){.home-copy h1{font-size:40px;letter-spacing:-2.5px}.home-copy p{font-size:14px}.home-card{flex-basis:138px}.home-card.main{flex-basis:160px}.home-featured{gap:9px}.home-start{min-width:108px;font-size:12px;padding:0 12px}}
+@media(min-width:900px){
+  .home-ugc-hero{max-width:none;min-height:0}
+  .home-shell{width:min(calc(100% - 80px),1280px);margin-inline:auto;padding:24px 0 64px;min-height:700px;height:clamp(700px,92svh,900px);display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.08fr);grid-template-rows:64px 1fr .5fr;column-gap:clamp(24px,4vw,64px);overflow:visible}
+  .home-topbar{grid-column:1/-1;height:64px;padding:0 16px 0 28px;gap:20px}
+  .home-start{min-width:150px}
+  .home-copy{grid-column:1;grid-row:2;align-self:end;margin:56px 0 0;padding:0;text-align:left;min-width:0}
+  .home-proof{margin:0 0 28px}
+  .home-copy h1{max-width:640px;margin:0;font-size:clamp(52px,5.1vw,76px);line-height:1.02;letter-spacing:-.065em}
+  .home-copy p{margin:24px 0 0;font-size:18px;line-height:1.55;letter-spacing:-.4px;color:#737373}
+  .home-featured{grid-column:2;grid-row:2/4;align-self:center;width:100%;margin:32px 0 0;padding:20px 0;gap:12px;overflow:visible;min-width:0}
+  .home-card{flex:0 1 calc((100% - 24px)*.29);min-width:0;border-radius:22px}
+  .home-card.main{flex-basis:calc((100% - 24px)*.42)}
+  .home-card strong{width:82%;top:18%;font-size:clamp(18px,1.8vw,26px);line-height:1.05}
+  .home-explore{grid-column:1;grid-row:3;align-self:start;justify-self:start;margin:30px 0 0;padding:17px 24px;min-height:56px;border-radius:999px;background:#090909;color:#fff;flex-direction:row;gap:24px;font-size:14px;font-weight:700}
+  .home-explore span{color:inherit}
+  .home-analyser{padding:88px 40px}
+  .home-analyser-inner{width:min(100%,1280px);display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.08fr);column-gap:clamp(24px,4vw,64px);text-align:left;align-items:center}
+  .home-analyser-kicker,.home-analyser h2,.home-analyser-copy{grid-column:1}
+  .home-analyser h2{font-size:clamp(42px,4vw,60px)}
+  .home-analyser-copy{margin:20px 0 0;font-size:16px}
+  .hero-form-wrap{grid-column:2;grid-row:1/4;min-width:0}
+  .mode-tabs{margin-left:0;margin-right:auto}
+  .gallery{padding:78px 40px 104px}
+  .video-grid{grid-template-columns:repeat(5,minmax(0,1fr));gap:16px}
+  .preview-card{border-radius:18px}
+  .menu-panel{width:min(calc(100% - 80px),1120px);padding:32px 0}
 }
 </style>
+<link rel="stylesheet" href="/assets/brand.css?v=20260923-1">
 </head>
 <body>
-<header class="shell">
-  <div class="topbar">
-    <a class="brand" href="/">CLIPFA.ST</a>
-    <nav class="nav" aria-label="Navigation principale">
-      <a href="/">Produit</a>
-      <a href="/metiers">Métiers</a>
-      <a href="/business" aria-current="page">Business</a>
-    </nav>
-    <a class="start" href="#create">Commencer <span>→</span></a>
-  </div>
-</header>
-
-<main>
-  <section class="hero shell">
-    <div class="hero-badge">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 21V5a2 2 0 0 1 2-2h8v18M14 9h4a2 2 0 0 1 2 2v10M8 7h2M8 11h2M8 15h2M17 13h1M17 17h1M2 21h20"/></svg>
-      Pour les entreprises
+<section class="home-ugc-hero" id="top">
+  <div class="home-shell">
+    <div class="home-topbar">
+      <a class="home-brand" href="/" style="text-decoration:none">CLIPFA.ST</a>
+      <a class="home-start" href="#analyser">Commencer <b>→</b></a>
+      <button class="home-menu" id="menuToggle" aria-label="Ouvrir le menu" aria-expanded="false"><i></i></button>
     </div>
-    <h1>Votre business devient <em>du contenu qui performe.</em></h1>
-    <p class="hero-copy">Donnez-nous un site web, une page d’app ou décrivez simplement votre activité. CLIPFA.ST transforme ce contexte en vidéos verticales sur mesure, prêtes à publier.</p>
 
-    <div class="source-wrap" id="create">
-      <div class="source-tabs" role="tablist" aria-label="Source à analyser">
-        <button class="source-tab active" type="button" role="tab" aria-selected="true" data-mode="web">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="9"/><path d="M3.5 9h17M3.5 15h17M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18"/></svg>
-          Web
+    <div class="home-copy">
+      <div class="home-proof">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 21V5a2 2 0 0 1 2-2h8v18M14 9h4a2 2 0 0 1 2 2v10M8 7h2M8 11h2M8 15h2M17 13h1M17 17h1M2 21h20"/></svg>
+        <span>Pour les entreprises</span>
+      </div>
+      <h1>Des vidéos UGC<br>pour votre business</h1>
+      <p>1000 vidéos prêtes à publier.<br>Aucun tournage. Aucun montage.</p>
+    </div>
+
+    <div class="home-featured" aria-label="Exemples de vidéos UGC">
+      <div class="home-card"><video src="https://doublespeed2.blob.core.windows.net/media/media/e3e45b32-d29e-4d2f-a821-c06c4f101bc8/generated/64810d44-8da4-47b6-b392-c28d8a5e35a6-019d4fed-a614-7690-945c-90007fa3799a.mp4" muted playsinline loop autoplay preload="metadata"></video></div>
+      <div class="home-card main"><video src="https://doublespeed2.blob.core.windows.net/media/media/2dca701e-9e20-48a8-b642-3fb04aed5ea6/generated/8c1f6534-8585-46b6-968f-33b3d50694b1-019e41f7-375b-7b10-b49c-78de5c896c8a.mp4" muted playsinline loop autoplay preload="metadata"></video><strong>Votre business.<br>Votre contenu.</strong></div>
+      <div class="home-card"><video src="https://doublespeed2.blob.core.windows.net/media/media/e3e45b32-d29e-4d2f-a821-c06c4f101bc8/generated/74f92628-dbbd-4c35-b81d-47f76090294e-019e59e5-4360-77e2-a238-c471c4d20932.mp4" muted playsinline loop autoplay preload="metadata"></video></div>
+    </div>
+
+    <a class="home-explore" href="#analyser">Analyser mon activité <span>⌄</span></a>
+  </div>
+</section>
+
+<section class="home-analyser" id="analyser">
+  <div class="home-analyser-inner">
+    <p class="home-analyser-kicker">CRÉER VOS VIDÉOS</p>
+    <h2>Donnez-nous<br>votre contexte.</h2>
+    <p class="home-analyser-copy">Un site web, une page App Store ou quelques lignes sur votre activité. On s’occupe du reste.</p>
+
+    <div class="hero-form-wrap">
+      <div class="mode-tabs" role="tablist" aria-label="Source à analyser">
+        <button class="mode-tab active" type="button" role="tab" aria-selected="true" data-mode="web">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="9"/><path d="M3.5 9h17M3.5 15h17M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18"/></svg>Web
         </button>
-        <button class="source-tab" type="button" role="tab" aria-selected="false" data-mode="app">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M9.2 6.7 5 14M14.8 6.7 19 14M7.2 10h9.6M4 17h16M10.4 3l1.6 2.7L13.6 3"/></svg>
-          App Store
+        <button class="mode-tab" type="button" role="tab" aria-selected="false" data-mode="app">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M9.2 6.7 5 14M14.8 6.7 19 14M7.2 10h9.6M4 17h16M10.4 3l1.6 2.7L13.6 3"/></svg>App Store
         </button>
-        <button class="source-tab" type="button" role="tab" aria-selected="false" data-mode="description">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="m4 20 4.2-1 10-10a2.1 2.1 0 0 0-3-3l-10 10L4 20Z"/><path d="m13.8 7.2 3 3"/></svg>
-          Décrire
+        <button class="mode-tab" type="button" role="tab" aria-selected="false" data-mode="description">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="m4 20 4.2-1 10-10a2.1 2.1 0 0 0-3-3l-10 10L4 20Z"/></svg>Décrire
         </button>
       </div>
 
-      <form class="source-card" id="businessForm" novalidate>
-        <div class="source-field" id="urlField">
-          <span class="source-icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M10.6 13.4a4 4 0 0 0 5.66 0l2.12-2.12a4 4 0 0 0-5.66-5.66L11.5 6.84" stroke-width="1.9" stroke-linecap="round"/><path d="M13.4 10.6a4 4 0 0 0-5.66 0l-2.12 2.12a4 4 0 0 0 5.66 5.66l1.22-1.22" stroke-width="1.9" stroke-linecap="round"/></svg>
+      <form id="businessForm" class="site-form" novalidate>
+        <div class="site-field" id="urlField">
+          <span class="site-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M10.6 13.4a4 4 0 0 0 5.66 0l2.12-2.12a4 4 0 0 0-5.66-5.66L11.5 6.84" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/><path d="M13.4 10.6a4 4 0 0 0-5.66 0l-2.12 2.12a4 4 0 0 0 5.66 5.66l1.22-1.22" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>
           </span>
-          <input class="source-input" id="businessUrl" type="url" inputmode="url" autocomplete="url" placeholder="votrebusiness.com">
+          <input id="businessUrl" type="url" inputmode="url" autocomplete="url" placeholder="votrebusiness.com">
+          <button type="submit" class="site-submit"><span>Créer mes 1000 vidéos</span><span aria-hidden="true">→</span></button>
         </div>
-        <textarea class="source-textarea" id="businessDescription" maxlength="4000" placeholder="Ex. Nous sommes un cabinet comptable à Nantes. Nous accompagnons les TPE sur leur comptabilité, leurs déclarations et le pilotage financier. Nos clients veulent gagner du temps et comprendre leurs chiffres sans jargon."></textarea>
-        <button class="source-submit" type="submit"><span>Créer mon contenu</span><span aria-hidden="true">→</span></button>
-        <div class="source-error" id="businessError" aria-live="polite"></div>
+
+        <div class="description-field" id="descriptionField">
+          <textarea id="businessDescription" maxlength="12000" placeholder="Ex. : Nous sommes un cabinet comptable à Nantes. Nous aidons les TPE à gagner du temps et à mieux comprendre leurs chiffres."></textarea>
+          <button type="submit" class="site-submit"><span>Créer mes 1000 vidéos</span><span aria-hidden="true">→</span></button>
+        </div>
+        <div id="businessError" class="site-error" aria-live="polite"></div>
       </form>
     </div>
-  </section>
-
-  <section class="features shell" aria-label="Avantages">
-    <div class="feature-grid">
-      <article class="feature">
-        <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="m12 3 1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8L12 3Z"/><path d="m19 16 .9 2.1L22 19l-2.1.9L19 22l-.9-2.1L16 19l2.1-.9L19 16Z"/></svg></div>
-        <div><h3>Sur mesure</h3><p>Le contenu part de votre activité, votre offre et votre audience.</p></div>
-      </article>
-      <article class="feature">
-        <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="m13 2-8 12h7l-1 8 8-12h-7l1-8Z"/></svg></div>
-        <div><h3>Rapide</h3><p>Votre contexte est analysé puis transformé en idées prêtes à produire.</p></div>
-      </article>
-      <article class="feature">
-        <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 3v12M8 7l4-4 4 4"/><path d="M5 13v6h14v-6"/></svg></div>
-        <div><h3>Prêt à publier</h3><p>Des formats pensés pour TikTok, Instagram, Facebook et Shorts.</p></div>
-      </article>
-    </div>
-  </section>
-
-  <section class="story shell">
-    <div class="story-card">
-      <div>
-        <p class="story-kicker">DE VOTRE ACTIVITÉ À DES VIDÉOS</p>
-        <h2>Un contenu qui raconte vraiment votre business.</h2>
-        <p class="story-copy">Le système lit votre site ou votre description pour comprendre ce que vous vendez, à qui vous le vendez et ce qui mérite d’être mis en avant. Il s’en sert ensuite pour adapter les hooks et les vidéos.</p>
-        <div class="story-list">
-          <div><span class="check">✓</span> Analyse de votre activité et de votre offre</div>
-          <div><span class="check">✓</span> Hooks et angles adaptés à votre audience</div>
-          <div><span class="check">✓</span> Contenu vertical prêt pour vos réseaux</div>
-        </div>
-      </div>
-      <div class="visual" aria-hidden="true">
-        <div class="browser">
-          <div class="browser-top"><i></i><i></i><i></i><div class="browser-address">votrebusiness.com</div></div>
-          <div class="browser-body">
-            <div class="browser-label">Votre entreprise</div>
-            <div class="browser-title">Une offre pensée<br>pour vos clients.</div>
-            <div class="browser-button"></div>
-            <div class="browser-shape"></div>
-          </div>
-        </div>
-        <div class="arrow-curve"></div>
-        <div class="phone one"><div class="phone-copy">Votre offre.<br>Le bon angle.</div><div class="phone-meta">▶ 125K</div></div>
-        <div class="phone two"><div class="phone-copy">Pensé<br>pour eux.</div><div class="phone-meta">▶ 86K</div></div>
-        <div class="phone three"><div class="phone-copy">Une idée.<br>Un post.</div><div class="phone-meta">▶ 42K</div></div>
-      </div>
-    </div>
-  </section>
-</main>
-
-<footer class="footer">
-  <div class="shell footer-row">
-    <span class="footer-brand">CLIPFA.ST</span>
-    <span>Votre activité. Votre contenu.</span>
   </div>
-</footer>
+</section>
+
+<section class="gallery" aria-labelledby="galleryTitle">
+  <div class="gallery-inner">
+    <div class="gallery-head">
+      <p class="gallery-kicker">APERÇUS</p>
+      <h2 id="galleryTitle">Du contenu prêt à poster.</h2>
+    </div>
+    <div class="video-grid" id="businessGrid"></div>
+  </div>
+</section>
+
+<div class="simple-menu" id="siteMenu" aria-hidden="true">
+  <div class="menu-panel">
+    <div class="menu-head">
+      <div class="home-menu-brand">CLIPFA.ST</div>
+      <button class="menu-close" id="menuClose" aria-label="Fermer">×</button>
+    </div>
+    <p class="menu-kicker">NAVIGATION</p>
+    <nav class="menu-links">
+      <a href="/">Accueil <span>→</span></a>
+      <a href="/metiers">Métiers <span>→</span></a>
+      <a href="/business">Business <span>→</span></a>
+    </nav>
+  </div>
+</div>
 
 <script>
 (function(){
   var mode="web";
-  var tabs=Array.from(document.querySelectorAll(".source-tab"));
+  var tabs=Array.from(document.querySelectorAll(".mode-tab"));
   var urlField=document.getElementById("urlField");
+  var descriptionField=document.getElementById("descriptionField");
   var urlInput=document.getElementById("businessUrl");
   var description=document.getElementById("businessDescription");
   var error=document.getElementById("businessError");
   var form=document.getElementById("businessForm");
 
-  function selectMode(next){
+  function setMode(next){
     mode=next;
     tabs.forEach(function(tab){
       var active=tab.dataset.mode===mode;
@@ -265,14 +230,12 @@ a{color:inherit}
       tab.setAttribute("aria-selected",String(active));
     });
     var manual=mode==="description";
-    urlField.style.display=manual?"none":"block";
-    description.style.display=manual?"block":"none";
+    urlField.style.display=manual?"none":"flex";
+    descriptionField.style.display=manual?"block":"none";
     urlInput.placeholder=mode==="app"?"apps.apple.com/…":"votrebusiness.com";
     error.textContent="";
-    setTimeout(function(){(manual?description:urlInput).focus({preventScroll:true})},0);
   }
-
-  tabs.forEach(function(tab){tab.addEventListener("click",function(){selectMode(tab.dataset.mode)})});
+  tabs.forEach(function(tab){tab.addEventListener("click",function(){setMode(tab.dataset.mode)})});
 
   function normalizeUrl(value){
     var v=String(value||"").trim();
@@ -289,18 +252,10 @@ a{color:inherit}
     var value;
     if(mode==="description"){
       value=String(description.value||"").replace(/\s+/g," ").trim();
-      if(value.length<20){
-        error.textContent="Décrivez votre activité en quelques phrases.";
-        description.focus();
-        return;
-      }
+      if(value.length<20){error.textContent="Décrivez votre activité en quelques phrases.";description.focus();return;}
     }else{
       value=normalizeUrl(urlInput.value);
-      if(!value){
-        error.textContent=mode==="app"?"Ajoutez un lien App Store valide.":"Ajoutez l’adresse de votre site.";
-        urlInput.focus();
-        return;
-      }
+      if(!value){error.textContent=mode==="app"?"Ajoutez un lien App Store valide.":"Ajoutez l’adresse de votre site.";urlInput.focus();return;}
     }
     try{
       sessionStorage.setItem("clipfast_business_handoff",JSON.stringify({
@@ -312,6 +267,30 @@ a{color:inherit}
     }catch(err){}
     location.href="/?business=1#analyser";
   });
+
+  fetch("/videos.txt",{cache:"force-cache"})
+    .then(function(r){return r.ok?r.text():""})
+    .then(function(text){
+      var urls=text.split(/\r?\n/).map(function(s){return s.trim()}).filter(function(s){return /^https:\/\//.test(s)}).slice(0,10);
+      var grid=document.getElementById("businessGrid");
+      urls.forEach(function(url){
+        var card=document.createElement("article");
+        card.className="preview-card";
+        var video=document.createElement("video");
+        video.muted=true;video.loop=true;video.playsInline=true;video.preload="metadata";video.src=url;
+        card.appendChild(video);grid.appendChild(card);
+      });
+      if("IntersectionObserver" in window){
+        var io=new IntersectionObserver(function(entries){entries.forEach(function(entry){var v=entry.target;if(entry.isIntersecting)v.play().catch(function(){});else v.pause()})},{rootMargin:"160px"});
+        grid.querySelectorAll("video").forEach(function(v){io.observe(v)});
+      }
+    });
+
+  var toggle=document.getElementById("menuToggle"),menu=document.getElementById("siteMenu"),close=document.getElementById("menuClose");
+  function closeMenu(){menu.classList.remove("open");menu.setAttribute("aria-hidden","true");toggle.setAttribute("aria-expanded","false")}
+  toggle.addEventListener("click",function(){var open=!menu.classList.contains("open");menu.classList.toggle("open",open);menu.setAttribute("aria-hidden",String(!open));toggle.setAttribute("aria-expanded",String(open))});
+  close.addEventListener("click",closeMenu);
+  menu.addEventListener("click",function(e){if(e.target===menu)closeMenu()});
 })();
 </script>
 </body>
