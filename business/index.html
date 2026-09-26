@@ -56,7 +56,7 @@ button{cursor:pointer}
 .site-field input::placeholder{color:#929292}
 .site-submit{min-height:48px;flex:none;border:0;border-radius:13px;padding:0 18px;display:inline-flex;align-items:center;justify-content:center;gap:13px;background:#080808;color:#fff;font-size:14px;font-weight:750}
 .site-submit:hover{background:#272727}
-.description-field{display:none}
+.description-field{display:none}\n.description-field.active{display:block}\n[hidden]{display:none!important}
 .description-field textarea{width:100%;min-height:145px;border:1px solid #dededb;border-radius:17px;background:#fff;color:#111;outline:0;padding:16px;font-size:14px;line-height:1.5;resize:vertical}
 .description-field .site-submit{width:100%;margin-top:10px}
 .site-error{min-height:17px;margin:8px 7px 0;color:#9a4d4d;text-align:left;font-size:10px}
@@ -230,8 +230,8 @@ button{cursor:pointer}
       tab.setAttribute("aria-selected",String(active));
     });
     var manual=mode==="description";
-    urlField.style.display=manual?"none":"flex";
-    descriptionField.style.display=manual?"block":"none";
+    urlField.hidden=manual;
+    descriptionField.classList.toggle("active",manual);
     urlInput.placeholder=mode==="app"?"apps.apple.com/…":"votrebusiness.com";
     error.textContent="";
   }
