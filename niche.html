@@ -119,7 +119,6 @@ button,a,input,textarea{font:inherit}button{cursor:pointer}
 
   <section class="gallery" id="videos">
     <div class="video-grid" id="grid" aria-live="polite"></div>
-    <div class="load-state" id="loadState">Chargement des 12 aperçus…</div>
   </section>
 
   <section class="trade-info" id="details">
@@ -298,7 +297,7 @@ button,a,input,textarea{font:inherit}button{cursor:pointer}
   toggle.addEventListener('click',()=>{const open=!menu.classList.contains('open');menu.classList.toggle('open',open);menu.setAttribute('aria-hidden',String(!open));toggle.setAttribute('aria-expanded',String(open));document.body.style.overflow=open?'hidden':''});
   close.addEventListener('click',closeMenu);menu.addEventListener('click',e=>{if(e.target===menu)closeMenu()});
 
-  const grid=document.getElementById('grid'),loadState=document.getElementById('loadState');
+  const grid=document.getElementById('grid');
   fetch('/videos.txt',{cache:'force-cache'}).then(r=>r.ok?r.text():'').then(text=>{
     const urls=text.split(/\r?\n/).map(s=>s.trim()).filter(s=>/^https:\/\//.test(s)).slice(0,12);
     document.querySelectorAll('.featured-strip video').forEach((v,i)=>{if(urls[i]){v.src=urls[i];v.addEventListener('canplay',()=>v.play().catch(()=>{}),{once:true})}});
@@ -310,8 +309,7 @@ button,a,input,textarea{font:inherit}button{cursor:pointer}
     });
     const io=new IntersectionObserver(entries=>entries.forEach(entry=>{const v=entry.target;if(entry.isIntersecting){if(!v.src)v.src=v.dataset.src;v.play().catch(()=>{})}else v.pause()}),{rootMargin:'220px'});
     grid.querySelectorAll('video').forEach(v=>io.observe(v));
-    loadState.textContent=urls.length+' aperçus · 1 000 vidéos dans votre pack';
-  }).catch(()=>{loadState.textContent='12 aperçus · 1 000 vidéos dans votre pack'});
+  }).catch(()=>{});
 
   const onboarding=document.getElementById('onboarding'),steps=[...document.querySelectorAll('.ob-step')],bars=[...document.querySelectorAll('#obProgress i')],count=document.getElementById('obCount'),back=document.getElementById('obBack'),error=document.getElementById('obError');let step=0;
   function showStep(n){step=Math.max(0,Math.min(3,n));steps.forEach((s,i)=>s.classList.toggle('active',i===step));bars.forEach((b,i)=>b.classList.toggle('active',i<=step));count.textContent=(step+1)+' / 4';back.style.visibility=step?'visible':'hidden'}
