@@ -10,6 +10,15 @@
       ]
     },
     {
+      "source": "/business",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-store, max-age=0"
+        }
+      ]
+    },
+    {
       "source": "/index.html",
       "headers": [
         {
@@ -131,6 +140,10 @@
     }
   ],
   "rewrites": [
+    {
+      "source": "/business",
+      "destination": "/business/index.html"
+    },
     {
       "source": "/metiers",
       "destination": "/metiers/index.html"

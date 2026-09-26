@@ -2391,6 +2391,30 @@ if(paymentState==="success"){
   history.replaceState(null,"",clean);
 }
 
+// /business handoff: reuse the existing analyzer instead of duplicating the generation engine.
+try{
+  const businessParams=new URLSearchParams(location.search);
+  const rawHandoff=businessParams.get("business")==="1"?sessionStorage.getItem("clipfast_business_handoff"):"";
+  if(rawHandoff){
+    const handoff=JSON.parse(rawHandoff);
+    const fresh=Date.now()-Number(handoff.createdAt||0)<15*60*1000;
+    if(fresh&&handoff&&handoff.value){
+      const manual=handoff.mode==="description";
+      INPUT_MODE=manual?"description":"website";
+      siteForm.querySelector(".site-field").hidden=manual;
+      descriptionField.hidden=!manual;
+      siteUrlInput.required=!manual;
+      inputModeToggle.textContent=manual?"J’ai un site web":"Pas de site ? Décrire mon activité";
+      if(manual)siteDescription.value=String(handoff.value||"").slice(0,12000);
+      else siteUrlInput.value=String(handoff.value||"").slice(0,1000);
+      sessionStorage.removeItem("clipfast_business_handoff");
+      businessParams.delete("business");
+      history.replaceState(null,"",location.pathname+(businessParams.toString()?"?"+businessParams.toString():"")+"#analyser");
+      setTimeout(()=>{document.querySelector("#analyser")?.scrollIntoView({block:"start"});siteForm.requestSubmit()},180);
+    }
+  }
+}catch(e){console.warn("business handoff",e)}
+
 restoreProject();
 const linkedProjectToken=new URLSearchParams(location.hash.replace(/^#/,"")).get("project");
 if(linkedProjectToken){
