@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#070707">
+<title>TT.INTERNAL — TikTok Downloader</title>
+<style>
+:root{--bg:#070707;--panel:#101010;--line:#252525;--text:#f6f6f6;--muted:#8d8d8d;--ok:#b9ffb2;--bad:#ffb0b0}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:var(--bg);color:var(--text);font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+body{min-height:100vh;background:radial-gradient(circle at 50% -10%,#202020 0,#0c0c0c 32%,#070707 68%)}
+.wrap{width:min(760px,100%);margin:0 auto;padding:22px 18px 64px}.nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:62px}.brand{font-weight:900;letter-spacing:-.045em}.pill{font-size:11px;color:#999;border:1px solid var(--line);padding:7px 10px;border-radius:999px}
+h1{font-size:clamp(48px,9vw,78px);line-height:.94;letter-spacing:-.07em;margin:0 0 18px}.sub{max-width:620px;color:var(--muted);font-size:16px;line-height:1.55;margin-bottom:30px}
+.form{display:flex;gap:10px;background:var(--panel);border:1px solid var(--line);padding:8px;border-radius:18px;box-shadow:0 28px 90px rgba(0,0,0,.35)}
+input{flex:1;min-width:0;background:transparent;border:0;color:white;font-size:15px;padding:14px 12px;outline:none}input::placeholder{color:#5d5d5d}
+button,.btn{appearance:none;border:0;border-radius:12px;padding:13px 17px;font-weight:800;font-size:14px;cursor:pointer;text-decoration:none;text-align:center}.primary{background:white;color:black}.ghost{background:#171717;color:white;border:1px solid var(--line)}button:disabled{opacity:.5;cursor:not-allowed}
+.status{display:none;margin-top:14px;padding:12px 14px;border-radius:13px;border:1px solid var(--line);background:#0d0d0d;color:var(--muted);font-size:13px}.status.show{display:block}.status.err{color:var(--bad)}
+.card{display:none;margin-top:22px;border:1px solid var(--line);background:rgba(16,16,16,.95);border-radius:22px;overflow:hidden}.card.show{display:block}.media{aspect-ratio:9/13;background:#050505;display:grid;place-items:center;max-height:520px}.media video,.media img{width:100%;height:100%;object-fit:cover}
+.content{padding:18px}.eyebrow{display:flex;gap:8px;align-items:center;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.08em}.dot{width:7px;height:7px;border-radius:50%;background:var(--ok)}.title{font-size:21px;line-height:1.22;font-weight:800;letter-spacing:-.03em;margin:12px 0 7px}.author{color:var(--muted);font-size:14px}.actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:18px}
+.meta{margin-top:18px;padding-top:16px;border-top:1px solid var(--line);display:grid;grid-template-columns:1fr 1fr;gap:12px}.meta div{font-size:12px;color:var(--muted)}.meta b{display:block;color:#ddd;font-size:13px;margin-top:4px;word-break:break-all}
+.api{margin-top:46px;padding-top:26px;border-top:1px solid var(--line)}.api h2{font-size:24px;letter-spacing:-.04em;margin:0 0 8px}.api p{color:var(--muted);font-size:14px;line-height:1.5}.code{margin-top:12px;background:#0c0c0c;border:1px solid var(--line);border-radius:16px;padding:16px;color:#ccc;overflow:auto;font:12px/1.6 ui-monospace,SFMono-Regular,Menlo,monospace;white-space:pre}.footer{margin-top:34px;color:#5f5f5f;font-size:11px;line-height:1.5}
+@media(max-width:620px){.nav{margin-bottom:44px}h1{font-size:52px}.form{display:block}.form button{width:100%}.actions,.meta{grid-template-columns:1fr}.media{max-height:none}}
+</style>
+</head>
+<body>
+<main class="wrap">
+<nav class="nav"><div class="brand">TT.INTERNAL</div><div class="pill">VERCEL PREVIEW</div></nav>
+<h1>Colle. Résous. Récupère.</h1>
+<div class="sub">Colle une URL TikTok publique. L'outil récupère les métadonnées et le flux vidéo sans yt-dlp.</div>
+
+<form id="form" class="form">
+<input id="url" autocomplete="off" inputmode="url" placeholder="https://www.tiktok.com/@user/video/...">
+<button id="go" class="primary" type="submit">Analyser →</button>
+</form>
+<div id="status" class="status"></div>
+
+<section id="card" class="card">
+<div id="media" class="media"></div>
+<div class="content">
+<div class="eyebrow"><span class="dot"></span><span id="source">SOURCE</span></div>
+<div id="title" class="title"></div>
+<div id="author" class="author"></div>
+<div class="actions">
+<a id="open" class="btn primary" target="_blank" rel="noopener">Ouvrir la vidéo</a>
+<button id="copy" class="ghost" type="button">Copier l'URL vidéo</button>
+</div>
+<div class="meta"><div>ID<b id="vid"></b></div><div>Durée<b id="duration"></b></div></div>
+</div>
+</section>
+
+<section class="api">
+<h2>Pour Claude / tes agents.</h2>
+<p>Le même resolver est accessible en JSON depuis la preview Vercel.</p>
+<div id="snippet" class="code"></div>
+</section>
+<div class="footer">Utilise uniquement des contenus que tu possèdes ou que tu as le droit de télécharger. Les endpoints non officiels peuvent changer sans préavis.</div>
+</main>
+<script>
+const $=id=>document.getElementById(id),form=$("form"),url=$("url"),go=$("go"),status=$("status"),card=$("card"),media=$("media");let current=null;
+$("snippet").textContent="POST "+location.origin+"/api/tiktok-resolve\nContent-Type: application/json\n\n{\n  \"url\": \"https://www.tiktok.com/@user/video/...\"\n}";
+function setStatus(text,error=false){status.textContent=text;status.className="status show"+(error?" err":"")}
+function render(d){current=d;$("source").textContent=d.source||"unknown";$("title").textContent=d.title||"Vidéo TikTok";$("author").textContent=d.author?"@"+String(d.author).replace(/^@/,""):"Auteur inconnu";$("vid").textContent=d.id||"—";$("duration").textContent=d.duration!=null?d.duration+" s":"—";$("open").href=d.videoUrl||"#";media.innerHTML="";if(d.videoUrl){const v=document.createElement("video");v.src=d.videoUrl;v.controls=true;v.playsInline=true;v.preload="metadata";if(d.cover)v.poster=d.cover;media.appendChild(v)}else if(d.cover){const i=document.createElement("img");i.src=d.cover;i.alt="Miniature TikTok";media.appendChild(i)}card.classList.add("show")}
+form.addEventListener("submit",async e=>{e.preventDefault();const value=url.value.trim();if(!value)return setStatus("Colle une URL TikTok.",true);go.disabled=true;card.classList.remove("show");setStatus("Résolution de la vidéo…");try{const r=await fetch("/api/tiktok-resolve",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({url:value})});const d=await r.json();if(!r.ok||!d.ok)throw new Error(d.error||"Impossible de résoudre cette vidéo.");render(d);setStatus("OK · "+d.source)}catch(err){setStatus(err.message||"Erreur",true)}finally{go.disabled=false}});
+$("copy").addEventListener("click",async()=>{if(!current?.videoUrl)return;await navigator.clipboard.writeText(current.videoUrl);$("copy").textContent="Copié ✓";setTimeout(()=>$("copy").textContent="Copier l'URL vidéo",1200)});
+</script>
+</body>
+</html>
