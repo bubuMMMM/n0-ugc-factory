@@ -41,25 +41,31 @@ button{cursor:pointer}
 .home-analyser h2{margin:0;font-size:clamp(42px,8vw,66px);line-height:.96;letter-spacing:-3px;font-weight:540}
 .home-analyser-copy{max-width:520px;margin:16px auto 28px;color:#858585;font-size:14px;line-height:1.45}
 
-.mode-tabs{position:relative;z-index:2;width:max-content;max-width:calc(100% - 20px);margin:0 auto -1px;display:grid;grid-template-columns:repeat(3,1fr);border:1px solid var(--line);border-bottom:0;border-radius:18px 18px 0 0;background:#efefed;overflow:hidden}
-.mode-tab{height:45px;min-width:138px;padding:0 15px;border:0;border-right:1px solid var(--line);background:transparent;color:#7c7c80;display:flex;align-items:center;justify-content:center;gap:8px;font-size:12px;font-weight:700;white-space:nowrap}
-.mode-tab:last-child{border-right:0}
-.mode-tab svg{width:17px;height:17px}
-.mode-tab.active{background:#f7f7f5;color:#111}
-
-.hero-form-wrap{width:min(760px,100%);margin:0 auto}
-.site-form{width:100%;position:relative;padding:12px;border:1px solid var(--line);border-radius:22px;background:#f7f7f5}
-.site-field{width:100%;min-height:60px;display:flex;align-items:center;gap:10px;padding:6px 6px 6px 18px;border:1px solid #dededb;border-radius:17px;background:#fff}
-.site-icon{width:21px;height:21px;display:grid;place-items:center;color:#777;flex:none}
+/* Compact source selector: one card, one clear primary action. */
+.hero-form-wrap{width:min(760px,100%);margin:0 auto;padding:8px;border:1px solid var(--line);border-radius:24px;background:#f7f7f5;box-shadow:0 12px 36px rgba(0,0,0,.04)}
+.mode-tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px;padding:4px;border-radius:16px;background:#eaeae7}
+.mode-tab{min-width:0;min-height:46px;padding:10px 8px;border:0;border-radius:12px;background:transparent;color:#61615e;display:flex;align-items:center;justify-content:center;gap:7px;font-size:13px;font-weight:650;white-space:nowrap;transition:background .15s,color .15s}
+.mode-tab svg{width:18px;height:18px;flex:none;stroke-width:1.6}
+.mode-tab:hover{background:#f4f4f1;color:#111}
+.mode-tab.active{background:#fff;color:#111;box-shadow:0 2px 5px rgba(0,0,0,.07)}
+.mode-tab:focus-visible,.site-submit:focus-visible{outline:2px solid #111;outline-offset:3px}
+.site-form{width:100%;position:relative;padding:20px 8px 8px}
+.source-label{display:block;margin:0 0 9px;text-align:left;font-size:13px;font-weight:650;color:#242424}
+.site-field{width:100%;min-height:56px;display:flex;align-items:center;gap:10px;padding:0 14px;border:1px solid #d8d8d3;border-radius:13px;background:#fff;transition:border-color .15s,box-shadow .15s}
+.site-field:focus-within{border-color:#555;box-shadow:0 0 0 3px rgba(0,0,0,.06)}
+.site-icon{width:20px;height:20px;display:grid;place-items:center;color:#777;flex:none}
 .site-icon svg{width:100%;height:100%}
-.site-field input{flex:1;min-width:0;height:46px;border:0;outline:0;background:transparent;color:#111;font-size:15px;padding:0 6px}
-.site-field input::placeholder{color:#929292}
-.site-submit{min-height:48px;flex:none;border:0;border-radius:13px;padding:0 18px;display:inline-flex;align-items:center;justify-content:center;gap:13px;background:#080808;color:#fff;font-size:14px;font-weight:750}
+.site-field input{flex:1;min-width:0;width:100%;height:54px;border:0;outline:0;background:transparent;color:#111;font-size:16px;padding:0}
+.site-field input::placeholder{color:#858580}
+.source-hint{margin:10px 0 16px;text-align:left;color:#6b6b66;font-size:12px;line-height:1.5}
+.site-submit{width:100%;min-height:54px;border:0;border-radius:13px;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px;background:#080808;color:#fff;font-size:14px;font-weight:750;transition:background .15s}
+.site-submit span:last-child{font-size:22px;font-weight:400}
 .site-submit:hover{background:#272727}
-.description-field{display:none}\n.description-field.active{display:block}\n[hidden]{display:none!important}
-.description-field textarea{width:100%;min-height:145px;border:1px solid #dededb;border-radius:17px;background:#fff;color:#111;outline:0;padding:16px;font-size:14px;line-height:1.5;resize:vertical}
-.description-field .site-submit{width:100%;margin-top:10px}
-.site-error{min-height:17px;margin:8px 7px 0;color:#9a4d4d;text-align:left;font-size:10px}
+[hidden]{display:none!important}
+.description-field textarea{display:block;width:100%;min-height:140px;border:1px solid #d8d8d3;border-radius:13px;background:#fff;color:#111;padding:14px;font-size:16px;line-height:1.5;resize:vertical}
+.description-field textarea:focus{outline:2px solid #555;outline-offset:2px}
+.site-error{margin:12px 0 0;color:#a12b2b;text-align:left;font-size:12px;line-height:1.5}
+.site-error:empty{display:none}
 
 .gallery{background:#f7f7f5;padding:64px 14px 88px;border-top:1px solid #ececea}
 .gallery-inner{width:min(100%,1280px);margin:0 auto}
@@ -81,14 +87,6 @@ button{cursor:pointer}
 .menu-links a{min-height:56px;border-bottom:1px solid #202024;color:#fff;text-decoration:none;display:flex;align-items:center;justify-content:space-between;font-size:20px;font-weight:650}
 
 @media(max-height:780px){.home-copy{margin-top:62px}.home-featured{margin-top:34px}.home-card{flex-basis:138px}.home-card.main{flex-basis:160px}.home-explore{padding-top:18px}}
-@media(max-width:680px){
-  .mode-tabs{width:calc(100% - 18px)}
-  .mode-tab{min-width:0;padding:0 8px;font-size:10.5px;gap:5px}
-  .site-field{display:grid;grid-template-columns:auto minmax(0,1fr);gap:6px 8px;padding:8px}
-  .site-icon{margin-left:5px}
-  .site-field input{height:42px;font-size:15px;padding-left:2px}
-  .site-submit{grid-column:1/-1;width:100%}
-}
 @media(max-width:370px){.home-copy h1{font-size:40px;letter-spacing:-2.5px}.home-copy p{font-size:14px}.home-card{flex-basis:138px}.home-card.main{flex-basis:160px}.home-featured{gap:9px}.home-start{min-width:108px;font-size:12px;padding:0 12px}}
 @media(min-width:900px){
   .home-ugc-hero{max-width:none;min-height:0}
@@ -111,14 +109,14 @@ button{cursor:pointer}
   .home-analyser h2{font-size:clamp(42px,4vw,60px)}
   .home-analyser-copy{margin:20px 0 0;font-size:16px}
   .hero-form-wrap{grid-column:2;grid-row:1/4;min-width:0}
-  .mode-tabs{margin-left:0;margin-right:auto}
   .gallery{padding:78px 40px 104px}
   .video-grid{grid-template-columns:repeat(5,minmax(0,1fr));gap:16px}
   .preview-card{border-radius:18px}
   .menu-panel{width:min(calc(100% - 80px),1120px);padding:32px 0}
 }
 </style>
-<link rel="stylesheet" href="/assets/brand.css?v=20260923-1">\n<link rel="stylesheet" href="/assets/analysis-faq.css?v=1">
+<link rel="stylesheet" href="/assets/brand.css?v=20260923-1">
+<link rel="stylesheet" href="/assets/analysis-faq.css?v=1">
 </head>
 <body>
 <section class="home-ugc-hero" id="top">
@@ -156,30 +154,31 @@ button{cursor:pointer}
 
     <div class="hero-form-wrap">
       <div class="mode-tabs" role="tablist" aria-label="Source à analyser">
-        <button class="mode-tab active" type="button" role="tab" aria-selected="true" data-mode="web">
+        <button class="mode-tab active" type="button" role="tab" aria-selected="true" id="source-web" aria-controls="businessForm" data-mode="web">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="9"/><path d="M3.5 9h17M3.5 15h17M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18"/></svg>Web
         </button>
-        <button class="mode-tab" type="button" role="tab" aria-selected="false" data-mode="app">
+        <button class="mode-tab" type="button" role="tab" aria-selected="false" id="source-app" aria-controls="businessForm" tabindex="-1" data-mode="app">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M9.2 6.7 5 14M14.8 6.7 19 14M7.2 10h9.6M4 17h16M10.4 3l1.6 2.7L13.6 3"/></svg>App Store
         </button>
-        <button class="mode-tab" type="button" role="tab" aria-selected="false" data-mode="description">
+        <button class="mode-tab" type="button" role="tab" aria-selected="false" id="source-description" aria-controls="businessForm" tabindex="-1" data-mode="description">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="m4 20 4.2-1 10-10a2.1 2.1 0 0 0-3-3l-10 10L4 20Z"/></svg>Décrire
         </button>
       </div>
 
-      <form id="businessForm" class="site-form" novalidate>
+      <form id="businessForm" class="site-form" role="tabpanel" aria-labelledby="source-web" novalidate>
+        <label class="source-label" id="sourceLabel" for="businessUrl">Le lien de votre site web</label>
         <div class="site-field" id="urlField">
           <span class="site-icon" aria-hidden="true">
             <svg viewBox="0 0 24 24" fill="none"><path d="M10.6 13.4a4 4 0 0 0 5.66 0l2.12-2.12a4 4 0 0 0-5.66-5.66L11.5 6.84" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/><path d="M13.4 10.6a4 4 0 0 0-5.66 0l-2.12 2.12a4 4 0 0 0 5.66 5.66l1.22-1.22" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>
           </span>
-          <input id="businessUrl" type="url" inputmode="url" autocomplete="url" placeholder="votrebusiness.com">
-          <button type="submit" class="site-submit"><span>Créer mes 1000 vidéos</span><span aria-hidden="true">→</span></button>
+          <input id="businessUrl" type="url" inputmode="url" autocomplete="url" aria-describedby="sourceHint businessError" placeholder="votrebusiness.com">
         </div>
 
-        <div class="description-field" id="descriptionField">
-          <textarea id="businessDescription" maxlength="12000" placeholder="Ex. : Nous sommes un cabinet comptable à Nantes. Nous aidons les TPE à gagner du temps et à mieux comprendre leurs chiffres."></textarea>
-          <button type="submit" class="site-submit"><span>Créer mes 1000 vidéos</span><span aria-hidden="true">→</span></button>
+        <div class="description-field" id="descriptionField" hidden>
+          <textarea id="businessDescription" aria-describedby="sourceHint businessError" maxlength="12000" placeholder="Ex. : Nous sommes un cabinet comptable à Nantes. Nous aidons les TPE à gagner du temps et à mieux comprendre leurs chiffres."></textarea>
         </div>
+        <p class="source-hint" id="sourceHint">Nous utiliserons votre site pour comprendre votre activité.</p>
+          <button type="submit" class="site-submit"><span>Créer mes 1000 vidéos</span><span aria-hidden="true">→</span></button>
         <div id="businessError" class="site-error" aria-live="polite"></div>
       </form>
     </div>
@@ -253,7 +252,9 @@ button{cursor:pointer}
       </details>
     </div>
   </div>
-</section>\n\n<div class="simple-menu" id="siteMenu" aria-hidden="true">
+</section>
+
+<div class="simple-menu" id="siteMenu" aria-hidden="true">
   <div class="menu-panel">
     <div class="menu-head">
       <div class="home-menu-brand">CLIPFA.ST</div>
@@ -285,14 +286,28 @@ button{cursor:pointer}
       var active=tab.dataset.mode===mode;
       tab.classList.toggle("active",active);
       tab.setAttribute("aria-selected",String(active));
+      tab.tabIndex=active?0:-1;
     });
     var manual=mode==="description";
     urlField.hidden=manual;
-    descriptionField.classList.toggle("active",manual);
+    descriptionField.hidden=!manual;
+    form.setAttribute("aria-labelledby","source-"+mode);
+    var label=document.getElementById("sourceLabel");
+    label.htmlFor=manual?"businessDescription":"businessUrl";
+    label.textContent=manual?"Décrivez votre activité":mode==="app"?"Le lien de votre application":"Le lien de votre site web";
+    document.getElementById("sourceHint").textContent=manual?"Précisez votre offre, vos clients et ce qui vous différencie.":mode==="app"?"Collez le lien de votre fiche sur l’App Store.":"Nous utiliserons votre site pour comprendre votre activité.";
     urlInput.placeholder=mode==="app"?"apps.apple.com/…":"votrebusiness.com";
     error.textContent="";
   }
   tabs.forEach(function(tab){tab.addEventListener("click",function(){setMode(tab.dataset.mode)})});
+
+  document.querySelector(".mode-tabs").addEventListener("keydown",function(e){
+    var current=tabs.indexOf(document.activeElement);
+    if(current<0)return;
+    var next=e.key==="ArrowRight"?(current+1)%3:e.key==="ArrowLeft"?(current+2)%3:e.key==="Home"?0:e.key==="End"?2:-1;
+    if(next<0)return;
+    e.preventDefault();setMode(tabs[next].dataset.mode);tabs[next].focus();
+  });
 
   function normalizeUrl(value){
     var v=String(value||"").trim();
