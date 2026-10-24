@@ -30,3 +30,13 @@
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*:before,*:after{transition:none!important;animation:none!important}}
 
 [hidden]{display:none!important}
+
+/* Standalone new-platform landing page refinements */
+.hero-actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.soon-line{margin:15px 0 0!important;color:#8091aa!important;font-size:11px!important;line-height:1.55!important}
+.format-modal{background:transparent;border:0;padding:20px;max-width:550px;width:calc(100% - 20px);color:#f1f7ff}
+.format-modal::backdrop{background:#010307cc;backdrop-filter:blur(10px)}
+.format-modal-content{position:relative;background:radial-gradient(ellipse at top right,#253f682b,transparent 66%),#0b0e15;border:1px solid #ffffff28;border-radius:23px;padding:34px;box-shadow:0 35px 100px #000a}
+.format-modal .section-text{font-size:14px}
+.format-card[data-video-type]{cursor:pointer}
+@media(max-width:700px){.hero-actions{gap:8px}.hero-actions .btn{font-size:12px}.format-modal-content{padding:25px 20px}.format-modal .section-title{font-size:40px!important}}
