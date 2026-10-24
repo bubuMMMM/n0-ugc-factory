@@ -3,258 +3,176 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#000000">
-<meta name="color-scheme" content="dark">
-<title>Création vidéo IA — UGC, Ads, Viral, Documentaires | CLIPFA.ST</title>
-<meta name="description" content="Découvrez la vision du studio vidéo IA CLIPFA.ST : UGC, publicités, viral, documentaire, motion design et cinéma. Vidéos multi-scènes de quelques secondes à plusieurs minutes.">
+<meta name="theme-color" content="#f7f7f5">
+<title>CLIPFA.ST — Toute la création vidéo IA, au même endroit</title>
+<meta name="description" content="UGC, publicités, vidéos virales, documentaires, motion design et cinéma. Découvrez la future plateforme vidéo IA de CLIPFA.ST, pensée pour les histoires courtes et longues.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="/assets/brand.css?v=20261024">
-<link rel="stylesheet" href="/assets/video-ai-landing.css?v=20261024">
-<style>
-/* Page-specific finishing touches: no changes to the existing UGC homepage */
-.platform-flag{border:1px solid #8bc4ff38;background:#91bfff10;color:#a8c9eb;border-radius:999px;padding:7px 10px;font-size:10px;display:inline-flex;align-items:center;gap:8px;margin-left:13px;vertical-align:middle;font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-style:normal;letter-spacing:.015em}
-.platform-flag:before{content:"";background:#75b7ff;width:6px;height:6px;border-radius:50%;box-shadow:0 0 12px #75b7ff}
-.format-card{cursor:pointer;text-align:left;color:#fff;font:inherit;width:100%}.format-card:focus-visible{outline:2px solid #a8d7ff;outline-offset:3px}.format-card:hover .format-arrow{background:#223d5b;border-color:#739dcb}.format-art:before{content:"";position:absolute;inset:0;background:linear-gradient(120deg,#ffffff08,transparent 36%,#0006 100%);pointer-events:none}
-.art-index{position:absolute;z-index:1;left:17px;bottom:13px;font-family:Georgia,serif;font-size:42px;letter-spacing:-.065em;font-weight:400;color:#e7f4ff45;line-height:1}
-.art-visual-label{position:absolute;z-index:1;right:16px;bottom:14px;color:#dae8ffb9;font:600 9px Inter,system-ui,sans-serif;letter-spacing:.14em;text-transform:uppercase}
-.demo-tabs{display:flex;gap:7px;flex-wrap:wrap;margin:20px 0}.demo-tab{border:1px solid #ffffff26;border-radius:999px;background:#0a0d16;color:#9baabd;padding:9px 13px;font-size:11px}.demo-tab[aria-selected="true"]{color:#eaf5ff;background:#1a3047;border-color:#8bc6ff73}.demo-panel{display:flex;gap:28px;align-items:center;border:1px solid #ffffff1b;border-radius:20px;background:linear-gradient(145deg,#0f1522,#08090f);padding:22px;min-height:230px}.demo-visual{flex:0 0 38%;height:170px;display:grid;place-items:center;overflow:hidden;position:relative;border-radius:15px;background:radial-gradient(circle at 40% 38%,#314b87,#14182d 55%,#080a14)}.demo-orb{height:96px;width:96px;border:1px solid #a9ceff88;border-radius:26%;transform:rotate(-24deg);box-shadow:0 0 85px #77a4ff4a;position:relative}.demo-orb:after{content:"";position:absolute;inset:17%;background:linear-gradient(120deg,#c2ecff,#6ca3ec,#6158a9);border-radius:28%;filter:blur(2px)}.demo-sample-label{position:absolute;left:12px;bottom:12px;z-index:1;color:#c9d6eb;font-size:9px;letter-spacing:.12em;text-transform:uppercase}.demo-content{min-width:0}.demo-content h3{font:400 29px Georgia,serif;letter-spacing:-.04em;margin:8px 0 9px}.demo-content p{font-size:12px;line-height:1.6;color:#98a9bf;margin:0 0 14px}.demo-content small{color:#7294c4;font-size:10px}
-.hero-visual-note{position:absolute;bottom:-8px;left:0;right:0;text-align:center;font-size:10px;color:#718098;letter-spacing:.025em}.section-id{scroll-margin-top:65px}.long-pill{display:inline-flex;font-size:10px;color:#b6d3fa;background:#112039;border:1px solid #43638e70;border-radius:999px;padding:8px 12px;margin-top:15px}
-.eyebrow-quiet{margin:0;color:#879bb7;font-size:11px}.faq-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.faq-item{border:1px solid #ffffff18;border-radius:14px;padding:18px 21px;background:#0b0d12}.faq-item summary{font-size:13px;font-weight:650;cursor:pointer;list-style:none;position:relative;padding-right:25px}.faq-item summary:after{content:"+";position:absolute;right:0;color:#9bcafd;font-size:18px;top:-4px}.faq-item[open] summary:after{content:"−"}.faq-item p{font-size:12px;color:#8996aa;line-height:1.65;margin:14px 0 0}.page-kicker{margin-bottom:8px}.footer-brand{font-weight:800;letter-spacing:.09em;font-size:13px;color:#eff5ff}.site-header .home-brand{font-weight:780}.anchor-btn{background:none;border:0}.metric b{font-size:27px}.metric span{font-size:11px}
-@media(min-width:921px){.home-hero{min-height:705px;display:flex;align-items:center}.hero-layout{width:100%}}@media(max-width:700px){.platform-flag{margin:10px 0 0}.hero-copy h1{font-size:clamp(54px,12.8vw,78px)}.hero-layout{gap:18px}.hero-visual{margin-top:5px}.format-card{min-height:257px}.format-bottom h3{line-height:1.1}.demo-panel{display:block;padding:14px}.demo-visual{height:150px;margin-bottom:16px}.demo-content h3{font-size:26px}.faq-grid{grid-template-columns:1fr}.long-grid{gap:24px}.metric{padding:18px 10px}.metric b{font-size:23px}}@media(max-width:390px){.hero-copy h1{font-size:52px}.format-card{min-height:240px}.format-art{height:142px}.art-index{font-size:32px}}
-</style>
+<link rel="stylesheet" href="/assets/video-ai-landing.css?v=2">
 </head>
 <body>
-<header class="site-header wrap">
-  <a class="home-brand" href="/" aria-label="CLIPFA.ST, accueil">CLIPFA.ST</a>
-  <nav class="header-nav" aria-label="Navigation principale">
-    <a href="#formats">Les formats</a>
-    <a href="#videos-longues">Vidéos longues</a>
-    <a href="#experience">Le studio</a>
-    <a href="#fonctionnement">Comment ça marche</a>
-    <a href="/" title="Revenir à l'UGC Factory existante">UGC Factory ↗</a>
-  </nav>
-  <div class="header-actions">
-    <a class="btn btn-ghost btn-small desktop-action" href="/">UGC Factory <span aria-hidden="true">↗</span></a>
-    <a class="btn btn-primary btn-small" href="#formats">Explorer <span aria-hidden="true">↗</span></a>
-    <button type="button" class="icon-btn menu-trigger" id="menuButton" aria-label="Ouvrir le menu" aria-controls="mobileMenu" aria-expanded="false"><span aria-hidden="true">☰</span></button>
-  </div>
-  <nav id="mobileMenu" class="mobile-nav" aria-label="Menu mobile">
-    <a href="#formats">Les formats</a><a href="#videos-longues">Vidéos longues</a><a href="#experience">Le studio</a><a href="#fonctionnement">Comment ça marche</a><a href="/">UGC Factory ↗</a>
-  </nav>
-</header>
-
 <main>
-<section class="home-hero" id="top">
-  <div class="wrap hero-layout">
-    <div class="hero-copy">
-      <div class="tagline">CRÉATION VIDÉO PAR IA</div>
-      <h1>Une idée.<br><span class="grad">Toutes les vidéos.</span></h1>
-      <p>UGC, publicités, vidéos virales, documentaires, motion design, cinéma… Imagine des vidéos de quelques secondes à plusieurs minutes. Un seul univers créatif.</p>
-      <div class="hero-actions" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
-        <a class="btn btn-primary" href="#formats">Explorer les formats <span aria-hidden="true">↗</span></a>
-        <a class="btn btn-ghost" href="#experience">Découvrir le studio <span aria-hidden="true">→</span></a>
-      </div>
-      <div class="hero-mini"><span>Texte → vidéo</span><span>Image → vidéo</span><span>Storyboard</span><span>Multi-scènes</span></div>
-      <div class="platform-flag">Aperçu du futur studio — interface en conception</div>
-    </div>
-    <div class="hero-visual" aria-label="Aperçu visuel conceptuel d'un éditeur vidéo IA multi-scènes">
-      <div class="hero-halo"></div>
-      <div class="float-card float-one">✦ STORYBOARD <strong>Une histoire, scène par scène</strong></div>
-      <div class="mock-app" aria-hidden="true">
-        <div class="mock-bar"><span class="dots"><i></i><i></i><i></i></span><span class="mock-name">CLIPFA.ST / CRÉATION</span><span class="live-dot">● CONCEPT STUDIO</span></div>
-        <div class="mock-body">
-          <div class="mock-strip"><span>✧</span><span>▣</span><span>◈</span><span>♫</span><span>≡</span></div>
-          <div class="mock-main">
-            <div class="mock-canvas"><b>16:9 · CINÉMATIQUE</b><span>From imagination to motion.</span></div>
-            <div class="mock-timeline">
-              <div class="mock-shot"><small>01</small></div><div class="mock-shot"><small>02</small></div><div class="mock-shot"><small>03</small></div><div class="mock-shot"><small>04</small></div><div class="mock-shot"><small>05</small></div>
-            </div>
-          </div>
-        </div>
-        <div class="mock-bottom"><span>▸ Aperçu de la timeline</span><span>00:45 / 03:00</span></div>
-      </div>
-      <div class="float-card float-two"><span class="float-blue">✧</span> MULTI-FORMAT <strong>9:16 · 16:9 · 1:1</strong></div>
-      <span class="hero-visual-note">Maquette d'interface — aucun rendu IA n'est lancé ici</span>
-    </div>
+<section class="home-ugc-hero" id="top">
+ <div class="home-shell">
+  <div class="home-topbar">
+   <a href="/" class="home-brand" aria-label="CLIPFA.ST, retour au site actuel">CLIPFA.ST</a>
+   <a class="home-start" href="#formats">Explorer <b aria-hidden="true">→</b></a>
+   <button class="home-menu" id="menuToggle" aria-label="Ouvrir le menu" aria-controls="siteMenu" aria-expanded="false" type="button"><i></i></button>
   </div>
-</section>
-
-<section class="metrics">
- <div class="wrap metric-grid">
-   <div class="metric"><b>6 univers</b><span>De l'UGC au film cinématique</span></div>
-   <div class="metric"><b>Multi-scènes</b><span>Pour raconter des histoires plus longues</span></div>
-   <div class="metric"><b>9:16 / 16:9</b><span>Pour les réseaux et le grand écran</span></div>
-   <div class="metric"><b>1 studio</b><span>Une vision, tous les formats</span></div>
+  <div class="home-copy">
+   <div class="home-proof"><span class="home-avatars" aria-hidden="true"><span></span><span></span><span></span></span><span>UGC, Ads, viral & bien plus</span></div>
+   <h1>Toutes tes vidéos.<br>Un seul studio.</h1>
+   <p>UGC, publicités, vidéos virales, documentaires, motion design… De quelques secondes à plusieurs minutes.</p>
+  </div>
+  <div class="home-featured" aria-label="Vidéos UGC issues de la plateforme actuelle">
+   <div class="home-card">
+    <video src="https://doublespeed2.blob.core.windows.net/media/media/e3e45b32-d29e-4d2f-a821-c06c4f101bc8/generated/64810d44-8da4-47b6-b392-c28d8a5e35a6-019d4fed-a614-7690-945c-90007fa3799a.mp4" muted playsinline loop autoplay preload="metadata" aria-label="Aperçu vidéo UGC existante"></video>
+   </div>
+   <div class="home-card main">
+    <video src="https://doublespeed2.blob.core.windows.net/media/media/2dca701e-9e20-48a8-b642-3fb04aed5ea6/generated/8c1f6534-8585-46b6-968f-33b3d50694b1-019e41f7-375b-7b10-b49c-78de5c896c8a.mp4" muted playsinline loop autoplay preload="metadata" aria-label="Aperçu vidéo UGC existante"></video>
+    <strong>Imagine.<br>Crée.<br>Publie.</strong>
+    <span class="video-note">APERÇU UGC ACTUEL</span>
+   </div>
+   <div class="home-card">
+    <video src="https://doublespeed2.blob.core.windows.net/media/media/e3e45b32-d29e-4d2f-a821-c06c4f101bc8/generated/74f92628-dbbd-4c35-b81d-47f76090294e-019e59e5-4360-77e2-a238-c471c4d20932.mp4" muted playsinline loop autoplay preload="metadata" aria-label="Aperçu vidéo UGC existante"></video>
+   </div>
+  </div>
+  <a class="home-explore" href="#formats">Découvrir tous les formats <span aria-hidden="true">⌄</span></a>
  </div>
 </section>
 
-<section class="section section-id" id="formats">
-  <div class="wrap">
-    <div class="section-intro">
-      <div><div class="tagline page-kicker">UN TERRAIN DE JEU CRÉATIF</div><h2 class="section-title">Un format pour<br><span class="grad">chaque idée.</span></h2></div>
-      <p class="section-text">Un lancement de produit, une histoire, une publicité ou juste une idée complètement folle ? Choisis ton univers, imagine la suite. Clique sur un format pour découvrir son concept.</p>
-    </div>
-    <div class="format-grid">
-      <button class="format-card" data-format="ugc" type="button" aria-label="Découvrir le format UGC">
-        <div class="format-art art-ugc"><span class="art-top">Créateurs & marques</span><span class="art-duration">9:16</span><div class="art-circle"></div><span class="art-index">01</span><span class="art-visual-label">Authentique</span></div>
-        <div class="format-bottom"><div><h3>UGC</h3><p>Des vidéos qui parlent vrai.</p></div><span class="format-arrow" aria-hidden="true">↗</span></div>
-      </button>
-      <button class="format-card" data-format="ads" type="button" aria-label="Découvrir le format publicités">
-        <div class="format-art art-ads"><span class="art-top">Marques & produits</span><span class="art-duration">9:16 / 16:9</span><div class="art-circle"></div><span class="art-index">02</span><span class="art-visual-label">Performance</span></div>
-        <div class="format-bottom"><div><h3>Ads</h3><p>Des pubs qui captent l'attention.</p></div><span class="format-arrow" aria-hidden="true">↗</span></div>
-      </button>
-      <button class="format-card" data-format="viral" type="button" aria-label="Découvrir le format viral">
-        <div class="format-art art-viral"><span class="art-top">Réseaux sociaux</span><span class="art-duration">9:16</span><div class="art-circle"></div><span class="art-index">03</span><span class="art-visual-label">Culture Internet</span></div>
-        <div class="format-bottom"><div><h3>Viral</h3><p>Des concepts faits pour être partagés.</p></div><span class="format-arrow" aria-hidden="true">↗</span></div>
-      </button>
-      <button class="format-card" data-format="documentaire" type="button" aria-label="Découvrir le format documentaire">
-        <div class="format-art art-documentary"><span class="art-top">Histoires & savoir</span><span class="art-duration">16:9</span><div class="art-circle"></div><span class="art-index">04</span><span class="art-visual-label">Narration</span></div>
-        <div class="format-bottom"><div><h3>Documentaire</h3><p>Des récits qui vont au fond des choses.</p></div><span class="format-arrow" aria-hidden="true">↗</span></div>
-      </button>
-      <button class="format-card" data-format="motion" type="button" aria-label="Découvrir le format motion design">
-        <div class="format-art art-motion"><span class="art-top">Design & pédagogie</span><span class="art-duration">1:1 / 16:9</span><div class="art-circle"></div><span class="art-index">05</span><span class="art-visual-label">Animation</span></div>
-        <div class="format-bottom"><div><h3>Motion design</h3><p>Des idées abstraites qui prennent vie.</p></div><span class="format-arrow" aria-hidden="true">↗</span></div>
-      </button>
-      <button class="format-card" data-format="cinema" type="button" aria-label="Découvrir le format cinéma">
-        <div class="format-art art-cinema"><span class="art-top">Fiction & cinéma</span><span class="art-duration">16:9</span><div class="art-circle"></div><span class="art-index">06</span><span class="art-visual-label">Cinématique</span></div>
-        <div class="format-bottom"><div><h3>Cinéma</h3><p>Des univers impossibles à filmer.</p></div><span class="format-arrow" aria-hidden="true">↗</span></div>
-      </button>
-    </div>
+<div class="home-site-menu" id="siteMenu" aria-hidden="true">
+ <div class="home-menu-panel">
+  <div class="home-menu-head">
+   <div class="home-menu-brand">CLIPFA.ST</div>
+   <button class="home-menu-close" id="menuClose" aria-label="Fermer le menu" type="button">×</button>
   </div>
+  <p class="home-menu-kicker">DÉCOUVRIR LA PLATEFORME</p>
+  <nav class="home-menu-nav" aria-label="Menu de la plateforme">
+   <section><h3>Explorer</h3><a href="#formats">Tous les formats <b>↗</b></a><a href="#longues">Vidéos longues <b>↗</b></a><a href="#fonctionnement">Comment ça marche <b>↗</b></a></section>
+   <section><h3>Formats</h3><a href="#formats" data-open-format="ugc">UGC <b>↗</b></a><a href="#formats" data-open-format="ads">Publicités <b>↗</b></a><a href="#formats" data-open-format="viral">Viral <b>↗</b></a></section>
+   <section><h3>Création</h3><a href="#formats" data-open-format="documentaire">Documentaire <b>↗</b></a><a href="#formats" data-open-format="motion">Motion design <b>↗</b></a><a href="#formats" data-open-format="cinema">Cinéma <b>↗</b></a></section>
+   <section><h3>Site actuel</h3><a href="/">UGC Factory <b>↗</b></a><a href="#questions">Questions fréquentes <b>↗</b></a></section>
+  </nav>
+ </div>
+</div>
+
+<section class="section" id="formats">
+ <div class="inner">
+  <header class="center">
+   <p class="section-kicker">UNE PLATEFORME, SIX UNIVERS</p>
+   <h2 class="section-title">Toutes les vidéos<br>que tu imagines.</h2>
+   <p class="section-description">Une seule plateforme pour créer du contenu qui vend, qui explique, qui divertit ou qui raconte une histoire.</p>
+  </header>
+  <div class="format-grid" id="formatGrid">
+   <button class="format-card" type="button" data-format="ugc" aria-pressed="true"><div class="format-thumb ugc"><span class="thumb-index">01 / CRÉATEURS</span><span class="thumb-ratio">9:16</span></div><h3>UGC</h3><p>Naturel, spontané, authentique.</p></button>
+   <button class="format-card" type="button" data-format="ads" aria-pressed="false"><div class="format-thumb ads"><span class="thumb-index">02 / MARQUES</span><span class="thumb-ratio">9:16 · 16:9</span></div><h3>Ads</h3><p>Des publicités qui captent l'attention.</p></button>
+   <button class="format-card" type="button" data-format="viral" aria-pressed="false"><div class="format-thumb viral"><span class="thumb-index">03 / SOCIAL</span><span class="thumb-ratio">9:16</span></div><h3>Viral</h3><p>Des contenus qu'on a envie de partager.</p></button>
+   <button class="format-card" type="button" data-format="documentaire" aria-pressed="false"><div class="format-thumb doc"><span class="thumb-index">04 / STORIES</span><span class="thumb-ratio">16:9</span></div><h3>Documentaire</h3><p>Des histoires qui prennent leur temps.</p></button>
+   <button class="format-card" type="button" data-format="motion" aria-pressed="false"><div class="format-thumb motion"><span class="thumb-index">05 / DESIGN</span><span class="thumb-ratio">1:1 · 16:9</span></div><h3>Motion design</h3><p>Des idées complexes rendues simples.</p></button>
+   <button class="format-card" type="button" data-format="cinema" aria-pressed="false"><div class="format-thumb cinema"><span class="thumb-index">06 / CINÉMA</span><span class="thumb-ratio">16:9</span></div><h3>Cinéma</h3><p>Des histoires sans limites de tournage.</p></button>
+  </div>
+  <div class="format-preview" id="formatPreview" aria-live="polite">
+   <div>
+    <span class="format-preview-kicker" id="formatKicker">01 / UGC</span>
+    <h3 id="formatTitle">Des vidéos qui parlent vrai.</h3>
+    <p id="formatDescription">Un créateur présente ton produit face caméra, montre comment il l'utilise et partage une expérience concrète. Le point de départ de CLIPFA.ST, avec les packs UGC déjà accessibles sur le site.</p>
+    <div class="minor" id="formatMeta">FORMAT VERTICAL · COURT FORMAT · DÉJÀ DISPONIBLE EN PACK</div>
+   </div>
+   <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+    <a id="formatLink" class="pill-button" href="/">Découvrir l'UGC existant <span aria-hidden="true">→</span></a>
+    <span id="formatStatus" class="tag">UGC actuel</span>
+   </div>
+  </div>
+ </div>
 </section>
 
-<section class="section long-section section-id" id="videos-longues">
- <div class="wrap long-grid">
+<section class="section grey" id="longues">
+ <div class="inner long-layout">
   <div>
-    <div class="tagline">AU-DELÀ DU CLIP DE 8 SECONDES</div>
-    <h2 class="section-title">Une vraie histoire.<br><span class="grad">Pas juste un clip.</span></h2>
-    <p class="section-text">Une bonne idée ne tient pas toujours en dix secondes. Pour un documentaire, une publicité narrative ou un court-métrage, le futur studio est pensé autour de séquences que tu peux organiser, prolonger et réunir dans une seule timeline.</p>
-    <div class="mini-features"><span>Scènes indépendantes</span><span>Storyboard visuel</span><span>Formats multiples</span><span>Timeline organisée</span></div>
-    <div class="long-pill">Vision produit : construire des vidéos de plusieurs minutes</div>
+   <p class="section-kicker">FINI LES IDÉES COUPÉES EN 8 SECONDES</p>
+   <h2 class="section-title">Quelques secondes.<br>Ou plusieurs minutes.</h2>
+   <p class="section-description">Et si ton prochain documentaire durait trois minutes ? L'idée, c'est de créer plusieurs scènes, de les organiser sur une timeline et de construire une vidéo complète plutôt qu'un simple clip.</p>
+   <div class="feature-tags"><span class="tag">Storyboard</span><span class="tag">Scènes multiples</span><span class="tag">Voix & narration</span><span class="tag">Formats 9:16 et 16:9</span></div>
+   <p style="color:#888;font-size:11px;line-height:1.6;margin-top:20px;max-width:480px">Cette fonctionnalité décrit l'objectif de la future plateforme. Le rendu IA multi-scènes n'est pas encore disponible sur cette nouvelle page.</p>
   </div>
-  <div class="long-card" aria-label="Illustration d'une timeline multi-scènes">
-    <div class="long-card-top"><span>PROJECT / HISTORY OF TOMORROW</span><span>◉ STORYBOARD</span></div>
-    <div class="long-preview"><small>SCÈNE 03 — PLAN D'ENSEMBLE · 16:9</small></div>
-    <div class="long-row"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
-    <div class="long-ruler"><span>00:00</span><span>00:30</span><span>01:00</span><span>01:30</span><span>02:00</span><span>02:30</span><span>03:00</span></div>
+  <div class="timeline-card" aria-label="Illustration de l'interface multi-scènes envisagée">
+   <div class="timeline-head"><span>STORYBOARD / PROJET DÉMO</span><b>03:00 · 16:9</b></div>
+   <div class="timeline-player"><div class="timeline-topline">SCÈNE 03 / 18</div><div class="timeline-title">Un monde.<br>Des possibilités.</div></div>
+   <div class="timeline-scene-row"><div class="timeline-clip"><b>01</b><span>Intro</span></div><div class="timeline-clip"><b>02</b><span>Plan</span></div><div class="timeline-clip"><b>03</b><span>Focus</span></div><div class="timeline-clip"><b>04</b><span>Plan</span></div><div class="timeline-clip"><b>05</b><span>Suite</span></div><div class="timeline-clip"><b>06</b><span>Outro</span></div></div>
+   <div class="timeline-ruler"><span>00:00</span><span>01:00</span><span>02:00</span><span>03:00</span></div>
   </div>
  </div>
 </section>
 
-<section class="section section-id" id="experience">
- <div class="wrap">
-   <div class="section-intro">
-     <div><div class="tagline">APERÇU INTERACTIF · FRONTEND</div><h2 class="section-title">Imagine ton<br><span class="grad">prochain projet.</span></h2></div>
-     <p class="section-text">Explore les directions créatives prévues. Cette démonstration montre l'expérience imaginée, sans génération vidéo ni appel à une IA.</p>
-   </div>
-   <div role="tablist" aria-label="Choisir un univers vidéo" class="demo-tabs" id="demoTabs">
-     <button type="button" class="demo-tab" role="tab" aria-selected="true" data-tab="ugc">UGC</button>
-     <button type="button" class="demo-tab" role="tab" aria-selected="false" data-tab="ads">Ads</button>
-     <button type="button" class="demo-tab" role="tab" aria-selected="false" data-tab="viral">Viral</button>
-     <button type="button" class="demo-tab" role="tab" aria-selected="false" data-tab="documentaire">Documentaire</button>
-     <button type="button" class="demo-tab" role="tab" aria-selected="false" data-tab="motion">Motion design</button>
-     <button type="button" class="demo-tab" role="tab" aria-selected="false" data-tab="cinema">Cinéma</button>
-   </div>
-   <div class="demo-panel" id="formatPreview" role="tabpanel" aria-live="polite" aria-label="Exemple de projet">
-     <div class="demo-visual" aria-hidden="true"><div class="demo-orb"></div><div class="demo-sample-label" id="demoArtLabel">STORY / UGC</div></div>
-     <div class="demo-content">
-       <div class="studio-kicker" style="color:#99bfff;font-size:10px;letter-spacing:.15em">BRIEF CRÉATIF · EXEMPLE</div>
-       <h3 id="demoTitle">Une marque racontée par ses clients.</h3>
-       <p id="demoDescription">Imagine le témoignage spontané d'un créateur, avec un hook naturel, des plans produits et une conclusion qui donne envie d'en savoir plus.</p>
-       <small id="demoMeta">VERTICAL 9:16 · 15–60 S · CONCEPT</small>
-     </div>
-   </div>
-   <p class="eyebrow-quiet" style="margin-top:12px">Ces aperçus sont des exemples éditoriaux, pas des vidéos générées.</p>
- </div>
-</section>
-
-<section class="section section-id" id="fonctionnement" style="border-top:1px solid #ffffff14">
- <div class="wrap">
-   <div class="section-intro">
-    <div><div class="tagline">UNE APPROCHE SIMPLE</div><h2 class="section-title">De l'idée<br><span class="grad">à la séquence.</span></h2></div>
-    <p class="section-text">Notre objectif : simplifier la création vidéo sans sacrifier le contrôle créatif. Voici l'expérience envisagée pour le studio.</p>
-   </div>
-   <div class="steps-grid">
-     <div class="step"><span class="step-number">01.</span><h3>Décris ce que tu imagines</h3><p>Un prompt, un script, un produit ou une image de référence. Tu choisis le format, l'ambiance et la durée cible.</p></div>
-     <div class="step"><span class="step-number">02.</span><h3>Découpe en scènes</h3><p>Organise ton histoire dans un storyboard : une scène, un plan, une intention. Tu gardes la main sur la narration.</p></div>
-     <div class="step"><span class="step-number">03.</span><h3>Compose une vidéo complète</h3><p>Réunis les séquences dans une timeline, ajuste leur ordre, puis prépare ton export. La génération réelle viendra dans une phase ultérieure.</p></div>
-   </div>
- </div>
-</section>
-
-<section class="section section-id" id="questions" style="padding-top:24px">
- <div class="wrap">
-   <div class="section-intro"><div><div class="tagline">EN TOUTE TRANSPARENCE</div><h2 class="section-title">Questions <span class="grad">fréquentes.</span></h2></div></div>
-   <div class="faq-grid">
-     <details class="faq-item"><summary>Peut-on déjà générer des vidéos IA ici ?</summary><p>Pas sur cette nouvelle page. Elle présente la vision de la plateforme et son interface. Le site UGC existant reste accessible indépendamment.</p></details>
-     <details class="faq-item"><summary>Les vidéos pourront-elles durer plusieurs minutes ?</summary><p>C'est l'objectif du futur studio : découper une histoire en scènes courtes, puis les réunir dans une timeline, plutôt que demander une seule génération de plusieurs minutes.</p></details>
-     <details class="faq-item"><summary>Qu'advient-il de l'UGC Factory ?</summary><p>Elle ne disparaît pas. Le produit UGC et ses outils actuels sont conservés. L'UGC deviendra une spécialité parmi d'autres dans la vision globale.</p></details>
-     <details class="faq-item"><summary>Est-ce une nouvelle application ?</summary><p>Non, cette page appartient au projet CLIPFA.ST actuel. Elle teste son futur positionnement sans modifier les données, les outils ou les paiements du site existant.</p></details>
-   </div>
- </div>
-</section>
-
-<section class="section" style="padding-top:35px">
-  <div class="wrap">
-    <div class="cta-box">
-      <div class="tagline" style="justify-content:center">L'AVENIR DE CLIPFA.ST</div>
-      <h2>Une seule idée.<br><span class="grad">À toi de raconter la suite.</span></h2>
-      <p class="section-text" style="margin:0 auto 25px;text-align:center">Un univers dédié à la création vidéo IA, avec l'UGC comme point de départ. La nouvelle expérience se construit ici.</p>
-      <div style="display:flex;justify-content:center;gap:10px;flex-wrap:wrap">
-       <a class="btn btn-primary" href="#formats">Explorer les formats <span aria-hidden="true">↗</span></a>
-       <a class="btn btn-ghost" href="/">Découvrir l'UGC actuel <span aria-hidden="true">→</span></a>
-      </div>
-    </div>
+<section class="section" id="fonctionnement">
+ <div class="inner">
+  <header class="center">
+   <p class="section-kicker">COMMENT ÇA FONCTIONNERA</p>
+   <h2 class="section-title">Une idée suffit<br>pour commencer.</h2>
+   <p class="section-description">Le futur studio sera pensé pour te laisser créer sans te perdre dans des dizaines de réglages.</p>
+  </header>
+  <div class="steps">
+   <div class="step"><span class="step-num">01.</span><h3>Tu décris ton idée.</h3><p>Ton sujet, ton produit, ton style, la durée et le format de la vidéo.</p></div>
+   <div class="step"><span class="step-num">02.</span><h3>Tu construis tes scènes.</h3><p>Un storyboard pour visualiser chaque plan, son angle et sa durée.</p></div>
+   <div class="step"><span class="step-num">03.</span><h3>Tu assembles le résultat.</h3><p>Une timeline pour réunir les scènes et finaliser une vidéo cohérente. Ce moteur sera intégré plus tard.</p></div>
   </div>
+ </div>
+</section>
+
+<section class="section grey" id="questions">
+ <div class="inner faq">
+  <header class="center">
+   <p class="section-kicker">À SAVOIR</p>
+   <h2 class="section-title">Questions fréquentes.</h2>
+  </header>
+  <details><summary>Est-ce que cette landing peut déjà générer des vidéos IA ?</summary><p>Non, il s'agit de la présentation du futur produit, pas encore d'un studio de génération opérationnel. L'offre UGC existante reste accessible sur la page actuelle.</p></details>
+  <details><summary>Pourrai-je créer des vidéos de plusieurs minutes ?</summary><p>C'est le principe du futur produit : créer plusieurs plans, puis les assembler pour obtenir des vidéos longues. La durée maximale dépendra des modèles et du moteur de montage connectés.</p></details>
+  <details><summary>Est-ce que les packs UGC disparaissent ?</summary><p>Non. La nouvelle plateforme sera plus généraliste, mais les packs et outils UGC restent disponibles indépendamment.</p></details>
+  <details><summary>Pourquoi présenter ces formats maintenant ?</summary><p>Pour présenter une direction claire avant de connecter les moteurs IA et de développer toutes les fonctionnalités du studio.</p></details>
+ </div>
+</section>
+
+<section class="final-section">
+ <div class="inner">
+  <p class="section-kicker">LE FUTUR DE CLIPFA.ST</p>
+  <h2 class="section-title">La vidéo IA.<br>Sans limites créatives.</h2>
+  <p class="section-description">D'abord l'UGC. Demain, toutes les vidéos que tu imagines.</p>
+  <a class="pill-button light" href="/">Voir la plateforme UGC actuelle <span aria-hidden="true">→</span></a>
+ </div>
 </section>
 </main>
-
-<footer class="footer">
- <div class="wrap footer-inner">
-   <div><span class="footer-brand">CLIPFA.ST</span><span style="margin-left:16px">Imaginer. Créer. Raconter.</span></div>
-   <nav aria-label="Navigation de pied de page"><a href="#top">Haut de page ↑</a><a href="#formats">Formats</a><a href="#questions">FAQ</a><a href="/">UGC Factory ↗</a></nav>
- </div>
-</footer>
+<footer class="footer"><div class="inner footer-inner"><div><strong>CLIPFA.ST</strong><span style="margin-left:12px">Créer sans se limiter.</span></div><nav class="footer-links"><a href="#top">Haut ↑</a><a href="#formats">Formats</a><a href="#questions">FAQ</a><a href="/">UGC Factory ↗</a></nav></div></footer>
 <script>
-(function () {
-  var menuButton=document.getElementById('menuButton');
-  var mobileMenu=document.getElementById('mobileMenu');
-  if(menuButton&&mobileMenu){
-    menuButton.addEventListener('click',function(){
-      var open=mobileMenu.classList.toggle('open');
-      menuButton.setAttribute('aria-expanded',String(open));
-      menuButton.setAttribute('aria-label',open?'Fermer le menu':'Ouvrir le menu');
-    });
-    mobileMenu.querySelectorAll('a').forEach(function(a){
-      a.addEventListener('click',function(){mobileMenu.classList.remove('open');menuButton.setAttribute('aria-expanded','false');});
-    });
-  }
-  var examples={
-    ugc:{title:'Une marque racontée par ses clients.',description:"Imagine le témoignage spontané d'un créateur, avec un hook naturel, des plans produits et une conclusion qui donne envie d'en savoir plus.",meta:'VERTICAL 9:16 · 15–60 S · CONCEPT',label:'STORY / UGC'},
-    ads:{title:'Un produit. Une pub mémorable.',description:"Un lancement visuellement impactant : accroche immédiate, démonstration en quelques plans et signature de marque. Un récit publicitaire pensé pour convertir.",meta:'VERTICAL OU HORIZONTAL · 15–45 S · CONCEPT',label:'STORY / ADS'},
-    viral:{title:'Le genre de vidéo qu’on partage.',description:"Un concept inattendu, un changement de perspective et une chute qui donne envie de montrer la vidéo à tout le monde.",meta:'VERTICAL 9:16 · 10–45 S · CONCEPT',label:'STORY / VIRAL'},
-    documentaire:{title:'Trois minutes pour tout comprendre.',description:"Une introduction qui intrigue, des chapitres structurés, des plans d'illustration et une narration qui déroule une histoire jusqu'à sa conclusion.",meta:'HORIZONTAL 16:9 · 1–5 MIN · CONCEPT',label:'STORY / DOCUMENTARY'},
-    motion:{title:'Une idée complexe. Une image limpide.',description:"Une animation qui fait apparaître chiffres, formes et mouvements au rythme d'une explication. Parfait pour expliquer un produit ou un phénomène.",meta:'CARRÉ OU HORIZONTAL · 20–90 S · CONCEPT',label:'STORY / MOTION DESIGN'},
-    cinema:{title:'Tourne un film qui n’existe pas encore.',description:"Des plans d'ensemble, un univers cohérent, une ambiance, un personnage et un montage qui racontent une histoire. De la simple idée au scénario multi-scènes.",meta:'HORIZONTAL 16:9 · 1–5 MIN · CONCEPT',label:'STORY / CINEMA'}
-  };
-  var tabs=Array.prototype.slice.call(document.querySelectorAll('[data-tab]'));
-  function selectFormat(key){
-    var item=examples[key];if(!item)return;
-    document.getElementById('demoTitle').textContent=item.title;
-    document.getElementById('demoDescription').textContent=item.description;
-    document.getElementById('demoMeta').textContent=item.meta;
-    document.getElementById('demoArtLabel').textContent=item.label;
-    tabs.forEach(function(tab){tab.setAttribute('aria-selected',String(tab.getAttribute('data-tab')===key));});
-  }
-  tabs.forEach(function(tab){tab.addEventListener('click',function(){selectFormat(tab.getAttribute('data-tab'));});});
-  document.querySelectorAll('[data-format]').forEach(function(button){
-    button.addEventListener('click',function(){
-      selectFormat(button.getAttribute('data-format'));
-      document.getElementById('experience').scrollIntoView({behavior:window.matchMedia('(prefers-reduced-motion:reduce)').matches?'auto':'smooth',block:'start'});
-    });
-  });
-  document.addEventListener('keydown',function(event){
-    if(event.key==='Escape'&&mobileMenu&&mobileMenu.classList.contains('open')){mobileMenu.classList.remove('open');menuButton.setAttribute('aria-expanded','false');menuButton.focus();}
-  });
+(function(){
+ const menu=document.getElementById("siteMenu"),toggle=document.getElementById("menuToggle"),close=document.getElementById("menuClose");
+ function setMenu(open){menu.classList.toggle("open",open);menu.setAttribute("aria-hidden",String(!open));toggle.setAttribute("aria-expanded",String(open));document.body.style.overflow=open?"hidden":"";if(open)close.focus();else toggle.focus();}
+ toggle.addEventListener("click",()=>setMenu(!menu.classList.contains("open")));
+ close.addEventListener("click",()=>setMenu(false));
+ menu.addEventListener("click",e=>{if(e.target===menu||e.target.closest("a"))setMenu(false);});
+ document.addEventListener("keydown",e=>{if(e.key==="Escape"&&menu.classList.contains("open"))setMenu(false)});
+ const concepts={
+ ugc:["01 / UGC","Des vidéos qui parlent vrai.","Un créateur présente ton produit face caméra, montre comment il l'utilise et partage une expérience concrète. Le point de départ de CLIPFA.ST, avec les packs UGC déjà accessibles sur le site.","FORMAT VERTICAL · COURT FORMAT · DÉJÀ DISPONIBLE EN PACK",true],
+ ads:["02 / PUBLICITÉ","Des publicités qui marquent.","Une création pour mettre un produit en valeur : hook, démonstration, argumentaire et séquence finale. Du lancement de produit aux publicités sociales.","VERTICAL OU HORIZONTAL · VISION PRODUIT",false],
+ viral:["03 / VIRAL","Des vidéos impossibles à ignorer.","Une accroche surprenante, un rythme qui retient l'attention et une chute qui donne envie d'en parler. Pensées pour les réseaux sociaux.","FORMAT VERTICAL · VISION PRODUIT",false],
+ documentaire:["04 / DOCUMENTAIRE","Raconte une histoire entière.","Un documentaire structuré avec une introduction, des chapitres, des illustrations et une narration. Le tout pensé pour une vidéo de plusieurs minutes.","FORMAT HORIZONTAL · MULTI-SCÈNES · VISION PRODUIT",false],
+ motion:["05 / MOTION DESIGN","Anime même les idées abstraites.","Formes, typographie, transitions et mouvement au service d'une explication, d'une démo produit ou d'un concept.","CARRÉ OU HORIZONTAL · VISION PRODUIT",false],
+ cinema:["06 / CINÉMA","Des histoires sans tournage.","Un personnage, un décor, des plans et une atmosphère pour imaginer un court-métrage. L'objectif : garder une continuité visuelle entre les scènes.","HORIZONTAL · STORYBOARD · VISION PRODUIT",false]
+ };
+ function selectFormat(key,scroll){
+  const x=concepts[key];if(!x)return;
+  document.querySelectorAll("[data-format]").forEach(el=>el.setAttribute("aria-pressed",String(el.dataset.format===key)));
+  document.getElementById("formatKicker").textContent=x[0];
+  document.getElementById("formatTitle").textContent=x[1];
+  document.getElementById("formatDescription").textContent=x[2];
+  document.getElementById("formatMeta").textContent=x[3];
+  const link=document.getElementById("formatLink"),status=document.getElementById("formatStatus");
+  link.hidden=!x[4];status.textContent=x[4]?"UGC actuel":"Fonctionnalité à venir";
+  if(scroll)document.getElementById("formatPreview").scrollIntoView({behavior:window.matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth",block:"center"});
+ }
+ document.querySelectorAll("[data-format]").forEach(b=>b.addEventListener("click",()=>selectFormat(b.dataset.format,true)));
+ document.querySelectorAll("[data-open-format]").forEach(b=>b.addEventListener("click",()=>selectFormat(b.dataset.openFormat,false)));
 })();
 </script>
 </body>
