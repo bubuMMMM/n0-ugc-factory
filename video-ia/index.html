@@ -3,176 +3,249 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#f7f7f5">
-<title>CLIPFA.ST — Toute la création vidéo IA, au même endroit</title>
-<meta name="description" content="UGC, publicités, vidéos virales, documentaires, motion design et cinéma. Découvrez la future plateforme vidéo IA de CLIPFA.ST, pensée pour les histoires courtes et longues.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="/assets/brand.css?v=20261024">
-<link rel="stylesheet" href="/assets/video-ai-landing.css?v=2">
+<meta name="theme-color" content="#ffffff">
+<title>Explore — CLIPFA.ST | Vidéo IA, UGC, Ads & créations</title>
+<meta name="description" content="Explore l'univers vidéo IA de CLIPFA.ST : UGC, Ads, vidéos virales, documentaires, motion design et cinéma. Découvre de vraies vidéos de la bibliothèque actuelle.">
+<link rel="stylesheet" href="/assets/video-ai-landing.css?v=3">
 </head>
 <body>
+<header class="wrap site-nav">
+ <a href="/" class="logo-mini" aria-label="CLIPFA.ST — accueil"><span class="symbol" aria-hidden="true"></span><span class="brand-text">CLIPFA.ST</span></a>
+ <span class="center-title">Explore</span>
+ <a class="upgrade" href="/" aria-label="Ouvrir la plateforme UGC existante"><span class="diamond" aria-hidden="true">◆</span> Créer</a>
+</header>
+
 <main>
-<section class="home-ugc-hero" id="top">
- <div class="home-shell">
-  <div class="home-topbar">
-   <a href="/" class="home-brand" aria-label="CLIPFA.ST, retour au site actuel">CLIPFA.ST</a>
-   <a class="home-start" href="#formats">Explorer <b aria-hidden="true">→</b></a>
-   <button class="home-menu" id="menuToggle" aria-label="Ouvrir le menu" aria-controls="siteMenu" aria-expanded="false" type="button"><i></i></button>
+<section class="wrap hero-block" aria-label="À la une">
+ <div class="hero-frame" id="heroFrame">
+  <div class="hero-motion" aria-hidden="true">
+   <video id="heroBackdrop" class="hero-blur" autoplay muted loop playsinline preload="metadata"></video>
+   <video id="heroPortrait" class="hero-portrait" autoplay muted loop playsinline preload="metadata"></video>
   </div>
-  <div class="home-copy">
-   <div class="home-proof"><span class="home-avatars" aria-hidden="true"><span></span><span></span><span></span></span><span>UGC, Ads, viral & bien plus</span></div>
-   <h1>Toutes tes vidéos.<br>Un seul studio.</h1>
-   <p>UGC, publicités, vidéos virales, documentaires, motion design… De quelques secondes à plusieurs minutes.</p>
+  <div class="hero-shade"></div>
+  <div class="hero-copy">
+   <div class="overline" id="heroOverline">EXPLORER LA VIDÉO IA</div>
+   <h1 id="heroTitle">CONTENT FACTORY</h1>
+   <p id="heroSubtitle">Les tendances d'aujourd'hui. Tes prochaines créations.</p>
   </div>
-  <div class="home-featured" aria-label="Vidéos UGC issues de la plateforme actuelle">
-   <div class="home-card">
-    <video src="https://doublespeed2.blob.core.windows.net/media/media/e3e45b32-d29e-4d2f-a821-c06c4f101bc8/generated/64810d44-8da4-47b6-b392-c28d8a5e35a6-019d4fed-a614-7690-945c-90007fa3799a.mp4" muted playsinline loop autoplay preload="metadata" aria-label="Aperçu vidéo UGC existante"></video>
-   </div>
-   <div class="home-card main">
-    <video src="https://doublespeed2.blob.core.windows.net/media/media/2dca701e-9e20-48a8-b642-3fb04aed5ea6/generated/8c1f6534-8585-46b6-968f-33b3d50694b1-019e41f7-375b-7b10-b49c-78de5c896c8a.mp4" muted playsinline loop autoplay preload="metadata" aria-label="Aperçu vidéo UGC existante"></video>
-    <strong>Imagine.<br>Crée.<br>Publie.</strong>
-    <span class="video-note">APERÇU UGC ACTUEL</span>
-   </div>
-   <div class="home-card">
-    <video src="https://doublespeed2.blob.core.windows.net/media/media/e3e45b32-d29e-4d2f-a821-c06c4f101bc8/generated/74f92628-dbbd-4c35-b81d-47f76090294e-019e59e5-4360-77e2-a238-c471c4d20932.mp4" muted playsinline loop autoplay preload="metadata" aria-label="Aperçu vidéo UGC existante"></video>
-   </div>
-  </div>
-  <a class="home-explore" href="#formats">Découvrir tous les formats <span aria-hidden="true">⌄</span></a>
+  <button id="heroNext" class="hero-next" aria-label="Voir la vidéo suivante" type="button">›</button>
+ </div>
+ <div class="carousel-dots" id="heroDots" role="group" aria-label="Choisir une vidéo à la une"></div>
+</section>
+
+<section class="wrap category-section" aria-label="Explorer les formats vidéo">
+ <div class="category-row" id="categoryRow">
+  <button class="category-tile active" type="button" data-format="ugc" aria-pressed="true"><span class="category-thumb"><video muted loop playsinline preload="none" data-src="https://doublespeed2.blob.core.windows.net/media/media/e3e45b32-d29e-4d2f-a821-c06c4f101bc8/generated/64810d44-8da4-47b6-b392-c28d8a5e35a6-019d4fed-a614-7690-945c-90007fa3799a.mp4"></video></span><span class="label">UGC</span><span class="upcoming">Déjà disponible</span></button>
+  <button class="category-tile" type="button" data-format="ads" aria-pressed="false"><span class="category-thumb"><video muted loop playsinline preload="none" poster="/media/kebab/broche-097f153d.jpg" data-src="/media/kebab/broche-097f153d.mp4"></video></span><span class="label">Ads</span><span class="upcoming">À développer</span></button>
+  <button class="category-tile" type="button" data-format="viral" aria-pressed="false"><span class="category-thumb"><video muted loop playsinline preload="none" data-src="https://doublespeed2.blob.core.windows.net/media/media/2dca701e-9e20-48a8-b642-3fb04aed5ea6/generated/8c1f6534-8585-46b6-968f-33b3d50694b1-019e41f7-375b-7b10-b49c-78de5c896c8a.mp4"></video></span><span class="label">Viral</span><span class="upcoming">À développer</span></button>
+  <button class="category-tile" type="button" data-format="documentaire" aria-pressed="false"><span class="category-thumb"><video muted loop playsinline preload="none" data-src="https://doublespeed2.blob.core.windows.net/media/media/e3e45b32-d29e-4d2f-a821-c06c4f101bc8/generated/74f92628-dbbd-4c35-b81d-47f76090294e-019e59e5-4360-77e2-a238-c471c4d20932.mp4"></video></span><span class="label">Documentaire</span><span class="upcoming">À développer</span></button>
+  <button class="category-tile" type="button" data-format="motion" aria-pressed="false"><span class="category-thumb"><video muted loop playsinline preload="none" poster="/media/kebab/pitas-44da836d.jpg" data-src="/media/kebab/pitas-44da836d.mp4"></video></span><span class="label">Motion</span><span class="upcoming">À développer</span></button>
+  <button class="category-tile" type="button" data-format="cinema" aria-pressed="false"><span class="category-thumb"><video muted loop playsinline preload="none" poster="/media/kebab/street.jpg" data-src="/media/kebab/street-89044c24.mp4"></video></span><span class="label">Cinéma</span><span class="upcoming">À développer</span></button>
  </div>
 </section>
 
-<div class="home-site-menu" id="siteMenu" aria-hidden="true">
- <div class="home-menu-panel">
-  <div class="home-menu-head">
-   <div class="home-menu-brand">CLIPFA.ST</div>
-   <button class="home-menu-close" id="menuClose" aria-label="Fermer le menu" type="button">×</button>
+<section class="wrap library-section" id="bibliotheque">
+ <div class="heading-bar">
+  <div><p class="eyebrow-lime">Inspire-to-create ✦</p><h2>Bibliothèque de démos</h2></div>
+  <button class="view-all" type="button" id="viewAll">Voir tout <span aria-hidden="true">›</span></button>
+ </div>
+ <div class="library-filters" id="libraryFilters" role="group" aria-label="Filtrer les vidéos">
+  <button type="button" class="filter active" data-filter="all" aria-pressed="true">Tout voir</button>
+  <button type="button" class="filter" data-filter="ugc" aria-pressed="false">UGC & réactions</button>
+  <button type="button" class="filter" data-filter="food" aria-pressed="false">Food & produits</button>
+ </div>
+ <div class="demo-grid" id="demoGrid" aria-live="polite"></div>
+ <button type="button" class="more-btn" id="loadMore">Afficher plus de vidéos ↓</button>
+ <p class="disclaimer" id="libraryStatus">Vidéos réelles de la bibliothèque UGC existante. Elles servent de démonstration visuelle ; les futurs outils documentaire, motion design et cinéma ne sont pas encore connectés.</p>
+</section>
+
+<section class="future-section" id="video-longue">
+ <div class="wrap future-layout">
+  <div>
+   <span class="future-tag">✦ UN STUDIO POUR TOUT CRÉER</span>
+   <h2>Du Reel au documentaire.</h2>
+   <p>Pas envie de te limiter à quelques secondes ? La prochaine étape de CLIPFA.ST, c'est un studio capable de découper ton idée en scènes et de les assembler en vidéos de plusieurs minutes.</p>
+   <p>UGC, publicités, formats viraux, documentaires, motion design, cinéma : une interface commune pour raconter toutes tes histoires.</p>
+   <a class="future-cta" href="/" aria-label="Accéder à l'UGC Factory actuelle">Découvrir l'UGC actuel <span aria-hidden="true">↗</span></a>
   </div>
-  <p class="home-menu-kicker">DÉCOUVRIR LA PLATEFORME</p>
-  <nav class="home-menu-nav" aria-label="Menu de la plateforme">
-   <section><h3>Explorer</h3><a href="#formats">Tous les formats <b>↗</b></a><a href="#longues">Vidéos longues <b>↗</b></a><a href="#fonctionnement">Comment ça marche <b>↗</b></a></section>
-   <section><h3>Formats</h3><a href="#formats" data-open-format="ugc">UGC <b>↗</b></a><a href="#formats" data-open-format="ads">Publicités <b>↗</b></a><a href="#formats" data-open-format="viral">Viral <b>↗</b></a></section>
-   <section><h3>Création</h3><a href="#formats" data-open-format="documentaire">Documentaire <b>↗</b></a><a href="#formats" data-open-format="motion">Motion design <b>↗</b></a><a href="#formats" data-open-format="cinema">Cinéma <b>↗</b></a></section>
-   <section><h3>Site actuel</h3><a href="/">UGC Factory <b>↗</b></a><a href="#questions">Questions fréquentes <b>↗</b></a></section>
-  </nav>
+  <div class="storyboard" aria-label="Concept visuel d'une timeline multi-scènes">
+   <div class="story-top"><span>STORYBOARD · APERÇU CONCEPTUEL</span><span>03:00 · 16:9</span></div>
+   <div class="story-stage">
+    <video id="storyVideo" muted loop playsinline preload="none" poster="/media/kebab/degustation-e2827722.jpg" data-src="/media/kebab/degustation-e2827722.mp4"></video>
+    <span id="storyCaption">Une histoire.<br>Plusieurs scènes.</span>
+   </div>
+   <div class="story-clips" id="storyClips">
+    <button type="button" class="active" data-shot="0" aria-label="Voir le plan 1"><video muted playsinline preload="none" poster="/media/kebab/degustation-e2827722.jpg" data-src="/media/kebab/degustation-e2827722.mp4"></video></button>
+    <button type="button" data-shot="1" aria-label="Voir le plan 2"><video muted playsinline preload="none" poster="/media/kebab/preparation.jpg" data-src="/media/kebab/preparation.mp4"></video></button>
+    <button type="button" data-shot="2" aria-label="Voir le plan 3"><video muted playsinline preload="none" poster="/media/kebab/broche-097f153d.jpg" data-src="/media/kebab/broche-097f153d.mp4"></video></button>
+    <button type="button" data-shot="3" aria-label="Voir le plan 4"><video muted playsinline preload="none" poster="/media/kebab/street.jpg" data-src="/media/kebab/street-89044c24.mp4"></video></button>
+    <button type="button" data-shot="4" aria-label="Voir le plan 5"><video muted playsinline preload="none" poster="/media/kebab/pitas-44da836d.jpg" data-src="/media/kebab/pitas-44da836d.mp4"></video></button>
+   </div>
+   <div class="story-time"><span>00:00</span><span>01:00</span><span>02:00</span><span>03:00</span></div>
+  </div>
+ </div>
+</section>
+
+<section class="wrap bottom-section">
+ <h2>Ton idée mérite<br>d'être une vidéo.</h2>
+ <p>Explore des vidéos réelles, trouve un style qui t'inspire et découvre ce qui arrive dans le futur studio CLIPFA.ST.</p>
+ <a class="lime-btn" href="/">Découvrir l'UGC Factory <span aria-hidden="true">↗</span></a>
+</section>
+</main>
+<footer class="footer"><div class="wrap footer-inner"><div><strong>CLIPFA.ST</strong><span style="margin-left:13px">Explore. Imagine. Crée.</span></div><nav><a href="#bibliotheque">Bibliothèque</a><a href="#video-longue">Studio</a><a href="/">UGC Factory</a></nav></div></footer>
+
+<div class="modal" id="videoModal" role="dialog" aria-modal="true" aria-labelledby="modalCaption" aria-hidden="true">
+ <div class="modal-dialog">
+  <button type="button" class="modal-close" id="modalClose" aria-label="Fermer la vidéo">×</button>
+  <video class="modal-video" id="modalVideo" controls playsinline preload="none"></video>
+  <span class="modal-caption" id="modalCaption">Aperçu vidéo</span>
  </div>
 </div>
 
-<section class="section" id="formats">
- <div class="inner">
-  <header class="center">
-   <p class="section-kicker">UNE PLATEFORME, SIX UNIVERS</p>
-   <h2 class="section-title">Toutes les vidéos<br>que tu imagines.</h2>
-   <p class="section-description">Une seule plateforme pour créer du contenu qui vend, qui explique, qui divertit ou qui raconte une histoire.</p>
-  </header>
-  <div class="format-grid" id="formatGrid">
-   <button class="format-card" type="button" data-format="ugc" aria-pressed="true"><div class="format-thumb ugc"><span class="thumb-index">01 / CRÉATEURS</span><span class="thumb-ratio">9:16</span></div><h3>UGC</h3><p>Naturel, spontané, authentique.</p></button>
-   <button class="format-card" type="button" data-format="ads" aria-pressed="false"><div class="format-thumb ads"><span class="thumb-index">02 / MARQUES</span><span class="thumb-ratio">9:16 · 16:9</span></div><h3>Ads</h3><p>Des publicités qui captent l'attention.</p></button>
-   <button class="format-card" type="button" data-format="viral" aria-pressed="false"><div class="format-thumb viral"><span class="thumb-index">03 / SOCIAL</span><span class="thumb-ratio">9:16</span></div><h3>Viral</h3><p>Des contenus qu'on a envie de partager.</p></button>
-   <button class="format-card" type="button" data-format="documentaire" aria-pressed="false"><div class="format-thumb doc"><span class="thumb-index">04 / STORIES</span><span class="thumb-ratio">16:9</span></div><h3>Documentaire</h3><p>Des histoires qui prennent leur temps.</p></button>
-   <button class="format-card" type="button" data-format="motion" aria-pressed="false"><div class="format-thumb motion"><span class="thumb-index">05 / DESIGN</span><span class="thumb-ratio">1:1 · 16:9</span></div><h3>Motion design</h3><p>Des idées complexes rendues simples.</p></button>
-   <button class="format-card" type="button" data-format="cinema" aria-pressed="false"><div class="format-thumb cinema"><span class="thumb-index">06 / CINÉMA</span><span class="thumb-ratio">16:9</span></div><h3>Cinéma</h3><p>Des histoires sans limites de tournage.</p></button>
-  </div>
-  <div class="format-preview" id="formatPreview" aria-live="polite">
-   <div>
-    <span class="format-preview-kicker" id="formatKicker">01 / UGC</span>
-    <h3 id="formatTitle">Des vidéos qui parlent vrai.</h3>
-    <p id="formatDescription">Un créateur présente ton produit face caméra, montre comment il l'utilise et partage une expérience concrète. Le point de départ de CLIPFA.ST, avec les packs UGC déjà accessibles sur le site.</p>
-    <div class="minor" id="formatMeta">FORMAT VERTICAL · COURT FORMAT · DÉJÀ DISPONIBLE EN PACK</div>
-   </div>
-   <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
-    <a id="formatLink" class="pill-button" href="/">Découvrir l'UGC existant <span aria-hidden="true">→</span></a>
-    <span id="formatStatus" class="tag">UGC actuel</span>
-   </div>
-  </div>
- </div>
-</section>
-
-<section class="section grey" id="longues">
- <div class="inner long-layout">
-  <div>
-   <p class="section-kicker">FINI LES IDÉES COUPÉES EN 8 SECONDES</p>
-   <h2 class="section-title">Quelques secondes.<br>Ou plusieurs minutes.</h2>
-   <p class="section-description">Et si ton prochain documentaire durait trois minutes ? L'idée, c'est de créer plusieurs scènes, de les organiser sur une timeline et de construire une vidéo complète plutôt qu'un simple clip.</p>
-   <div class="feature-tags"><span class="tag">Storyboard</span><span class="tag">Scènes multiples</span><span class="tag">Voix & narration</span><span class="tag">Formats 9:16 et 16:9</span></div>
-   <p style="color:#888;font-size:11px;line-height:1.6;margin-top:20px;max-width:480px">Cette fonctionnalité décrit l'objectif de la future plateforme. Le rendu IA multi-scènes n'est pas encore disponible sur cette nouvelle page.</p>
-  </div>
-  <div class="timeline-card" aria-label="Illustration de l'interface multi-scènes envisagée">
-   <div class="timeline-head"><span>STORYBOARD / PROJET DÉMO</span><b>03:00 · 16:9</b></div>
-   <div class="timeline-player"><div class="timeline-topline">SCÈNE 03 / 18</div><div class="timeline-title">Un monde.<br>Des possibilités.</div></div>
-   <div class="timeline-scene-row"><div class="timeline-clip"><b>01</b><span>Intro</span></div><div class="timeline-clip"><b>02</b><span>Plan</span></div><div class="timeline-clip"><b>03</b><span>Focus</span></div><div class="timeline-clip"><b>04</b><span>Plan</span></div><div class="timeline-clip"><b>05</b><span>Suite</span></div><div class="timeline-clip"><b>06</b><span>Outro</span></div></div>
-   <div class="timeline-ruler"><span>00:00</span><span>01:00</span><span>02:00</span><span>03:00</span></div>
-  </div>
- </div>
-</section>
-
-<section class="section" id="fonctionnement">
- <div class="inner">
-  <header class="center">
-   <p class="section-kicker">COMMENT ÇA FONCTIONNERA</p>
-   <h2 class="section-title">Une idée suffit<br>pour commencer.</h2>
-   <p class="section-description">Le futur studio sera pensé pour te laisser créer sans te perdre dans des dizaines de réglages.</p>
-  </header>
-  <div class="steps">
-   <div class="step"><span class="step-num">01.</span><h3>Tu décris ton idée.</h3><p>Ton sujet, ton produit, ton style, la durée et le format de la vidéo.</p></div>
-   <div class="step"><span class="step-num">02.</span><h3>Tu construis tes scènes.</h3><p>Un storyboard pour visualiser chaque plan, son angle et sa durée.</p></div>
-   <div class="step"><span class="step-num">03.</span><h3>Tu assembles le résultat.</h3><p>Une timeline pour réunir les scènes et finaliser une vidéo cohérente. Ce moteur sera intégré plus tard.</p></div>
-  </div>
- </div>
-</section>
-
-<section class="section grey" id="questions">
- <div class="inner faq">
-  <header class="center">
-   <p class="section-kicker">À SAVOIR</p>
-   <h2 class="section-title">Questions fréquentes.</h2>
-  </header>
-  <details><summary>Est-ce que cette landing peut déjà générer des vidéos IA ?</summary><p>Non, il s'agit de la présentation du futur produit, pas encore d'un studio de génération opérationnel. L'offre UGC existante reste accessible sur la page actuelle.</p></details>
-  <details><summary>Pourrai-je créer des vidéos de plusieurs minutes ?</summary><p>C'est le principe du futur produit : créer plusieurs plans, puis les assembler pour obtenir des vidéos longues. La durée maximale dépendra des modèles et du moteur de montage connectés.</p></details>
-  <details><summary>Est-ce que les packs UGC disparaissent ?</summary><p>Non. La nouvelle plateforme sera plus généraliste, mais les packs et outils UGC restent disponibles indépendamment.</p></details>
-  <details><summary>Pourquoi présenter ces formats maintenant ?</summary><p>Pour présenter une direction claire avant de connecter les moteurs IA et de développer toutes les fonctionnalités du studio.</p></details>
- </div>
-</section>
-
-<section class="final-section">
- <div class="inner">
-  <p class="section-kicker">LE FUTUR DE CLIPFA.ST</p>
-  <h2 class="section-title">La vidéo IA.<br>Sans limites créatives.</h2>
-  <p class="section-description">D'abord l'UGC. Demain, toutes les vidéos que tu imagines.</p>
-  <a class="pill-button light" href="/">Voir la plateforme UGC actuelle <span aria-hidden="true">→</span></a>
- </div>
-</section>
-</main>
-<footer class="footer"><div class="inner footer-inner"><div><strong>CLIPFA.ST</strong><span style="margin-left:12px">Créer sans se limiter.</span></div><nav class="footer-links"><a href="#top">Haut ↑</a><a href="#formats">Formats</a><a href="#questions">FAQ</a><a href="/">UGC Factory ↗</a></nav></div></footer>
 <script>
 (function(){
- const menu=document.getElementById("siteMenu"),toggle=document.getElementById("menuToggle"),close=document.getElementById("menuClose");
- function setMenu(open){menu.classList.toggle("open",open);menu.setAttribute("aria-hidden",String(!open));toggle.setAttribute("aria-expanded",String(open));document.body.style.overflow=open?"hidden":"";if(open)close.focus();else toggle.focus();}
- toggle.addEventListener("click",()=>setMenu(!menu.classList.contains("open")));
- close.addEventListener("click",()=>setMenu(false));
- menu.addEventListener("click",e=>{if(e.target===menu||e.target.closest("a"))setMenu(false);});
- document.addEventListener("keydown",e=>{if(e.key==="Escape"&&menu.classList.contains("open"))setMenu(false)});
- const concepts={
- ugc:["01 / UGC","Des vidéos qui parlent vrai.","Un créateur présente ton produit face caméra, montre comment il l'utilise et partage une expérience concrète. Le point de départ de CLIPFA.ST, avec les packs UGC déjà accessibles sur le site.","FORMAT VERTICAL · COURT FORMAT · DÉJÀ DISPONIBLE EN PACK",true],
- ads:["02 / PUBLICITÉ","Des publicités qui marquent.","Une création pour mettre un produit en valeur : hook, démonstration, argumentaire et séquence finale. Du lancement de produit aux publicités sociales.","VERTICAL OU HORIZONTAL · VISION PRODUIT",false],
- viral:["03 / VIRAL","Des vidéos impossibles à ignorer.","Une accroche surprenante, un rythme qui retient l'attention et une chute qui donne envie d'en parler. Pensées pour les réseaux sociaux.","FORMAT VERTICAL · VISION PRODUIT",false],
- documentaire:["04 / DOCUMENTAIRE","Raconte une histoire entière.","Un documentaire structuré avec une introduction, des chapitres, des illustrations et une narration. Le tout pensé pour une vidéo de plusieurs minutes.","FORMAT HORIZONTAL · MULTI-SCÈNES · VISION PRODUIT",false],
- motion:["05 / MOTION DESIGN","Anime même les idées abstraites.","Formes, typographie, transitions et mouvement au service d'une explication, d'une démo produit ou d'un concept.","CARRÉ OU HORIZONTAL · VISION PRODUIT",false],
- cinema:["06 / CINÉMA","Des histoires sans tournage.","Un personnage, un décor, des plans et une atmosphère pour imaginer un court-métrage. L'objectif : garder une continuité visuelle entre les scènes.","HORIZONTAL · STORYBOARD · VISION PRODUIT",false]
- };
- function selectFormat(key,scroll){
-  const x=concepts[key];if(!x)return;
-  document.querySelectorAll("[data-format]").forEach(el=>el.setAttribute("aria-pressed",String(el.dataset.format===key)));
-  document.getElementById("formatKicker").textContent=x[0];
-  document.getElementById("formatTitle").textContent=x[1];
-  document.getElementById("formatDescription").textContent=x[2];
-  document.getElementById("formatMeta").textContent=x[3];
-  const link=document.getElementById("formatLink"),status=document.getElementById("formatStatus");
-  link.hidden=!x[4];status.textContent=x[4]?"UGC actuel":"Fonctionnalité à venir";
-  if(scroll)document.getElementById("formatPreview").scrollIntoView({behavior:window.matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth",block:"center"});
- }
- document.querySelectorAll("[data-format]").forEach(b=>b.addEventListener("click",()=>selectFormat(b.dataset.format,true)));
- document.querySelectorAll("[data-open-format]").forEach(b=>b.addEventListener("click",()=>selectFormat(b.dataset.openFormat,false)));
+"use strict";
+const $=id=>document.getElementById(id);
+const AZ=[
+"https://doublespeed2.blob.core.windows.net/media/media/e3e45b32-d29e-4d2f-a821-c06c4f101bc8/generated/64810d44-8da4-47b6-b392-c28d8a5e35a6-019d4fed-a614-7690-945c-90007fa3799a.mp4",
+"https://doublespeed2.blob.core.windows.net/media/media/2dca701e-9e20-48a8-b642-3fb04aed5ea6/generated/8c1f6534-8585-46b6-968f-33b3d50694b1-019e41f7-375b-7b10-b49c-78de5c896c8a.mp4",
+"https://doublespeed2.blob.core.windows.net/media/media/e3e45b32-d29e-4d2f-a821-c06c4f101bc8/generated/74f92628-dbbd-4c35-b81d-47f76090294e-019e59e5-4360-77e2-a238-c471c4d20932.mp4",
+"https://doublespeed2.blob.core.windows.net/media/media/e3e45b32-d29e-4d2f-a821-c06c4f101bc8/generated/69debb65-342e-4171-b3ba-2402505740ca-019eae2c-a688-7c03-ab0e-94d9e927b37b.mp4",
+"https://doublespeed2.blob.core.windows.net/media/media/e3e45b32-d29e-4d2f-a821-c06c4f101bc8/generated/a6398cc3-3c0f-4948-b81d-4f709aab7b38-019e5a1e-0e1c-7742-a503-fb8594126e0e.mp4",
+"https://doublespeed2.blob.core.windows.net/media/media/6e0873cd-1eb0-430d-9d35-d9210f87c904/generated/373e9786-445e-4cab-ace6-20699db17725-019e4787-f472-7b23-b94d-d3f7121870e8.mp4",
+"https://doublespeed2.blob.core.windows.net/media/media/48156df6-5847-48d2-b66d-3c7a8d4c4bbd/generated/a5c4db94-ce15-48c2-97d4-9ddc8644c797-019f9166-b764-7ed0-9491-c8618b810112.mp4",
+"https://doublespeed2.blob.core.windows.net/media/media/a8f3d76e-d5c3-47e0-8434-be53cbbab810/generated/ab67c89b-bb22-4a5a-a72d-a2758a2e11d5-019f5211-f03e-7553-b555-f809d5152897.mp4",
+"https://doublespeed2.blob.core.windows.net/media/media/a8f3d76e-d5c3-47e0-8434-be53cbbab810/generated/27bc7c2d-5cf2-4674-88c8-acc213397bc4-019f62e2-a50e-73d1-b378-3cfdcc15bf49.mp4"
+];
+const FOOD=[
+{src:"/media/kebab/degustation-e2827722.mp4",poster:"/media/kebab/degustation-e2827722.jpg",title:"Première bouchée"},
+{src:"/media/kebab/preparation.mp4",poster:"/media/kebab/preparation.jpg",title:"En préparation"},
+{src:"/media/kebab/broche-097f153d.mp4",poster:"/media/kebab/broche-097f153d.jpg",title:"Produit en détail"},
+{src:"/media/kebab/street-89044c24.mp4",poster:"/media/kebab/street.jpg",title:"Street food"},
+{src:"/media/kebab/pitas-44da836d.mp4",poster:"/media/kebab/pitas-44da836d.jpg",title:"Food close-up"},
+{src:"/media/kebab/voiture-3f655e32.mp4",poster:"/media/kebab/voiture-3f655e32.jpg",title:"On-the-go"},
+{src:"/media/kebab/reaction-cbab9e5f.mp4",poster:"/media/kebab/reaction.jpg",title:"Réaction"},
+{src:"/media/kebab/collection-a3e99d9c.mp4",poster:"",title:"Street food reel"}
+].map((v,i)=>({...v,id:"food-"+i,group:"food",badge:"FOOD / ADS",subtitle:"Démo du site actuel"}));
+const feature=[
+{title:"CONTENT FACTORY",subtitle:"Les tendances d'aujourd'hui. Tes prochaines créations.",subtitleSmall:"EXPLORER LA VIDÉO IA",src:AZ[0]},
+{title:"UGC COLLECTION",subtitle:"Le contenu authentique, à portée de clic.",subtitleSmall:"VIDÉOS DE LA BIBLIOTHÈQUE",src:AZ[1]},
+{title:"FOOD & ADS",subtitle:"Des contenus produits qui captent l'attention.",subtitleSmall:"DÉMOS DU SITE ACTUEL",src:"/media/kebab/preparation.mp4"},
+{title:"REELS & SHORTS",subtitle:"Des formats courts, pensés pour défiler.",subtitleSmall:"TENDANCES & INSPIRATION",src:AZ[2]}
+];
+let activeHero=0,heroTimer=null,startTouch=0;
+function playSilent(el){if(!el||document.hidden)return;el.muted=true;el.playsInline=true;const p=el.play();if(p&&p.catch)p.catch(()=>{});}
+function showHero(index){
+activeHero=(index+feature.length)%feature.length;const item=feature[activeHero];
+$("heroTitle").textContent=item.title;$("heroSubtitle").textContent=item.subtitle;$("heroOverline").textContent=item.subtitleSmall;
+for(const id of ["heroBackdrop","heroPortrait"]){const v=$(id);v.pause();v.src=item.src;v.load();playSilent(v);}
+$("heroDots").querySelectorAll(".dot").forEach((b,i)=>{b.classList.toggle("active",i===activeHero);b.setAttribute("aria-current",i===activeHero?"true":"false");});
+}
+const dots=$("heroDots");
+feature.forEach((item,i)=>{const b=document.createElement("button");b.type="button";b.className="dot";b.setAttribute("aria-label","Voir le visuel "+(i+1));b.addEventListener("click",()=>{showHero(i);resetTimer();});dots.appendChild(b);});
+function resetTimer(){clearInterval(heroTimer);heroTimer=setInterval(()=>{if(!document.hidden&&!$("videoModal").classList.contains("open"))showHero(activeHero+1);},9000);}
+$("heroNext").addEventListener("click",()=>{showHero(activeHero+1);resetTimer();});
+$("heroFrame").addEventListener("touchstart",e=>{startTouch=e.changedTouches[0]?.clientX||0;},{passive:true});
+$("heroFrame").addEventListener("touchend",e=>{const dx=(e.changedTouches[0]?.clientX||0)-startTouch;if(Math.abs(dx)>45){showHero(activeHero+(dx<0?1:-1));resetTimer();}},{passive:true});
+showHero(0);resetTimer();
+
+const formats={
+ugc:{title:"UGC",subtitle:"Des vidéos authentiques déjà présentes dans la bibliothèque.",hero:0},
+ads:{title:"Ads",subtitle:"Des démos produits aujourd'hui, un studio publicitaire plus complet demain.",hero:2},
+viral:{title:"Viral",subtitle:"Des formats courts pour s'inspirer des codes des réseaux.",hero:3},
+documentaire:{title:"Documentaire",subtitle:"Le futur format multi-scènes pour raconter des histoires longues.",hero:0},
+motion:{title:"Motion design",subtitle:"Animations et contenus graphiques prévus pour le futur studio.",hero:3},
+cinema:{title:"Cinéma",subtitle:"De la narration au court-métrage : une piste pour le futur studio.",hero:1}
+};
+$("categoryRow").addEventListener("click",e=>{
+const b=e.target.closest("[data-format]");if(!b)return;
+$("categoryRow").querySelectorAll("[data-format]").forEach(x=>{x.classList.toggle("active",x===b);x.setAttribute("aria-pressed",String(x===b));});
+const format=formats[b.dataset.format];showHero(format.hero);resetTimer();
+});
+
+const fallback=AZ.map((src,i)=>({src,poster:"",group:"ugc",title:"Vidéo #"+String(i+1).padStart(3,"0"),badge:"UGC / REELS",subtitle:"Bibliothèque existante",id:"ugc-"+i}));
+let entries=[fallback[0],FOOD[0],fallback[1],FOOD[1],fallback[2],FOOD[2],fallback[3],FOOD[3],...fallback.slice(4),...FOOD.slice(4)];
+let filter="all",limit=8;
+let mediaObserver=null;
+function isValidVideoUrl(src){try{const u=new URL(src,location.origin);return u.protocol==="https:"&&u.hostname==="doublespeed2.blob.core.windows.net"&&u.pathname.endsWith(".mp4");}catch(e){return false;}}
+function itemFor(src,i){return {src,poster:"",id:"ugc-"+i,group:"ugc",title:"Vidéo #"+String(i+1).padStart(3,"0"),badge:"UGC / REELS",subtitle:"Bibliothèque existante"};}
+function draw(){
+const items=entries.filter(x=>filter==="all"||x.group===filter);
+const count=Math.min(items.length,limit),shown=items.slice(0,count);
+$("demoGrid").replaceChildren();
+const frag=document.createDocumentFragment();
+shown.forEach(v=>{
+const button=document.createElement("button");button.type="button";button.className="demo-card";button.dataset.src=v.src;button.dataset.label=v.title;button.setAttribute("aria-label","Lire "+v.title);
+const video=document.createElement("video");video.muted=true;video.defaultMuted=true;video.setAttribute("muted","");video.playsInline=true;video.setAttribute("playsinline","");video.loop=true;video.preload="none";video.dataset.src=v.src;if(v.poster)video.poster=v.poster;
+const grd=document.createElement("span");grd.className="demo-gradient";
+const top=document.createElement("span");top.className="demo-head";
+const cat=document.createElement("span");cat.className="category";cat.textContent=v.badge;const watch=document.createElement("span");watch.className="watch";watch.textContent="▶";top.append(cat,watch);
+const bottom=document.createElement("span");bottom.className="demo-meta";
+const title=document.createElement("strong");title.textContent=v.title;
+const subtitle=document.createElement("small");subtitle.textContent=v.subtitle;bottom.append(title,subtitle);
+button.append(video,grd,top,bottom);frag.appendChild(button);
+});
+$("demoGrid").appendChild(frag);
+$("loadMore").hidden=count>=items.length;
+$("viewAll").hidden=count>=items.length;
+if(mediaObserver)mediaObserver.disconnect();
+observeMedia();
+}
+function updateFilter(next){filter=next;limit=8;$("libraryFilters").querySelectorAll("button").forEach(b=>{const on=b.dataset.filter===next;b.classList.toggle("active",on);b.setAttribute("aria-pressed",String(on));});draw();}
+$("libraryFilters").addEventListener("click",e=>{const b=e.target.closest("[data-filter]");if(b)updateFilter(b.dataset.filter);});
+$("loadMore").addEventListener("click",()=>{limit+=8;draw();});
+$("viewAll").addEventListener("click",()=>{limit+=8;draw();$("bibliotheque").scrollIntoView({behavior:"smooth"});});
+
+function observeMedia(){
+const videoEls=document.querySelectorAll(".demo-card video, .category-thumb video, .storyboard video");
+if(!("IntersectionObserver" in window)){videoEls.forEach(v=>{if(!v.src&&v.dataset.src){v.src=v.dataset.src;v.load();}playSilent(v);});return;}
+mediaObserver=new IntersectionObserver(items=>items.forEach(item=>{
+const v=item.target;if(item.isIntersecting){
+if(!v.src&&v.dataset.src){v.src=v.dataset.src;v.load();}
+if(!v.closest(".story-clips"))playSilent(v);
+}else v.pause();
+}),{rootMargin:"100px 0px",threshold:.01});
+videoEls.forEach(v=>mediaObserver.observe(v));
+}
+draw();
+fetch("/videos.txt",{cache:"force-cache"}).then(r=>{if(!r.ok)throw Error("LIBRARY_NOT_FOUND");return r.text();}).then(text=>{
+const urls=[...new Set(text.split(/\r?\n/).map(x=>x.trim()).filter(isValidVideoUrl))].slice(0,1017);
+if(!urls.length)return;
+const ext=urls.map(itemFor),mix=[];
+for(let i=0;i<ext.length;i++){mix.push(ext[i]);if(i<FOOD.length)mix.push(FOOD[i]);}
+entries=mix;draw();$("libraryStatus").textContent=urls.length+" vidéos de la bibliothèque UGC existante, plus "+FOOD.length+" démos produit. Les autres formats sont la vision future du studio IA.";
+}).catch(()=>{$("libraryStatus").textContent="Sélection de vidéos issues de la bibliothèque UGC existante. Les fonctions vidéo IA longues sont encore à développer.";});
+
+const modal=$("videoModal"),modalVideo=$("modalVideo");let lastFocus=null;
+$("demoGrid").addEventListener("click",e=>{
+const card=e.target.closest(".demo-card");if(!card)return;lastFocus=card;
+const src=card.dataset.src;
+if(!src)return;
+document.querySelectorAll(".demo-card video").forEach(v=>v.pause());
+modalVideo.src=src;modalVideo.load();
+$("modalCaption").textContent=card.dataset.label+" · Bibliothèque existante";
+modal.classList.add("open");modal.setAttribute("aria-hidden","false");
+document.body.style.overflow="hidden";$("modalClose").focus();
+const p=modalVideo.play();if(p&&p.catch)p.catch(()=>{});
+clearInterval(heroTimer);
+});
+function closeModal(){modal.classList.remove("open");modal.setAttribute("aria-hidden","true");modalVideo.pause();modalVideo.removeAttribute("src");modalVideo.load();document.body.style.overflow="";if(lastFocus)lastFocus.focus();resetTimer();document.querySelectorAll(".demo-card video").forEach(v=>{if(v.getBoundingClientRect().top<innerHeight&&v.getBoundingClientRect().bottom>0)playSilent(v);});}
+$("modalClose").addEventListener("click",closeModal);
+modal.addEventListener("click",e=>{if(e.target===modal)closeModal();});
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&modal.classList.contains("open"))closeModal();});
+
+$("storyClips").addEventListener("click",e=>{
+const button=e.target.closest("[data-shot]");if(!button)return;
+const shot=button.querySelector("video");if(!shot)return;
+$("storyClips").querySelectorAll("button").forEach(b=>b.classList.toggle("active",b===button));
+const preview=$("storyVideo");preview.pause();preview.src=shot.dataset.src;preview.load();playSilent(preview);
+const captions=["Une histoire. Plusieurs scènes.","Plan produit. Une autre perspective.","Zoom. Mouvement. Détails.","Une nouvelle ambiance.","Une conclusion qui reste."];
+$("storyCaption").textContent=captions[Number(button.dataset.shot)]||"Séquence créative";
+});
+document.addEventListener("visibilitychange",()=>{
+if(document.hidden){clearInterval(heroTimer);document.querySelectorAll("video").forEach(v=>v.pause());}
+else{resetTimer();if(!modal.classList.contains("open")){playSilent($("heroBackdrop"));playSilent($("heroPortrait"));}}
+});
 })();
 </script>
 </body>
