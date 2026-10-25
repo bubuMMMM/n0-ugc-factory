@@ -119,7 +119,7 @@ button:focus-visible,a:focus-visible{outline:3px solid #8fbb00;outline-offset:3p
 .category-row{gap:11px;margin-right:-15px;padding-right:15px}
 .category-tile{flex:0 0 calc((100% - 33px)/4);min-width:0;max-width:none}
 .category-thumb{border-radius:16px;aspect-ratio:1.18}
-.category-tile .label{font-size:13px;font-weight:710;letter-spacing:-.45px;margin-top:10px}
+.category-tile .label{font-size:clamp(10px,2.85vw,12px);font-weight:710;letter-spacing:-.45px;margin-top:10px;overflow-wrap:anywhere}
 .category-tile .upcoming{font-size:8px}
 .library-section{margin-top:70px}
 .eyebrow-lime{font-size:13px;margin-bottom:7px}
